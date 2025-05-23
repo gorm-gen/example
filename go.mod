@@ -3,7 +3,7 @@ module example
 go 1.24.3
 
 require (
-	github.com/gorm-gen/plugin v0.1.3
+	github.com/gorm-gen/plugin v0.1.4
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/shopspring/decimal v1.4.0
 	github.com/spf13/viper v1.20.1

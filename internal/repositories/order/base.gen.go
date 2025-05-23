@@ -1027,7 +1027,7 @@ func UpdateUpdatedAt(v time.Time) UpdateOption {
 type OrderOption func(*Order) field.Expr
 
 // Order 自定义数据排序
-func Order(order field.Expr) OrderOption {
+func OrderBy(order field.Expr) OrderOption {
     return func(*Order) field.Expr {
         return order
     }
