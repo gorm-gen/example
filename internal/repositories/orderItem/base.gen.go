@@ -688,6 +688,24 @@ func ConditionUpdatedAtNotBetween(left, right time.Time) ConditionOption {
     }
 }
 
+func ConditionDeletedAtIsNull() ConditionOption {
+	return func(o *OrderItem) gen.Condition {
+        if o.newTableName != nil {
+            return o.q.OrderItem.Table(*o.newTableName).DeletedAt.IsNull()
+        }
+        return o.q.OrderItem.DeletedAt.IsNull()
+    }
+}
+
+func ConditionDeletedAtIsNotNull() ConditionOption {
+	return func(o *OrderItem) gen.Condition {
+        if o.newTableName != nil {
+            return o.q.OrderItem.Table(*o.newTableName).DeletedAt.IsNotNull()
+        }
+        return o.q.OrderItem.DeletedAt.IsNotNull()
+    }
+}
+
 // UpdateOption 数据更新选项
 type UpdateOption func(*OrderItem) field.AssignExpr
 
