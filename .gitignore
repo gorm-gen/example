@@ -1,0 +1,9 @@
+.idea
+.DS_Store
+config.yaml*
+!config.yaml.example
+logs/*
+*.log
+*.exe*
+/cmd/demo/*
+/cmd/test/*
