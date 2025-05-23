@@ -27,6 +27,7 @@ type delete struct {
 func (o *Order) Delete() *delete {
 	return &delete{
 		core:          o,
+		unscoped:      o.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 	}
 }

@@ -27,6 +27,7 @@ type count struct {
 func (o *Order) Count() *count {
 	return &count{
 		core:          o,
+		unscoped:      o.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 	}
 }

@@ -30,6 +30,7 @@ type sum struct {
 func (o *Order) Sum(genField field.Expr) *sum {
 	return &sum{
 		core:          o,
+		unscoped:      o.unscoped,
 		genField:      genField,
 		conditionOpts: make([]ConditionOption, 0),
 	}

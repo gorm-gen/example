@@ -38,6 +38,7 @@ type list struct {
 func (o *Order) List() *list {
 	return &list{
 		core:          o,
+		unscoped:      o.unscoped,
 		selects:       make([]field.Expr, 0),
 		relationOpts:  make([]RelationOption, 0),
 		orderOpts:     make([]OrderOption, 0),

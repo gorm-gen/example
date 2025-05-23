@@ -34,6 +34,7 @@ type first struct {
 func (o *Order) First() *first {
 	return &first{
 		core:          o,
+		unscoped:      o.unscoped,
 		selects:       make([]field.Expr, 0),
 		relationOpts:  make([]RelationOption, 0),
 		conditionOpts: make([]ConditionOption, 0),

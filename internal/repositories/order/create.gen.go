@@ -28,8 +28,9 @@ type create struct {
 // Create 添加数据
 func (o *Order) Create() *create {
 	return &create{
-		core:   o,
-		values: make([]*models.Order, 0),
+		core:     o,
+		unscoped: o.unscoped,
+		values:   make([]*models.Order, 0),
 	}
 }
 

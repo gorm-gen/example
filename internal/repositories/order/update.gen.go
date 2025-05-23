@@ -29,6 +29,7 @@ type update struct {
 func (o *Order) Update() *update {
 	return &update{
 		core:          o,
+		unscoped:      o.unscoped,
 		updateOpts:    make([]UpdateOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
 	}
