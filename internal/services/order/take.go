@@ -14,6 +14,5 @@ type Take struct {
 func (o *Order) Take(ctx context.Context, data *Take) (*models.Order, error) {
 	return o.orderRepo.Take().
 		Where(order.ConditionShardingEq(data.OrderNo[:6]), order.ConditionOrderNoEq(data.OrderNo)).
-		Unscoped().
 		Do(ctx)
 }
