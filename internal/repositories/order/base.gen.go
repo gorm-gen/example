@@ -840,18 +840,18 @@ func ConditionUpdatedAtNotBetween(left, right time.Time) ConditionOption {
 func ConditionDeletedAtIsZero() ConditionOption {
 	return func(o *Order) gen.Condition {
         if o.newTableName != nil {
-            return o.q.Order.Table(*o.newTableName).DeletedAt.Eq(0)
+            return f.NewDecimal(o.q.Order.DeletedAt, f.WithTableName(*o.newTableName)).Eq(decimal.Zero)
         }
-        return o.q.Order.DeletedAt.Eq(0)
+        return f.NewDecimal(o.q.Order.DeletedAt).Eq(decimal.Zero)
     }
 }
 
 func ConditionDeletedAtGtZero() ConditionOption {
 	return func(o *Order) gen.Condition {
         if o.newTableName != nil {
-            return o.q.Order.Table(*o.newTableName).DeletedAt.Gt(0)
+            return f.NewDecimal(o.q.Order.DeletedAt, f.WithTableName(*o.newTableName)).Gt(decimal.Zero)
         }
-        return o.q.Order.DeletedAt.Gt(0)
+        return f.NewDecimal(o.q.Order.DeletedAt).Gt(decimal.Zero)
     }
 }
 
