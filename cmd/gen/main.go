@@ -44,10 +44,12 @@ func main() {
 
 	// 1、生成models
 	g.SetGenerateModel("order")
+	g.SetGenerateModel("order_item")
 
 	// 2、生成gen.query
 	g.SetApplyBasic(
 		models.Order{},
+		models.OrderItem{},
 	)
 
 	g.Execute()
@@ -65,6 +67,7 @@ func main() {
 	// 3、生成repository
 	if err := r.Generate(
 		models.Order{},
+		models.OrderItem{},
 	); err != nil {
 		log.Fatal(err)
 		return
