@@ -1,11 +1,13 @@
 package order_test
 
 import (
+	"log"
+	"time"
+
 	"example/internal/global"
 	"example/internal/initialize/config"
 	"example/internal/initialize/logger"
 	"example/internal/initialize/mysql"
-	"example/internal/initialize/table"
 	"example/internal/services/order"
 )
 
@@ -21,9 +23,12 @@ func init() {
 	// 3、初始化MySQL
 	mysql.Init()
 
-	// 4、初始化数据库表
-	table.Init()
-
-	// 5、实例化order服务
+	// 4、实例化order服务
 	orderSvc = order.New()
+
+	// 5、初始化数据库表
+	if err := orderSvc.Table(time.Now().Format("200601"), "../../../resources/sql/order.sql"); err != nil {
+		log.Fatal(err)
+		return
+	}
 }
