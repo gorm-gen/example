@@ -17,6 +17,7 @@ type List struct {
 func (o *Order) List(ctx context.Context, sharding string, data *List) ([]*models.Order, error) {
 	conditions := make([]order.ConditionOption, 0)
 	conditions = append(conditions, order.ConditionShardingEq(sharding))
+	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	if data.ID != nil {
 		conditions = append(conditions, order.ConditionID(*data.ID))
 	}
