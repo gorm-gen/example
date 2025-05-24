@@ -1,0 +1,30 @@
+package order
+
+import (
+	"context"
+
+	"example/internal/models"
+	"example/internal/repositories/order"
+)
+
+type List struct {
+	Page     int
+	PageSize int
+	ID       *int
+	OrderNo  *string
+}
+
+func (o *Order) List(ctx context.Context, sharding string, data *List) ([]*models.Order, error) {
+	conditions := make([]order.ConditionOption, 0)
+	conditions = append(conditions, order.ConditionShardingEq(sharding))
+	if data.ID != nil {
+		conditions = append(conditions, order.ConditionID(*data.ID))
+	}
+	if data.OrderNo != nil {
+		conditions = append(conditions, order.ConditionOrderNoEq(*data.OrderNo))
+	}
+	return o.orderRepo.List().
+		Where(conditions...).
+		Page(uint(data.Page), uint(data.PageSize)).
+		Do(ctx)
+}
