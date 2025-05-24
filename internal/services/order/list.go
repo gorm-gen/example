@@ -26,6 +26,7 @@ func (o *Order) List(ctx context.Context, sharding string, data *List) ([]*model
 	}
 	return o.orderRepo.List().
 		Where(conditions...).
+		Order(order.OrderIDDesc()).
 		Page(uint(data.Page), uint(data.PageSize)).
 		Do(ctx)
 }
