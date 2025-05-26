@@ -7,13 +7,15 @@ import (
 
 	"github.com/shopspring/decimal"
 
+	orderRepo "example/internal/repositories/order"
 	"example/internal/services/order"
 )
 
 func TestUpdate(t *testing.T) {
-	err := orderSvc.Update(context.Background(), time.Now().Format("200601"), 1, &order.Update{
-		Amount: decimal.NewFromInt(666),
-	})
+	opts := make([]orderRepo.UpdateOption, 0)
+	opts = append(opts, orderRepo.UpdateAmountAdd(decimal.NewFromFloat(999)))
+	id := int64(2)
+	err := orderSvc.Update(context.Background(), time.Now().Format("200601"), &order.Update{ID: &id}, opts...)
 	if err != nil {
 		t.Error(err)
 		return
