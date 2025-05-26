@@ -135,14 +135,12 @@ func (f *first) Do(ctx context.Context) (*models.Order, error) {
 	if (f.tx != nil || f.qTx != nil) && f.lock != nil {
 		fr = fr.Clauses(f.lock)
 	}
-	errFields := make([]zap.Field, 0)
 	if len(f.conditionOpts) > 0 {
 		conditions := make([]gen.Condition, 0, len(f.conditionOpts))
 		for _, opt := range f.conditionOpts {
 			conditions = append(conditions, opt(f.core))
 		}
 		if len(conditions) > 0 {
-			errFields = append(errFields, zap.Any("conditions", conditions))
 			fr = fr.Where(conditions...)
 		}
 	}
@@ -152,15 +150,13 @@ func (f *first) Do(ctx context.Context) (*models.Order, error) {
 			relations = append(relations, opt(f.core))
 		}
 		if len(relations) > 0 {
-			errFields = append(errFields, zap.Any("relations", relations))
 			fr = fr.Preload(relations...)
 		}
 	}
 	res, err := fr.First()
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			errFields = append(errFields, zap.Error(err))
-			f.core.logger.Error("【Order.First】失败", errFields...)
+			f.core.logger.Error("【Order.First】失败", zap.Error(err))
 		}
 		return nil, err
 	}

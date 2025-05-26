@@ -72,22 +72,19 @@ func (d *delete) Do(ctx context.Context) (int64, error) {
 	if d.unscoped {
 		dr = dr.Unscoped()
 	}
-	errFields := make([]zap.Field, 0)
 	if len(d.conditionOpts) > 0 {
 		conditions := make([]gen.Condition, 0, len(d.conditionOpts))
 		for _, opt := range d.conditionOpts {
 			conditions = append(conditions, opt(d.core))
 		}
 		if len(conditions) > 0 {
-			errFields = append(errFields, zap.Any("conditions", conditions))
 			dr = dr.Where(conditions...)
 		}
 	}
 	res, err := dr.Delete()
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			errFields = append(errFields, zap.Error(err))
-			d.core.logger.Error("【OrderItem.Delete】失败", errFields...)
+			d.core.logger.Error("【OrderItem.Delete】失败", zap.Error(err))
 		}
 		return 0, err
 	}

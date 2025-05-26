@@ -84,18 +84,14 @@ func (c *create) Do(ctx context.Context) (err error) {
 	if c.unscoped {
 		cr = cr.Unscoped()
 	}
-	errFields := make([]zap.Field, 0)
 	if length > 1 && c.batchSize > 0 {
-		errFields = append(errFields, zap.Int("batchSize", c.batchSize))
 		err = cr.CreateInBatches(c.values, c.batchSize)
 	} else {
 		err = cr.Create(c.values...)
 	}
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			errFields = append(errFields, zap.Any("values", c.values))
-			errFields = append(errFields, zap.Error(err))
-			c.core.logger.Error("【OrderItem.Create】失败", errFields...)
+			c.core.logger.Error("【OrderItem.Create】失败", zap.Error(err))
 		}
 		return err
 	}

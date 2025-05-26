@@ -72,22 +72,19 @@ func (c *count) Do(ctx context.Context) (int64, error) {
 	if c.unscoped {
 		cr = cr.Unscoped()
 	}
-	errFields := make([]zap.Field, 0)
 	if len(c.conditionOpts) > 0 {
 		conditions := make([]gen.Condition, 0, len(c.conditionOpts))
 		for _, opt := range c.conditionOpts {
 			conditions = append(conditions, opt(c.core))
 		}
 		if len(conditions) > 0 {
-			errFields = append(errFields, zap.Any("conditions", conditions))
 			cr = cr.Where(conditions...)
 		}
 	}
 	count, err := cr.Count()
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			errFields = append(errFields, zap.Error(err))
-			c.core.logger.Error("【OrderItem.Count】失败", errFields...)
+			c.core.logger.Error("【OrderItem.Count】失败", zap.Error(err))
 		}
 		return 0, err
 	}

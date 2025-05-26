@@ -142,14 +142,12 @@ func (t *take) Do(ctx context.Context) (*models.Order, error) {
 	if (t.tx != nil || t.qTx != nil) && t.lock != nil {
 		tr = tr.Clauses(t.lock)
 	}
-	errFields := make([]zap.Field, 0)
 	if len(t.conditionOpts) > 0 {
 		conditions := make([]gen.Condition, 0, len(t.conditionOpts))
 		for _, opt := range t.conditionOpts {
 			conditions = append(conditions, opt(t.core))
 		}
 		if len(conditions) > 0 {
-			errFields = append(errFields, zap.Any("conditions", conditions))
 			tr = tr.Where(conditions...)
 		}
 	}
@@ -159,7 +157,6 @@ func (t *take) Do(ctx context.Context) (*models.Order, error) {
 			orders = append(orders, opt(t.core))
 		}
 		if len(orders) > 0 {
-			errFields = append(errFields, zap.Any("orders", orders))
 			tr = tr.Order(orders...)
 		}
 	}
@@ -169,15 +166,13 @@ func (t *take) Do(ctx context.Context) (*models.Order, error) {
 			relations = append(relations, opt(t.core))
 		}
 		if len(relations) > 0 {
-			errFields = append(errFields, zap.Any("relations", relations))
 			tr = tr.Preload(relations...)
 		}
 	}
 	res, err := tr.Take()
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			errFields = append(errFields, zap.Error(err))
-			t.core.logger.Error("【Order.Take】失败", errFields...)
+			t.core.logger.Error("【Order.Take】失败", zap.Error(err))
 		}
 		return nil, err
 	}

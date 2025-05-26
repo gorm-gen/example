@@ -135,14 +135,12 @@ func (l *last) Do(ctx context.Context) (*models.OrderItem, error) {
 	if (l.tx != nil || l.qTx != nil) && l.lock != nil {
 		lr = lr.Clauses(l.lock)
 	}
-	errFields := make([]zap.Field, 0)
 	if len(l.conditionOpts) > 0 {
 		conditions := make([]gen.Condition, 0, len(l.conditionOpts))
 		for _, opt := range l.conditionOpts {
 			conditions = append(conditions, opt(l.core))
 		}
 		if len(conditions) > 0 {
-			errFields = append(errFields, zap.Any("conditions", conditions))
 			lr = lr.Where(conditions...)
 		}
 	}
@@ -152,15 +150,13 @@ func (l *last) Do(ctx context.Context) (*models.OrderItem, error) {
 			relations = append(relations, opt(l.core))
 		}
 		if len(relations) > 0 {
-			errFields = append(errFields, zap.Any("relations", relations))
 			lr = lr.Preload(relations...)
 		}
 	}
 	res, err := lr.Last()
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			errFields = append(errFields, zap.Error(err))
-			l.core.logger.Error("【OrderItem.Last】失败", errFields...)
+			l.core.logger.Error("【OrderItem.Last】失败", zap.Error(err))
 		}
 		return nil, err
 	}

@@ -82,23 +82,19 @@ func (s *sum) Do(ctx context.Context) (decimal.Decimal, error) {
 	if s.unscoped {
 		sr = sr.Unscoped()
 	}
-	errFields := make([]zap.Field, 0)
 	if len(s.conditionOpts) > 0 {
 		conditions := make([]gen.Condition, 0, len(s.conditionOpts))
 		for _, opt := range s.conditionOpts {
 			conditions = append(conditions, opt(s.core))
 		}
 		if len(conditions) > 0 {
-			errFields = append(errFields, zap.Any("conditions", conditions))
 			sr = sr.Where(conditions...)
 		}
 	}
 	var data Sum
 	if err := sr.Scan(&data); err != nil {
 		if repositories.IsRealErr(err) {
-			errFields = append(errFields, zap.String("field", s.genField.ColumnName().String()))
-			errFields = append(errFields, zap.Error(err))
-			s.core.logger.Error("【OrderItem.Sum】失败", errFields...)
+			s.core.logger.Error("【OrderItem.Sum】失败", zap.Error(err))
 		}
 		return decimal.Zero, err
 	}

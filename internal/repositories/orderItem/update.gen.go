@@ -83,14 +83,12 @@ func (u *update) Do(ctx context.Context) (int64, error) {
 	if u.unscoped {
 		ur = ur.Unscoped()
 	}
-	errFields := make([]zap.Field, 0)
 	if len(u.conditionOpts) > 0 {
 		conditions := make([]gen.Condition, 0, len(u.conditionOpts))
 		for _, opt := range u.conditionOpts {
 			conditions = append(conditions, opt(u.core))
 		}
 		if len(conditions) > 0 {
-			errFields = append(errFields, zap.Any("conditions", conditions))
 			ur = ur.Where(conditions...)
 		}
 	}
@@ -104,9 +102,7 @@ func (u *update) Do(ctx context.Context) (int64, error) {
 	res, err := ur.UpdateSimple(columns...)
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			errFields = append(errFields, zap.Any("columns", columns))
-			errFields = append(errFields, zap.Error(err))
-			u.core.logger.Error("【OrderItem.Update】失败", errFields...)
+			u.core.logger.Error("【OrderItem.Update】失败", zap.Error(err))
 		}
 		return 0, err
 	}
