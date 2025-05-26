@@ -37,14 +37,18 @@ func (o *Order) Create() *create {
 // Tx 设置为事务
 func (c *create) Tx(tx *query.Query) *create {
 	c.tx = tx
-	c.qTx = nil
+	if tx != nil {
+		c.qTx = nil
+	}
 	return c
 }
 
 // QueryTx 设置为手动事务
 func (c *create) QueryTx(tx *query.QueryTx) *create {
 	c.qTx = tx
-	c.tx = nil
+	if tx != nil {
+		c.tx = nil
+	}
 	return c
 }
 

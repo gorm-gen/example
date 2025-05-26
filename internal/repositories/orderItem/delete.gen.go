@@ -35,14 +35,18 @@ func (o *OrderItem) Delete() *delete {
 // Tx 设置为事务
 func (d *delete) Tx(tx *query.Query) *delete {
 	d.tx = tx
-	d.qTx = nil
+	if tx != nil {
+		d.qTx = nil
+	}
 	return d
 }
 
 // QueryTx 设置为手动事务
 func (d *delete) QueryTx(tx *query.QueryTx) *delete {
 	d.qTx = tx
-	d.tx = nil
+	if tx != nil {
+		d.tx = nil
+	}
 	return d
 }
 

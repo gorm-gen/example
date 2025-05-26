@@ -49,14 +49,18 @@ func (o *OrderItem) List() *list {
 // Tx 设置为事务
 func (l *list) Tx(tx *query.Query) *list {
 	l.tx = tx
-	l.qTx = nil
+	if tx != nil {
+		l.qTx = nil
+	}
 	return l
 }
 
 // QueryTx 设置为手动事务
 func (l *list) QueryTx(tx *query.QueryTx) *list {
 	l.qTx = tx
-	l.tx = nil
+	if tx != nil {
+		l.tx = nil
+	}
 	return l
 }
 

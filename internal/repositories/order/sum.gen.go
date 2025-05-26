@@ -39,14 +39,18 @@ func (o *Order) Sum(genField field.Expr) *sum {
 // Tx 设置为事务
 func (s *sum) Tx(tx *query.Query) *sum {
 	s.tx = tx
-	s.qTx = nil
+	if tx != nil {
+		s.qTx = nil
+	}
 	return s
 }
 
 // SetQueryTx 设置为手动事务
 func (s *sum) QueryTx(tx *query.QueryTx) *sum {
 	s.qTx = tx
-	s.tx = nil
+	if tx != nil {
+		s.tx = nil
+	}
 	return s
 }
 

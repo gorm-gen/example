@@ -35,14 +35,18 @@ func (o *OrderItem) Count() *count {
 // Tx 设置为事务
 func (c *count) Tx(tx *query.Query) *count {
 	c.tx = tx
-	c.qTx = nil
+	if tx != nil {
+		c.qTx = nil
+	}
 	return c
 }
 
 // QueryTx 设置为手动事务
 func (c *count) QueryTx(tx *query.QueryTx) *count {
 	c.qTx = tx
-	c.tx = nil
+	if tx != nil {
+		c.tx = nil
+	}
 	return c
 }
 

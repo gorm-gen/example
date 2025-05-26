@@ -44,14 +44,18 @@ func (o *Order) First() *first {
 // Tx 设置为事务
 func (f *first) Tx(tx *query.Query) *first {
 	f.tx = tx
-	f.qTx = nil
+	if tx != nil {
+		f.qTx = nil
+	}
 	return f
 }
 
 // QueryTx 设置为手动事务
 func (f *first) QueryTx(tx *query.QueryTx) *first {
 	f.qTx = tx
-	f.tx = nil
+	if tx != nil {
+		f.tx = nil
+	}
 	return f
 }
 

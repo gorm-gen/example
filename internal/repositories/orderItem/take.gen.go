@@ -46,14 +46,18 @@ func (o *OrderItem) Take() *take {
 // Tx 设置为事务
 func (t *take) Tx(tx *query.Query) *take {
 	t.tx = tx
-	t.qTx = nil
+	if tx != nil {
+		t.qTx = nil
+	}
 	return t
 }
 
 // QueryTx 设置为手动事务
 func (t *take) QueryTx(tx *query.QueryTx) *take {
 	t.qTx = tx
-	t.tx = nil
+	if tx != nil {
+		t.tx = nil
+	}
 	return t
 }
 

@@ -38,14 +38,18 @@ func (o *OrderItem) Update() *update {
 // Tx 设置为事务
 func (u *update) Tx(tx *query.Query) *update {
 	u.tx = tx
-	u.qTx = nil
+	if tx != nil {
+		u.qTx = nil
+	}
 	return u
 }
 
 // QueryTx 设置为手动事务
 func (u *update) QueryTx(tx *query.QueryTx) *update {
 	u.qTx = tx
-	u.tx = nil
+	if tx != nil {
+		u.tx = nil
+	}
 	return u
 }
 
