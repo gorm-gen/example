@@ -18,15 +18,21 @@ func (o *Order) List(ctx context.Context, sharding string, data *List) ([]*model
 	conditions := make([]order.ConditionOption, 0)
 	conditions = append(conditions, order.ConditionShardingEq(sharding))
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
-	if data.ID != nil {
-		conditions = append(conditions, order.ConditionID(*data.ID))
+	var page, pageSize uint
+	if data != nil {
+		if data.ID != nil {
+			conditions = append(conditions, order.ConditionID(*data.ID))
+		}
+		if data.OrderNo != nil {
+			conditions = append(conditions, order.ConditionOrderNoEq(*data.OrderNo))
+		}
+		page = uint(data.Page)
+		pageSize = uint(data.PageSize)
 	}
-	if data.OrderNo != nil {
-		conditions = append(conditions, order.ConditionOrderNoEq(*data.OrderNo))
-	}
+
 	return o.orderRepo.List().
 		Where(conditions...).
 		Order(order.OrderIDDesc()).
-		Page(uint(data.Page), uint(data.PageSize)).
+		Page(page, pageSize).
 		Do(ctx)
 }

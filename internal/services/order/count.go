@@ -2,7 +2,7 @@ package order
 
 import (
 	"context"
-	
+
 	"example/internal/repositories/order"
 )
 
@@ -15,11 +15,13 @@ func (o *Order) Count(ctx context.Context, sharding string, data *Count) (int64,
 	conditions := make([]order.ConditionOption, 0)
 	conditions = append(conditions, order.ConditionShardingEq(sharding))
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
-	if data.ID != nil {
-		conditions = append(conditions, order.ConditionID(*data.ID))
-	}
-	if data.OrderNo != nil {
-		conditions = append(conditions, order.ConditionOrderNoEq(*data.OrderNo))
+	if data != nil {
+		if data.ID != nil {
+			conditions = append(conditions, order.ConditionID(*data.ID))
+		}
+		if data.OrderNo != nil {
+			conditions = append(conditions, order.ConditionOrderNoEq(*data.OrderNo))
+		}
 	}
 	return o.orderRepo.
 		Count().

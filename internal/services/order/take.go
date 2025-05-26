@@ -17,14 +17,16 @@ func (o *Order) Take(ctx context.Context, sharding string, data *Take) (*models.
 	conditions := make([]order.ConditionOption, 0)
 	conditions = append(conditions, order.ConditionShardingEq(sharding))
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
-	if data.ID != nil {
-		conditions = append(conditions, order.ConditionID(*data.ID))
-	}
-	if data.UID != nil {
-		conditions = append(conditions, order.ConditionUID(*data.UID))
-	}
-	if data.OrderNo != nil {
-		conditions = append(conditions, order.ConditionOrderNoEq(*data.OrderNo))
+	if data != nil {
+		if data.ID != nil {
+			conditions = append(conditions, order.ConditionID(*data.ID))
+		}
+		if data.UID != nil {
+			conditions = append(conditions, order.ConditionUID(*data.UID))
+		}
+		if data.OrderNo != nil {
+			conditions = append(conditions, order.ConditionOrderNoEq(*data.OrderNo))
+		}
 	}
 	return o.orderRepo.Take().
 		Where(conditions...).
