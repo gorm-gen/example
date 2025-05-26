@@ -17,7 +17,7 @@ import (
 	"example/internal/repositories"
 )
 
-type sum struct {
+type _sum struct {
 	core          *Order
 	tx            *query.Query
 	qTx           *query.QueryTx
@@ -27,8 +27,8 @@ type sum struct {
 }
 
 // Sum SUM数据
-func (o *Order) Sum(genField field.Expr) *sum {
-	return &sum{
+func (o *Order) Sum(genField field.Expr) *_sum {
+	return &_sum{
 		core:          o,
 		unscoped:      o.unscoped,
 		genField:      genField,
@@ -37,7 +37,7 @@ func (o *Order) Sum(genField field.Expr) *sum {
 }
 
 // Tx 设置为事务
-func (s *sum) Tx(tx *query.Query) *sum {
+func (s *_sum) Tx(tx *query.Query) *_sum {
 	s.tx = tx
 	if tx != nil {
 		s.qTx = nil
@@ -46,7 +46,7 @@ func (s *sum) Tx(tx *query.Query) *sum {
 }
 
 // SetQueryTx 设置为手动事务
-func (s *sum) QueryTx(tx *query.QueryTx) *sum {
+func (s *_sum) QueryTx(tx *query.QueryTx) *_sum {
 	s.qTx = tx
 	if tx != nil {
 		s.tx = nil
@@ -54,12 +54,12 @@ func (s *sum) QueryTx(tx *query.QueryTx) *sum {
 	return s
 }
 
-func (s *sum) Unscoped() *sum {
+func (s *_sum) Unscoped() *_sum {
 	s.unscoped = true
 	return s
 }
 
-func (s *sum) Where(opts ...ConditionOption) *sum {
+func (s *_sum) Where(opts ...ConditionOption) *_sum {
 	s.conditionOpts = append(s.conditionOpts, opts...)
 	return s
 }
@@ -69,7 +69,7 @@ type Sum struct {
 }
 
 // Do 执行SUM数据
-func (s *sum) Do(ctx context.Context) (decimal.Decimal, error) {
+func (s *_sum) Do(ctx context.Context) (decimal.Decimal, error) {
 	sq := s.core.q.Order
 	if s.tx != nil {
 		sq = s.tx.Order

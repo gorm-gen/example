@@ -16,7 +16,7 @@ import (
     "example/internal/repositories"
 )
 
-type update struct {
+type _update struct {
 	core          *OrderItem
 	tx            *query.Query
 	qTx           *query.QueryTx
@@ -26,8 +26,8 @@ type update struct {
 }
 
 // Update 更新数据
-func (o *OrderItem) Update() *update {
-	return &update{
+func (o *OrderItem) Update() *_update {
+	return &_update{
 		core:          o,
 		unscoped:      o.unscoped,
 		updateOpts:    make([]UpdateOption, 0),
@@ -36,7 +36,7 @@ func (o *OrderItem) Update() *update {
 }
 
 // Tx 设置为事务
-func (u *update) Tx(tx *query.Query) *update {
+func (u *_update) Tx(tx *query.Query) *_update {
 	u.tx = tx
 	if tx != nil {
 		u.qTx = nil
@@ -45,7 +45,7 @@ func (u *update) Tx(tx *query.Query) *update {
 }
 
 // QueryTx 设置为手动事务
-func (u *update) QueryTx(tx *query.QueryTx) *update {
+func (u *_update) QueryTx(tx *query.QueryTx) *_update {
 	u.qTx = tx
 	if tx != nil {
 		u.tx = nil
@@ -53,23 +53,23 @@ func (u *update) QueryTx(tx *query.QueryTx) *update {
 	return u
 }
 
-func (u *update) Unscoped() *update {
+func (u *_update) Unscoped() *_update {
 	u.unscoped = true
 	return u
 }
 
-func (u *update) Update(opts ...UpdateOption) *update {
+func (u *_update) Update(opts ...UpdateOption) *_update {
 	u.updateOpts = append(u.updateOpts, opts...)
 	return u
 }
 
-func (u *update) Where(opts ...ConditionOption) *update {
+func (u *_update) Where(opts ...ConditionOption) *_update {
 	u.conditionOpts = append(u.conditionOpts, opts...)
 	return u
 }
 
 // Do 执行更新数据
-func (u *update) Do(ctx context.Context) (int64, error) {
+func (u *_update) Do(ctx context.Context) (int64, error) {
 	if len(u.updateOpts) == 0 {
 		return 0, nil
 	}

@@ -19,7 +19,7 @@ import (
     "example/internal/models"
 )
 
-type last struct {
+type _last struct {
 	core          *OrderItem
 	tx            *query.Query
 	qTx           *query.QueryTx
@@ -31,8 +31,8 @@ type last struct {
 }
 
 // Last 获取最后一条记录（主键降序）
-func (o *OrderItem) Last() *last {
-	return &last{
+func (o *OrderItem) Last() *_last {
+	return &_last{
 		core:          o,
 		unscoped:      o.unscoped,
 		selects:       make([]field.Expr, 0),
@@ -42,7 +42,7 @@ func (o *OrderItem) Last() *last {
 }
 
 // Tx 设置为事务
-func (l *last) Tx(tx *query.Query) *last {
+func (l *_last) Tx(tx *query.Query) *_last {
 	l.tx = tx
 	if tx != nil {
 		l.qTx = nil
@@ -51,7 +51,7 @@ func (l *last) Tx(tx *query.Query) *last {
 }
 
 // QueryTx 设置为手动事务
-func (l *last) QueryTx(tx *query.QueryTx) *last {
+func (l *_last) QueryTx(tx *query.QueryTx) *_last {
 	l.qTx = tx
 	if tx != nil {
 		l.tx = nil
@@ -59,58 +59,58 @@ func (l *last) QueryTx(tx *query.QueryTx) *last {
 	return l
 }
 
-func (l *last) Select(field ...field.Expr) *last {
+func (l *_last) Select(field ...field.Expr) *_last {
 	l.selects = append(l.selects, field...)
 	return l
 }
 
-func (l *last) ForUpdate() *last {
+func (l *_last) ForUpdate() *_last {
 	l.lock = clause.Locking{Strength: clause.LockingStrengthUpdate}
 	return l
 }
 
-func (l *last) ForUpdateSkipLocked() *last {
+func (l *_last) ForUpdateSkipLocked() *_last {
 	l.lock = clause.Locking{Strength: clause.LockingStrengthUpdate, Options: clause.LockingOptionsSkipLocked}
 	return l
 }
 
-func (l *last) ForUpdateNoWait() *last {
+func (l *_last) ForUpdateNoWait() *_last {
 	l.lock = clause.Locking{Strength: clause.LockingStrengthUpdate, Options: clause.LockingOptionsNoWait}
 	return l
 }
 
-func (l *last) ForShare() *last {
+func (l *_last) ForShare() *_last {
 	l.lock = clause.Locking{Strength: clause.LockingStrengthShare}
 	return l
 }
 
-func (l *last) ForShareSkipLocked() *last {
+func (l *_last) ForShareSkipLocked() *_last {
 	l.lock = clause.Locking{Strength: clause.LockingStrengthShare, Options: clause.LockingOptionsSkipLocked}
 	return l
 }
 
-func (l *last) ForShareNoWait() *last {
+func (l *_last) ForShareNoWait() *_last {
 	l.lock = clause.Locking{Strength: clause.LockingStrengthShare, Options: clause.LockingOptionsNoWait}
 	return l
 }
 
-func (l *last) Unscoped() *last {
+func (l *_last) Unscoped() *_last {
 	l.unscoped = true
 	return l
 }
 
-func (l *last) Relation(opts ...RelationOption) *last {
+func (l *_last) Relation(opts ...RelationOption) *_last {
 	l.relationOpts = append(l.relationOpts, opts...)
 	return l
 }
 
-func (l *last) Where(opts ...ConditionOption) *last {
+func (l *_last) Where(opts ...ConditionOption) *_last {
 	l.conditionOpts = append(l.conditionOpts, opts...)
 	return l
 }
 
 // Do 执行获取最后一条记录（主键降序）
-func (l *last) Do(ctx context.Context) (*models.OrderItem, error) {
+func (l *_last) Do(ctx context.Context) (*models.OrderItem, error) {
 	lq := l.core.q.OrderItem
 	if l.tx != nil {
 		lq = l.tx.OrderItem

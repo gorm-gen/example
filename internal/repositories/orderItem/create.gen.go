@@ -16,7 +16,7 @@ import (
     "example/internal/models"
 )
 
-type create struct {
+type _create struct {
 	core      *OrderItem
 	tx        *query.Query
 	qTx       *query.QueryTx
@@ -26,8 +26,8 @@ type create struct {
 }
 
 // Create 添加数据
-func (o *OrderItem) Create() *create {
-	return &create{
+func (o *OrderItem) Create() *_create {
+	return &_create{
 		core:     o,
 		unscoped: o.unscoped,
 		values:   make([]*models.OrderItem, 0),
@@ -35,7 +35,7 @@ func (o *OrderItem) Create() *create {
 }
 
 // Tx 设置为事务
-func (c *create) Tx(tx *query.Query) *create {
+func (c *_create) Tx(tx *query.Query) *_create {
 	c.tx = tx
 	if tx != nil {
 		c.qTx = nil
@@ -44,7 +44,7 @@ func (c *create) Tx(tx *query.Query) *create {
 }
 
 // QueryTx 设置为手动事务
-func (c *create) QueryTx(tx *query.QueryTx) *create {
+func (c *_create) QueryTx(tx *query.QueryTx) *_create {
 	c.qTx = tx
 	if tx != nil {
 		c.tx = nil
@@ -52,24 +52,24 @@ func (c *create) QueryTx(tx *query.QueryTx) *create {
 	return c
 }
 
-func (c *create) Unscoped() *create {
+func (c *_create) Unscoped() *_create {
 	c.unscoped = true
 	return c
 }
 
-func (c *create) Values(values ...*models.OrderItem) *create {
+func (c *_create) Values(values ...*models.OrderItem) *_create {
 	c.values = append(c.values, values...)
 	return c
 }
 
 // BatchSize 当批量插入时指定创建的数量
-func (c *create) BatchSize(batchSize uint) *create {
+func (c *_create) BatchSize(batchSize uint) *_create {
 	c.batchSize = int(batchSize)
 	return c
 }
 
 // Do 执行添加数据
-func (c *create) Do(ctx context.Context) (err error) {
+func (c *_create) Do(ctx context.Context) (err error) {
 	length := len(c.values)
 	if length == 0 {
 		return nil

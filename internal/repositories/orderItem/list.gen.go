@@ -20,7 +20,7 @@ import (
     "example/internal/models"
 )
 
-type list struct {
+type _list struct {
 	core          *OrderItem
 	tx            *query.Query
 	qTx           *query.QueryTx
@@ -35,8 +35,8 @@ type list struct {
 }
 
 // List 获取数据列表
-func (o *OrderItem) List() *list {
-	return &list{
+func (o *OrderItem) List() *_list {
+	return &_list{
 		core:          o,
 		unscoped:      o.unscoped,
 		selects:       make([]field.Expr, 0),
@@ -47,7 +47,7 @@ func (o *OrderItem) List() *list {
 }
 
 // Tx 设置为事务
-func (l *list) Tx(tx *query.Query) *list {
+func (l *_list) Tx(tx *query.Query) *_list {
 	l.tx = tx
 	if tx != nil {
 		l.qTx = nil
@@ -56,7 +56,7 @@ func (l *list) Tx(tx *query.Query) *list {
 }
 
 // QueryTx 设置为手动事务
-func (l *list) QueryTx(tx *query.QueryTx) *list {
+func (l *_list) QueryTx(tx *query.QueryTx) *_list {
 	l.qTx = tx
 	if tx != nil {
 		l.tx = nil
@@ -64,70 +64,70 @@ func (l *list) QueryTx(tx *query.QueryTx) *list {
 	return l
 }
 
-func (l *list) Select(field ...field.Expr) *list {
+func (l *_list) Select(field ...field.Expr) *_list {
 	l.selects = append(l.selects, field...)
 	return l
 }
 
-func (l *list) ForUpdate() *list {
+func (l *_list) ForUpdate() *_list {
 	l.lock = clause.Locking{Strength: clause.LockingStrengthUpdate}
 	return l
 }
 
-func (l *list) ForUpdateSkipLocked() *list {
+func (l *_list) ForUpdateSkipLocked() *_list {
 	l.lock = clause.Locking{Strength: clause.LockingStrengthUpdate, Options: clause.LockingOptionsSkipLocked}
 	return l
 }
 
-func (l *list) ForUpdateNoWait() *list {
+func (l *_list) ForUpdateNoWait() *_list {
 	l.lock = clause.Locking{Strength: clause.LockingStrengthUpdate, Options: clause.LockingOptionsNoWait}
 	return l
 }
 
-func (l *list) ForShare() *list {
+func (l *_list) ForShare() *_list {
 	l.lock = clause.Locking{Strength: clause.LockingStrengthShare}
 	return l
 }
 
-func (l *list) ForShareSkipLocked() *list {
+func (l *_list) ForShareSkipLocked() *_list {
 	l.lock = clause.Locking{Strength: clause.LockingStrengthShare, Options: clause.LockingOptionsSkipLocked}
 	return l
 }
 
-func (l *list) ForShareNoWait() *list {
+func (l *_list) ForShareNoWait() *_list {
 	l.lock = clause.Locking{Strength: clause.LockingStrengthShare, Options: clause.LockingOptionsNoWait}
 	return l
 }
 
-func (l *list) Unscoped() *list {
+func (l *_list) Unscoped() *_list {
 	l.unscoped = true
 	return l
 }
 
-func (l *list) Relation(opts ...RelationOption) *list {
+func (l *_list) Relation(opts ...RelationOption) *_list {
 	l.relationOpts = append(l.relationOpts, opts...)
 	return l
 }
 
-func (l *list) Order(opts ...OrderOption) *list {
+func (l *_list) Order(opts ...OrderOption) *_list {
 	l.orderOpts = append(l.orderOpts, opts...)
 	return l
 }
 
-func (l *list) Where(opts ...ConditionOption) *list {
+func (l *_list) Where(opts ...ConditionOption) *_list {
 	l.conditionOpts = append(l.conditionOpts, opts...)
 	return l
 }
 
 // Page 列表分页
-func (l *list) Page(page, pageSize uint) *list {
+func (l *_list) Page(page, pageSize uint) *_list {
 	l.page = int(page)
 	l.pageSize = int(pageSize)
 	return l
 }
 
 // Do 执行获取数据列表
-func (l *list) Do(ctx context.Context) ([]*models.OrderItem, error) {
+func (l *_list) Do(ctx context.Context) ([]*models.OrderItem, error) {
 	lq := l.core.q.OrderItem
 	if l.tx != nil {
 		lq = l.tx.OrderItem

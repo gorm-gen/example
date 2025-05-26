@@ -19,7 +19,7 @@ import (
     "example/internal/models"
 )
 
-type first struct {
+type _first struct {
 	core          *OrderItem
 	tx            *query.Query
 	qTx           *query.QueryTx
@@ -31,8 +31,8 @@ type first struct {
 }
 
 // First 获取第一条记录（主键升序）
-func (o *OrderItem) First() *first {
-	return &first{
+func (o *OrderItem) First() *_first {
+	return &_first{
 		core:          o,
 		unscoped:      o.unscoped,
 		selects:       make([]field.Expr, 0),
@@ -42,7 +42,7 @@ func (o *OrderItem) First() *first {
 }
 
 // Tx 设置为事务
-func (f *first) Tx(tx *query.Query) *first {
+func (f *_first) Tx(tx *query.Query) *_first {
 	f.tx = tx
 	if tx != nil {
 		f.qTx = nil
@@ -51,7 +51,7 @@ func (f *first) Tx(tx *query.Query) *first {
 }
 
 // QueryTx 设置为手动事务
-func (f *first) QueryTx(tx *query.QueryTx) *first {
+func (f *_first) QueryTx(tx *query.QueryTx) *_first {
 	f.qTx = tx
 	if tx != nil {
 		f.tx = nil
@@ -59,58 +59,58 @@ func (f *first) QueryTx(tx *query.QueryTx) *first {
 	return f
 }
 
-func (f *first) Select(field ...field.Expr) *first {
+func (f *_first) Select(field ...field.Expr) *_first {
 	f.selects = append(f.selects, field...)
 	return f
 }
 
-func (f *first) ForUpdate() *first {
+func (f *_first) ForUpdate() *_first {
 	f.lock = clause.Locking{Strength: clause.LockingStrengthUpdate}
 	return f
 }
 
-func (f *first) ForUpdateSkipLocked() *first {
+func (f *_first) ForUpdateSkipLocked() *_first {
 	f.lock = clause.Locking{Strength: clause.LockingStrengthUpdate, Options: clause.LockingOptionsSkipLocked}
 	return f
 }
 
-func (f *first) ForUpdateNoWait() *first {
+func (f *_first) ForUpdateNoWait() *_first {
 	f.lock = clause.Locking{Strength: clause.LockingStrengthUpdate, Options: clause.LockingOptionsNoWait}
 	return f
 }
 
-func (f *first) ForShare() *first {
+func (f *_first) ForShare() *_first {
 	f.lock = clause.Locking{Strength: clause.LockingStrengthShare}
 	return f
 }
 
-func (f *first) ForShareSkipLocked() *first {
+func (f *_first) ForShareSkipLocked() *_first {
 	f.lock = clause.Locking{Strength: clause.LockingStrengthShare, Options: clause.LockingOptionsSkipLocked}
 	return f
 }
 
-func (f *first) ForShareNoWait() *first {
+func (f *_first) ForShareNoWait() *_first {
 	f.lock = clause.Locking{Strength: clause.LockingStrengthShare, Options: clause.LockingOptionsNoWait}
 	return f
 }
 
-func (f *first) Unscoped() *first {
+func (f *_first) Unscoped() *_first {
 	f.unscoped = true
 	return f
 }
 
-func (f *first) Relation(opts ...RelationOption) *first {
+func (f *_first) Relation(opts ...RelationOption) *_first {
 	f.relationOpts = append(f.relationOpts, opts...)
 	return f
 }
 
-func (f *first) Where(opts ...ConditionOption) *first {
+func (f *_first) Where(opts ...ConditionOption) *_first {
 	f.conditionOpts = append(f.conditionOpts, opts...)
 	return f
 }
 
 // Do 执行获取第一条记录（主键升序）
-func (f *first) Do(ctx context.Context) (*models.OrderItem, error) {
+func (f *_first) Do(ctx context.Context) (*models.OrderItem, error) {
 	fq := f.core.q.OrderItem
 	if f.tx != nil {
 		fq = f.tx.OrderItem

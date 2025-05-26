@@ -15,7 +15,7 @@ import (
     "example/internal/repositories"
 )
 
-type delete struct {
+type _delete struct {
 	core          *OrderItem
 	tx            *query.Query
 	qTx           *query.QueryTx
@@ -24,8 +24,8 @@ type delete struct {
 }
 
 // Delete 删除数据
-func (o *OrderItem) Delete() *delete {
-	return &delete{
+func (o *OrderItem) Delete() *_delete {
+	return &_delete{
 		core:          o,
 		unscoped:      o.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
@@ -33,7 +33,7 @@ func (o *OrderItem) Delete() *delete {
 }
 
 // Tx 设置为事务
-func (d *delete) Tx(tx *query.Query) *delete {
+func (d *_delete) Tx(tx *query.Query) *_delete {
 	d.tx = tx
 	if tx != nil {
 		d.qTx = nil
@@ -42,7 +42,7 @@ func (d *delete) Tx(tx *query.Query) *delete {
 }
 
 // QueryTx 设置为手动事务
-func (d *delete) QueryTx(tx *query.QueryTx) *delete {
+func (d *_delete) QueryTx(tx *query.QueryTx) *_delete {
 	d.qTx = tx
 	if tx != nil {
 		d.tx = nil
@@ -50,18 +50,18 @@ func (d *delete) QueryTx(tx *query.QueryTx) *delete {
 	return d
 }
 
-func (d *delete) Unscoped() *delete {
+func (d *_delete) Unscoped() *_delete {
 	d.unscoped = true
 	return d
 }
 
-func (d *delete) Where(opts ...ConditionOption) *delete {
+func (d *_delete) Where(opts ...ConditionOption) *_delete {
 	d.conditionOpts = append(d.conditionOpts, opts...)
 	return d
 }
 
 // Do 执行删除数据
-func (d *delete) Do(ctx context.Context) (int64, error) {
+func (d *_delete) Do(ctx context.Context) (int64, error) {
 	dq := d.core.q.OrderItem
 	if d.tx != nil {
 		dq = d.tx.OrderItem

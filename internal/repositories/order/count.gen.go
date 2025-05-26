@@ -15,7 +15,7 @@ import (
     "example/internal/repositories"
 )
 
-type count struct {
+type _count struct {
 	core          *Order
 	tx            *query.Query
 	qTx           *query.QueryTx
@@ -24,8 +24,8 @@ type count struct {
 }
 
 // Count 获取数据总条数
-func (o *Order) Count() *count {
-	return &count{
+func (o *Order) Count() *_count {
+	return &_count{
 		core:          o,
 		unscoped:      o.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
@@ -33,7 +33,7 @@ func (o *Order) Count() *count {
 }
 
 // Tx 设置为事务
-func (c *count) Tx(tx *query.Query) *count {
+func (c *_count) Tx(tx *query.Query) *_count {
 	c.tx = tx
 	if tx != nil {
 		c.qTx = nil
@@ -42,7 +42,7 @@ func (c *count) Tx(tx *query.Query) *count {
 }
 
 // QueryTx 设置为手动事务
-func (c *count) QueryTx(tx *query.QueryTx) *count {
+func (c *_count) QueryTx(tx *query.QueryTx) *_count {
 	c.qTx = tx
 	if tx != nil {
 		c.tx = nil
@@ -50,18 +50,18 @@ func (c *count) QueryTx(tx *query.QueryTx) *count {
 	return c
 }
 
-func (c *count) Unscoped() *count {
+func (c *_count) Unscoped() *_count {
 	c.unscoped = true
 	return c
 }
 
-func (c *count) Where(opts ...ConditionOption) *count {
+func (c *_count) Where(opts ...ConditionOption) *_count {
 	c.conditionOpts = append(c.conditionOpts, opts...)
 	return c
 }
 
 // Do 执行获取数据总条数
-func (c *count) Do(ctx context.Context) (int64, error) {
+func (c *_count) Do(ctx context.Context) (int64, error) {
 	cq := c.core.q.Order
 	if c.tx != nil {
 		cq = c.tx.Order
