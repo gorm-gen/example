@@ -4,14 +4,14 @@ go 1.24.3
 
 require (
 	github.com/go-dev-pkg/sn v0.0.2
-	github.com/gorm-gen/plugin v0.2.0
+	github.com/gorm-gen/plugin v0.2.1
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/shopspring/decimal v1.4.0
 	github.com/spf13/viper v1.20.1
 	go.uber.org/zap v1.27.0
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gen v0.3.27
-	gorm.io/gorm v1.26.1
+	gorm.io/gorm v1.30.0
 	gorm.io/plugin/dbresolver v1.6.0
 	gorm.io/plugin/soft_delete v1.2.1
 )
@@ -35,12 +35,12 @@ require (
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 // indirect
+	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
 	golang.org/x/mod v0.24.0 // indirect
 	golang.org/x/sync v0.14.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.25.0 // indirect
-	golang.org/x/tools v0.32.0 // indirect
+	golang.org/x/tools v0.33.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/datatypes v1.2.5 // indirect
 	gorm.io/hints v1.1.2 // indirect
