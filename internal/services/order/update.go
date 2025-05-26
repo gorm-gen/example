@@ -12,7 +12,7 @@ type Update struct {
 	Amount decimal.Decimal
 }
 
-func (o *Order) Update(ctx context.Context, sharding string, id int, data *Update) error {
+func (o *Order) Update(ctx context.Context, sharding string, id int64, data *Update) error {
 	_, err := o.orderRepo.Update().
 		Where(
 			order.ConditionShardingEq(sharding),

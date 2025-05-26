@@ -10,7 +10,7 @@ import (
 type List struct {
 	Page     int
 	PageSize int
-	ID       *int
+	ID       *int64
 	OrderNo  *string
 }
 

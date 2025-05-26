@@ -87,7 +87,7 @@ func Condition(condition gen.Condition) ConditionOption {
 	}
 }
 
-func ConditionID(v ...int) ConditionOption {
+func ConditionID(v ...int64) ConditionOption {
 	return func(o *Order) gen.Condition {
         length := len(v)
         if o.newTableName != nil {
@@ -109,7 +109,7 @@ func ConditionID(v ...int) ConditionOption {
     }
 }
 
-func ConditionIDNot(v ...int) ConditionOption {
+func ConditionIDNot(v ...int64) ConditionOption {
 	return func(o *Order) gen.Condition {
         length := len(v)
         if o.newTableName != nil {
@@ -131,7 +131,7 @@ func ConditionIDNot(v ...int) ConditionOption {
     }
 }
 
-func ConditionIDGt(v ...int) ConditionOption {
+func ConditionIDGt(v ...int64) ConditionOption {
 	return func(o *Order) gen.Condition {
         if o.newTableName != nil {
             if len(v) == 0 {
@@ -146,7 +146,7 @@ func ConditionIDGt(v ...int) ConditionOption {
     }
 }
 
-func ConditionIDGte(v ...int) ConditionOption {
+func ConditionIDGte(v ...int64) ConditionOption {
 	return func(o *Order) gen.Condition {
         if o.newTableName != nil {
             if len(v) == 0 {
@@ -161,7 +161,7 @@ func ConditionIDGte(v ...int) ConditionOption {
     }
 }
 
-func ConditionIDLt(v ...int) ConditionOption {
+func ConditionIDLt(v ...int64) ConditionOption {
 	return func(o *Order) gen.Condition {
         if o.newTableName != nil {
             if len(v) == 0 {
@@ -176,7 +176,7 @@ func ConditionIDLt(v ...int) ConditionOption {
     }
 }
 
-func ConditionIDLte(v ...int) ConditionOption {
+func ConditionIDLte(v ...int64) ConditionOption {
 	return func(o *Order) gen.Condition {
         if o.newTableName != nil {
             if len(v) == 0 {
@@ -191,7 +191,7 @@ func ConditionIDLte(v ...int) ConditionOption {
     }
 }
 
-func ConditionIDBetween(left, right int) ConditionOption {
+func ConditionIDBetween(left, right int64) ConditionOption {
 	return func(o *Order) gen.Condition {
         if o.newTableName != nil {
             return o.q.Order.Table(*o.newTableName).ID.Between(left, right)
@@ -200,7 +200,7 @@ func ConditionIDBetween(left, right int) ConditionOption {
     }
 }
 
-func ConditionIDNotBetween(left, right int) ConditionOption {
+func ConditionIDNotBetween(left, right int64) ConditionOption {
 	return func(o *Order) gen.Condition {
         if o.newTableName != nil {
             return o.q.Order.Table(*o.newTableName).ID.NotBetween(left, right)

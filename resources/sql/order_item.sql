@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS `order_item` (
-    `id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '记录ID',
+    `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '记录ID',
     `sharding` char(6) NOT NULL COMMENT '分表关键字段[月份:202503]',
     `uid` int UNSIGNED NOT NULL DEFAULT '0' COMMENT '用户ID',
     `order_no` char(24) NOT NULL DEFAULT '' COMMENT '订单号',

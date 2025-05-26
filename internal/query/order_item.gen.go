@@ -28,7 +28,7 @@ func newOrderItem(db *gorm.DB, opts ...gen.DOOption) orderItem {
 
 	tableName := _orderItem.orderItemDo.TableName()
 	_orderItem.ALL = field.NewAsterisk(tableName)
-	_orderItem.ID = field.NewInt(tableName, "id")
+	_orderItem.ID = field.NewInt64(tableName, "id")
 	_orderItem.Sharding = field.NewString(tableName, "sharding")
 	_orderItem.UID = field.NewInt(tableName, "uid")
 	_orderItem.OrderNo = field.NewString(tableName, "order_no")
@@ -47,7 +47,7 @@ type orderItem struct {
 	orderItemDo
 
 	ALL           field.Asterisk
-	ID            field.Int    // 记录ID
+	ID            field.Int64  // 记录ID
 	Sharding      field.String // 分表关键字段[月份:202503]
 	UID           field.Int    // 用户ID
 	OrderNo       field.String // 订单号
@@ -72,7 +72,7 @@ func (o orderItem) As(alias string) *orderItem {
 
 func (o *orderItem) updateTableName(table string) *orderItem {
 	o.ALL = field.NewAsterisk(table)
-	o.ID = field.NewInt(table, "id")
+	o.ID = field.NewInt64(table, "id")
 	o.Sharding = field.NewString(table, "sharding")
 	o.UID = field.NewInt(table, "uid")
 	o.OrderNo = field.NewString(table, "order_no")

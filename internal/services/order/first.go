@@ -8,7 +8,7 @@ import (
 )
 
 type First struct {
-	ID      *int
+	ID      *int64
 	UID     *int
 	OrderNo *string
 }

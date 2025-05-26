@@ -2,11 +2,12 @@ package order
 
 import (
 	"context"
+	
 	"example/internal/repositories/order"
 )
 
 type Count struct {
-	ID      *int
+	ID      *int64
 	OrderNo *string
 }
 

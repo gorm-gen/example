@@ -15,7 +15,7 @@ const TableNameOrder = "order"
 
 // Order 订单表
 type Order struct {
-	ID        int                   `gorm:"column:id;primaryKey;autoIncrement:true;comment:记录ID" json:"id"`                                // 记录ID
+	ID        int64                 `gorm:"column:id;primaryKey;autoIncrement:true;comment:记录ID" json:"id"`                                // 记录ID
 	Sharding  string                `gorm:"column:sharding;not null;comment:分表关键字段[月份:202503]" json:"sharding"`                            // 分表关键字段[月份:202503]
 	UID       int                   `gorm:"column:uid;not null;comment:用户ID" json:"uid"`                                                   // 用户ID
 	OrderNo   string                `gorm:"column:order_no;not null;comment:订单号" json:"order_no"`                                          // 订单号
