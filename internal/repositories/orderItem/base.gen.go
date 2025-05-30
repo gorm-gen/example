@@ -206,7 +206,7 @@ func ConditionIDNotBetween(left, right int64) ConditionOption {
     }
 }
 
-func ConditionShardingEq(v string) ConditionOption {
+func ConditionSharding(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
         if o.newTableName != nil {
             return o.q.OrderItem.Table(*o.newTableName).Sharding.Eq(v)
@@ -364,7 +364,7 @@ func ConditionUIDNotBetween(left, right int) ConditionOption {
     }
 }
 
-func ConditionOrderNoEq(v string) ConditionOption {
+func ConditionOrderNo(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
         if o.newTableName != nil {
             return o.q.OrderItem.Table(*o.newTableName).OrderNo.Eq(v)
@@ -400,7 +400,7 @@ func ConditionOrderNoNotLike(v string) ConditionOption {
     }
 }
 
-func ConditionCommentEq(v string) ConditionOption {
+func ConditionComment(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
         if o.newTableName != nil {
             return o.q.OrderItem.Table(*o.newTableName).Comment.Eq(v)
@@ -436,7 +436,7 @@ func ConditionCommentNotLike(v string) ConditionOption {
     }
 }
 
-func ConditionExpressNumberEq(v string) ConditionOption {
+func ConditionExpressNumber(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
         if o.newTableName != nil {
             return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Eq(v)
@@ -472,7 +472,7 @@ func ConditionExpressNumberNotLike(v string) ConditionOption {
     }
 }
 
-func ConditionCreatedAtEq(v ...time.Time) ConditionOption {
+func ConditionCreatedAt(v ...time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
         if o.newTableName != nil {
             if len(v) > 0 && !v[0].IsZero() {
@@ -580,7 +580,7 @@ func ConditionCreatedAtNotBetween(left, right time.Time) ConditionOption {
     }
 }
 
-func ConditionUpdatedAtEq(v ...time.Time) ConditionOption {
+func ConditionUpdatedAt(v ...time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
         if o.newTableName != nil {
             if len(v) > 0 && !v[0].IsZero() {

@@ -209,7 +209,7 @@ func ConditionIDNotBetween(left, right int64) ConditionOption {
     }
 }
 
-func ConditionShardingEq(v string) ConditionOption {
+func ConditionSharding(v string) ConditionOption {
 	return func(o *Order) gen.Condition {
         if o.newTableName != nil {
             return o.q.Order.Table(*o.newTableName).Sharding.Eq(v)
@@ -367,7 +367,7 @@ func ConditionUIDNotBetween(left, right int) ConditionOption {
     }
 }
 
-func ConditionOrderNoEq(v string) ConditionOption {
+func ConditionOrderNo(v string) ConditionOption {
 	return func(o *Order) gen.Condition {
         if o.newTableName != nil {
             return o.q.Order.Table(*o.newTableName).OrderNo.Eq(v)
@@ -525,7 +525,7 @@ func ConditionStatusNotBetween(left, right int8) ConditionOption {
     }
 }
 
-func ConditionAmountEq(v decimal.Decimal) ConditionOption {
+func ConditionAmount(v decimal.Decimal) ConditionOption {
 	return func(o *Order) gen.Condition {
         if o.newTableName != nil {
             return o.q.Order.Table(*o.newTableName).Amount.Eq(value.NewDecimal(v))
@@ -621,7 +621,7 @@ func ConditionAmountNotBetween(left, right decimal.Decimal) ConditionOption {
     }
 }
 
-func ConditionCreatedAtEq(v ...time.Time) ConditionOption {
+func ConditionCreatedAt(v ...time.Time) ConditionOption {
 	return func(o *Order) gen.Condition {
         if o.newTableName != nil {
             if len(v) > 0 && !v[0].IsZero() {
@@ -729,7 +729,7 @@ func ConditionCreatedAtNotBetween(left, right time.Time) ConditionOption {
     }
 }
 
-func ConditionUpdatedAtEq(v ...time.Time) ConditionOption {
+func ConditionUpdatedAt(v ...time.Time) ConditionOption {
 	return func(o *Order) gen.Condition {
         if o.newTableName != nil {
             if len(v) > 0 && !v[0].IsZero() {
