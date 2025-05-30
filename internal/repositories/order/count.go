@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+	"runtime"
 
 	"example/internal/query"
 )
@@ -13,6 +14,7 @@ type multiCount struct {
 	unscoped      bool
 	conditionOpts []ConditionOption
 	sharding      []string
+	worker        chan struct{}
 }
 
 // MultiCount 获取多表数据总条数
@@ -22,7 +24,13 @@ func (o *Order) MultiCount(sharding []string) *multiCount {
 		unscoped:      o.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,
+		worker:        make(chan struct{}, runtime.NumCPU()),
 	}
+}
+
+func (c *multiCount) Worker(worker chan struct{}) *multiCount {
+	c.worker = worker
+	return c
 }
 
 // Tx 设置为事务
@@ -49,7 +57,10 @@ func (c *multiCount) Where(opts ...ConditionOption) *multiCount {
 	return c
 }
 
-// Do 执行获取数据总条数
+// Do 执行获取多表数据总条数
 func (c *multiCount) Do(ctx context.Context) (int64, error) {
+	if len(c.sharding) == 0 {
+		return 0, nil
+	}
 	return 0, nil
 }
