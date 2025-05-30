@@ -735,22 +735,30 @@ func UpdateUID(v int) UpdateOption {
 }
 
 // UpdateUIDAdd +=
-func UpdateUIDAdd(v int) UpdateOption {
+func UpdateUIDAdd(v ...int) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).UID.Add(v)
+        _v := int(1)
+        if len(v) > 0 {
+            _v = v[0]
         }
-        return o.q.OrderItem.UID.Add(v)
+        if o.newTableName != nil {
+            return o.q.OrderItem.Table(*o.newTableName).UID.Add(_v)
+        }
+        return o.q.OrderItem.UID.Add(_v)
     }
 }
 
 // UpdateUIDSub -=
-func UpdateUIDSub(v int) UpdateOption {
+func UpdateUIDSub(v ...int) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).UID.Sub(v)
+        _v := int(1)
+        if len(v) > 0 {
+            _v = v[0]
         }
-        return o.q.OrderItem.UID.Sub(v)
+        if o.newTableName != nil {
+            return o.q.OrderItem.Table(*o.newTableName).UID.Sub(_v)
+        }
+        return o.q.OrderItem.UID.Sub(_v)
     }
 }
 

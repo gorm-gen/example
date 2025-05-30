@@ -884,22 +884,30 @@ func UpdateUID(v int) UpdateOption {
 }
 
 // UpdateUIDAdd +=
-func UpdateUIDAdd(v int) UpdateOption {
+func UpdateUIDAdd(v ...int) UpdateOption {
 	return func(o *Order) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.Order.Table(*o.newTableName).UID.Add(v)
+        _v := int(1)
+        if len(v) > 0 {
+            _v = v[0]
         }
-        return o.q.Order.UID.Add(v)
+        if o.newTableName != nil {
+            return o.q.Order.Table(*o.newTableName).UID.Add(_v)
+        }
+        return o.q.Order.UID.Add(_v)
     }
 }
 
 // UpdateUIDSub -=
-func UpdateUIDSub(v int) UpdateOption {
+func UpdateUIDSub(v ...int) UpdateOption {
 	return func(o *Order) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.Order.Table(*o.newTableName).UID.Sub(v)
+        _v := int(1)
+        if len(v) > 0 {
+            _v = v[0]
         }
-        return o.q.Order.UID.Sub(v)
+        if o.newTableName != nil {
+            return o.q.Order.Table(*o.newTableName).UID.Sub(_v)
+        }
+        return o.q.Order.UID.Sub(_v)
     }
 }
 
@@ -942,22 +950,30 @@ func UpdateStatus(v int8) UpdateOption {
 }
 
 // UpdateStatusAdd +=
-func UpdateStatusAdd(v int8) UpdateOption {
+func UpdateStatusAdd(v ...int8) UpdateOption {
 	return func(o *Order) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.Order.Table(*o.newTableName).Status.Add(v)
+        _v := int8(1)
+        if len(v) > 0 {
+            _v = v[0]
         }
-        return o.q.Order.Status.Add(v)
+        if o.newTableName != nil {
+            return o.q.Order.Table(*o.newTableName).Status.Add(_v)
+        }
+        return o.q.Order.Status.Add(_v)
     }
 }
 
 // UpdateStatusSub -=
-func UpdateStatusSub(v int8) UpdateOption {
+func UpdateStatusSub(v ...int8) UpdateOption {
 	return func(o *Order) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.Order.Table(*o.newTableName).Status.Sub(v)
+        _v := int8(1)
+        if len(v) > 0 {
+            _v = v[0]
         }
-        return o.q.Order.Status.Sub(v)
+        if o.newTableName != nil {
+            return o.q.Order.Table(*o.newTableName).Status.Sub(_v)
+        }
+        return o.q.Order.Status.Sub(_v)
     }
 }
 
