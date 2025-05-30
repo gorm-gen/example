@@ -12,14 +12,16 @@ type multiCount struct {
 	qTx           *query.QueryTx
 	unscoped      bool
 	conditionOpts []ConditionOption
+	sharding      []string
 }
 
-// MultiCount 获取数据总条数
-func (o *Order) MultiCount() *multiCount {
+// MultiCount 获取多表数据总条数
+func (o *Order) MultiCount(sharding []string) *multiCount {
 	return &multiCount{
 		core:          o,
 		unscoped:      o.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
+		sharding:      sharding,
 	}
 }
 
