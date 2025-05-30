@@ -7,7 +7,7 @@ import (
 )
 
 type multiCount struct {
-	core          *MultiOrder
+	core          *Order
 	tx            *query.Query
 	qTx           *query.QueryTx
 	unscoped      bool
@@ -15,10 +15,10 @@ type multiCount struct {
 }
 
 // MultiCount 获取数据总条数
-func (o *MultiOrder) MultiCount() *multiCount {
+func (o *Order) MultiCount() *multiCount {
 	return &multiCount{
 		core:          o,
-		unscoped:      o.so.unscoped,
+		unscoped:      o.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 	}
 }
