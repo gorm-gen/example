@@ -15,7 +15,7 @@ type First struct {
 
 func (o *Order) First(ctx context.Context, sharding string, data *First) (*models.Order, error) {
 	conditions := make([]order.ConditionOption, 0)
-	conditions = append(conditions, order.ConditionShardingEq(sharding))
+	conditions = append(conditions, order.ConditionSharding(sharding))
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	if data != nil {
 		if data.ID != nil {
@@ -25,7 +25,7 @@ func (o *Order) First(ctx context.Context, sharding string, data *First) (*model
 			conditions = append(conditions, order.ConditionUID(*data.UID))
 		}
 		if data.OrderNo != nil {
-			conditions = append(conditions, order.ConditionOrderNoEq(*data.OrderNo))
+			conditions = append(conditions, order.ConditionOrderNo(*data.OrderNo))
 		}
 	}
 	return o.orderRepo.First().

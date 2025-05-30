@@ -14,7 +14,7 @@ type Sum struct {
 
 func (o *Order) Sum(ctx context.Context, sharding string, data *Sum) (decimal.Decimal, error) {
 	conditions := make([]order.ConditionOption, 0)
-	conditions = append(conditions, order.ConditionShardingEq(sharding))
+	conditions = append(conditions, order.ConditionSharding(sharding))
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	if data != nil {
 	}

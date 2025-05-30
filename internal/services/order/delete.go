@@ -16,7 +16,7 @@ type Delete struct {
 // PhysicalDelete 物理删除/永久删除
 func (o *Order) PhysicalDelete(ctx context.Context, sharding string, data *Delete) error {
 	conditions := make([]order.ConditionOption, 0)
-	conditions = append(conditions, order.ConditionShardingEq(sharding))
+	conditions = append(conditions, order.ConditionSharding(sharding))
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	if data != nil {
 		if data.ID != nil {
@@ -26,7 +26,7 @@ func (o *Order) PhysicalDelete(ctx context.Context, sharding string, data *Delet
 			conditions = append(conditions, order.ConditionUID(*data.UID))
 		}
 		if data.OrderNo != nil {
-			conditions = append(conditions, order.ConditionOrderNoEq(*data.OrderNo))
+			conditions = append(conditions, order.ConditionOrderNo(*data.OrderNo))
 		}
 	}
 	_, err := o.orderRepo.Delete().
@@ -38,7 +38,7 @@ func (o *Order) PhysicalDelete(ctx context.Context, sharding string, data *Delet
 // Delete 软删除
 func (o *Order) Delete(ctx context.Context, sharding string, data *Delete) error {
 	conditions := make([]order.ConditionOption, 0)
-	conditions = append(conditions, order.ConditionShardingEq(sharding))
+	conditions = append(conditions, order.ConditionSharding(sharding))
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	if data != nil {
 		if data.ID != nil {
@@ -48,7 +48,7 @@ func (o *Order) Delete(ctx context.Context, sharding string, data *Delete) error
 			conditions = append(conditions, order.ConditionUID(*data.UID))
 		}
 		if data.OrderNo != nil {
-			conditions = append(conditions, order.ConditionOrderNoEq(*data.OrderNo))
+			conditions = append(conditions, order.ConditionOrderNo(*data.OrderNo))
 		}
 	}
 	_, err := o.orderRepo.Update().

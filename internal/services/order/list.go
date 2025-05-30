@@ -16,7 +16,7 @@ type List struct {
 
 func (o *Order) List(ctx context.Context, sharding string, data *List) ([]*models.Order, error) {
 	conditions := make([]order.ConditionOption, 0)
-	conditions = append(conditions, order.ConditionShardingEq(sharding))
+	conditions = append(conditions, order.ConditionSharding(sharding))
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	var page, pageSize uint
 	if data != nil {
@@ -24,7 +24,7 @@ func (o *Order) List(ctx context.Context, sharding string, data *List) ([]*model
 			conditions = append(conditions, order.ConditionID(*data.ID))
 		}
 		if data.OrderNo != nil {
-			conditions = append(conditions, order.ConditionOrderNoEq(*data.OrderNo))
+			conditions = append(conditions, order.ConditionOrderNo(*data.OrderNo))
 		}
 		page = uint(data.Page)
 		pageSize = uint(data.PageSize)
