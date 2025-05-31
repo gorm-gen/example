@@ -11,6 +11,7 @@ import (
 	"gorm.io/gen"
 
 	"example/internal/query"
+
 	"example/internal/repositories"
 )
 
