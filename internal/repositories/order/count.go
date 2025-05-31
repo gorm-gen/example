@@ -86,14 +86,15 @@ func (c *multiCount) Do(ctx context.Context) (int64, error) {
 	}
 	count := int64(0)
 	wg := sync.WaitGroup{}
-	errChan := make(chan error, len(c.sharding))
+	errChan := make(chan error)
+	successChan := make(chan struct{})
 	for _, sharding := range c.sharding {
 		c.worker <- struct{}{}
 		wg.Add(1)
 		go func(sharding string) {
 			defer func() {
 				if r := recover(); r != nil {
-					c.core.logger.Error(fmt.Sprintf("【Order.MultiCount.%s】异常", sharding), zap.Any("recover", r), zap.ByteString("debug.Stack", debug.Stack()))
+					c.core.logger.Error(fmt.Sprintf("【Order.MultiCount.%s】执行异常", sharding), zap.Any("recover", r), zap.ByteString("debug.Stack", debug.Stack()))
 					errChan <- fmt.Errorf("recover:%v", r)
 				}
 			}()
@@ -117,11 +118,17 @@ func (c *multiCount) Do(ctx context.Context) (int64, error) {
 				return
 			}
 			atomic.AddInt64(&count, __count)
+			return
 		}(sharding)
 	}
-	wg.Wait()
-	if len(errChan) > 0 {
-		return 0, <-errChan
+	go func() {
+		wg.Wait()
+		successChan <- struct{}{}
+	}()
+	select {
+	case <-successChan:
+		return count, nil
+	case err := <-errChan:
+		return 0, err
 	}
-	return count, nil
 }
