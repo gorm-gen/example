@@ -25,3 +25,16 @@ func (o *Order) Sum(ctx context.Context, sharding string, data *Sum) (decimal.De
 		Where(conditions...).
 		Do(ctx)
 }
+
+func (o *Order) MultiSum(ctx context.Context, sharding []string, data *Sum) (decimal.Decimal, error) {
+	conditions := make([]order.ConditionOption, 0)
+	conditions = append(conditions, order.ConditionDeletedAtIsZero())
+	if data != nil {
+		if data.UID != nil {
+			conditions = append(conditions, order.ConditionUID(*data.UID))
+		}
+	}
+	return o.orderRepo.MultiSum(o.q.Order.Amount, sharding).
+		Where(conditions...).
+		Do(ctx)
+}
