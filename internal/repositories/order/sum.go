@@ -41,6 +41,9 @@ func (o *Order) MultiSum(genField field.Expr, sharding []string) *multiSum {
 }
 
 func (s *multiSum) Worker(worker chan struct{}) *multiSum {
+	if worker == nil {
+		return s
+	}
 	s.worker = worker
 	return s
 }

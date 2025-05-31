@@ -37,6 +37,9 @@ func (o *Order) MultiCount(sharding []string) *multiCount {
 }
 
 func (c *multiCount) Worker(worker chan struct{}) *multiCount {
+	if worker == nil {
+		return c
+	}
 	c.worker = worker
 	return c
 }

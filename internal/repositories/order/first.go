@@ -46,6 +46,9 @@ func (o *Order) MultiFirst(sharding []string) *multiFirst {
 }
 
 func (f *multiFirst) Worker(worker chan struct{}) *multiFirst {
+	if worker == nil {
+		return f
+	}
 	f.worker = worker
 	return f
 }

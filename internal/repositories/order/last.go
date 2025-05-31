@@ -46,6 +46,9 @@ func (o *Order) MultiLast(sharding []string) *multiLast {
 }
 
 func (l *multiLast) Worker(worker chan struct{}) *multiLast {
+	if worker == nil {
+		return l
+	}
 	l.worker = worker
 	return l
 }

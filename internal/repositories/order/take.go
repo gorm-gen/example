@@ -48,6 +48,9 @@ func (o *Order) MultiTake(sharding []string) *multiTake {
 }
 
 func (t *multiTake) Worker(worker chan struct{}) *multiTake {
+	if worker == nil {
+		return t
+	}
 	t.worker = worker
 	return t
 }
