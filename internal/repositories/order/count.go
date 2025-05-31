@@ -87,7 +87,7 @@ func (c *multiCount) Do(ctx context.Context) (int64, error) {
 	count := int64(0)
 	wg := sync.WaitGroup{}
 	errChan := make(chan error)
-	successChan := make(chan struct{})
+	endChan := make(chan struct{})
 	for _, sharding := range c.sharding {
 		c.worker <- struct{}{}
 		wg.Add(1)
@@ -123,10 +123,10 @@ func (c *multiCount) Do(ctx context.Context) (int64, error) {
 	}
 	go func() {
 		wg.Wait()
-		successChan <- struct{}{}
+		endChan <- struct{}{}
 	}()
 	select {
-	case <-successChan:
+	case <-endChan:
 		return count, nil
 	case err := <-errChan:
 		return 0, err

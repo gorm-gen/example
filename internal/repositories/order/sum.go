@@ -97,7 +97,7 @@ func (s *multiSum) Do(ctx context.Context) (decimal.Decimal, error) {
 	wg := sync.WaitGroup{}
 	sm := sync.Map{}
 	errChan := make(chan error)
-	successChan := make(chan struct{})
+	endChan := make(chan struct{})
 	for _, sharding := range s.sharding {
 		s.worker <- struct{}{}
 		wg.Add(1)
@@ -133,10 +133,10 @@ func (s *multiSum) Do(ctx context.Context) (decimal.Decimal, error) {
 	}
 	go func() {
 		wg.Wait()
-		successChan <- struct{}{}
+		endChan <- struct{}{}
 	}()
 	select {
-	case <-successChan:
+	case <-endChan:
 		sm.Range(func(key, value interface{}) bool {
 			sum = sum.Add(value.(decimal.Decimal))
 			return true
