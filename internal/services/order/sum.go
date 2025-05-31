@@ -17,9 +17,9 @@ func (o *Order) Sum(ctx context.Context, sharding string, data *Sum) (decimal.De
 	conditions = append(conditions, order.ConditionSharding(sharding))
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	if data != nil {
-	}
-	if data.UID != nil {
-		conditions = append(conditions, order.ConditionUID(*data.UID))
+		if data.UID != nil {
+			conditions = append(conditions, order.ConditionUID(*data.UID))
+		}
 	}
 	return o.orderRepo.Sum(o.q.Order.Amount).
 		Where(conditions...).
