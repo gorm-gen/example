@@ -2,9 +2,17 @@ package order
 
 import (
 	"context"
+	"fmt"
 	"runtime"
+	"runtime/debug"
+	"sync"
+	"sync/atomic"
+
+	"go.uber.org/zap"
+	"gorm.io/gen"
 
 	"example/internal/query"
+	"example/internal/repositories"
 )
 
 type multiCount struct {
@@ -62,5 +70,58 @@ func (c *multiCount) Do(ctx context.Context) (int64, error) {
 	if len(c.sharding) == 0 {
 		return 0, nil
 	}
-	return 0, nil
+	cq := c.core.q.Order
+	if c.tx != nil {
+		cq = c.tx.Order
+	}
+	if c.qTx != nil {
+		cq = c.qTx.Order
+	}
+	var conditions []gen.Condition
+	if len(c.conditionOpts) > 0 {
+		conditions = make([]gen.Condition, 0, len(c.conditionOpts))
+		for _, opt := range c.conditionOpts {
+			conditions = append(conditions, opt(c.core))
+		}
+	}
+	count := int64(0)
+	wg := sync.WaitGroup{}
+	errChan := make(chan error, len(c.sharding))
+	for _, sharding := range c.sharding {
+		c.worker <- struct{}{}
+		wg.Add(1)
+		go func(sharding string) {
+			defer func() {
+				if r := recover(); r != nil {
+					c.core.logger.Error(fmt.Sprintf("【Order.MultiCount.%s】异常", sharding), zap.Any("recover", r), zap.ByteString("debug.Stack", debug.Stack()))
+					errChan <- fmt.Errorf("recover:%v", r)
+				}
+			}()
+			defer func() {
+				<-c.worker
+			}()
+			defer wg.Done()
+			_conditions := make([]gen.Condition, len(conditions))
+			copy(_conditions, conditions)
+			_conditions = append(_conditions, ConditionSharding(sharding)(c.core))
+			cr := cq.WithContext(ctx)
+			if c.unscoped {
+				cr = cr.Unscoped()
+			}
+			__count, err := cr.Where(_conditions...).Count()
+			if err != nil {
+				if repositories.IsRealErr(err) {
+					c.core.logger.Error(fmt.Sprintf("【Order.MultiCount.%s】失败", sharding), zap.Error(err))
+				}
+				errChan <- err
+				return
+			}
+			atomic.AddInt64(&count, __count)
+		}(sharding)
+	}
+	wg.Wait()
+	if len(errChan) > 0 {
+		return 0, <-errChan
+	}
+	return count, nil
 }
