@@ -36,3 +36,25 @@ func (o *Order) List(ctx context.Context, sharding string, data *List) ([]*model
 		Page(page, pageSize).
 		Do(ctx)
 }
+
+func (o *Order) MultiList(ctx context.Context, sharding []string, data *List) ([]*models.Order, int64, error) {
+	conditions := make([]order.ConditionOption, 0)
+	conditions = append(conditions, order.ConditionDeletedAtIsZero())
+	var page, pageSize uint
+	if data != nil {
+		if data.ID != nil {
+			conditions = append(conditions, order.ConditionID(*data.ID))
+		}
+		if data.OrderNo != nil {
+			conditions = append(conditions, order.ConditionOrderNo(*data.OrderNo))
+		}
+		page = uint(data.Page)
+		pageSize = uint(data.PageSize)
+	}
+
+	return o.orderRepo.MultiList(sharding).
+		Where(conditions...).
+		Order(order.OrderIDDesc()).
+		Page(page, pageSize).
+		Do(ctx)
+}
