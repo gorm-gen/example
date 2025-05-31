@@ -6,7 +6,6 @@ import (
 	"runtime"
 	"runtime/debug"
 	"sync"
-	"sync/atomic"
 
 	"go.uber.org/zap"
 	"gorm.io/gen"
@@ -69,9 +68,9 @@ func (c *multiCount) Where(opts ...ConditionOption) *multiCount {
 }
 
 // Do 执行获取多表数据总条数
-func (c *multiCount) Do(ctx context.Context) (int64, error) {
+func (c *multiCount) Do(ctx context.Context) (int64, map[string]int64, error) {
 	if len(c.sharding) == 0 {
-		return 0, nil
+		return 0, nil, nil
 	}
 	cq := c.core.q.Order
 	if c.tx != nil {
@@ -87,7 +86,8 @@ func (c *multiCount) Do(ctx context.Context) (int64, error) {
 			conditions = append(conditions, opt(c.core))
 		}
 	}
-	count := int64(0)
+	m := make(map[string]int64, len(c.sharding))
+	sm := sync.Map{}
 	wg := sync.WaitGroup{}
 	errChan := make(chan error)
 	endChan := make(chan struct{})
@@ -112,7 +112,7 @@ func (c *multiCount) Do(ctx context.Context) (int64, error) {
 			if c.unscoped {
 				cr = cr.Unscoped()
 			}
-			__count, err := cr.Where(_conditions...).Count()
+			count, err := cr.Where(_conditions...).Count()
 			if err != nil {
 				if repositories.IsRealErr(err) {
 					c.core.logger.Error(fmt.Sprintf("【Order.MultiCount.%s】失败", sharding), zap.Error(err))
@@ -120,7 +120,7 @@ func (c *multiCount) Do(ctx context.Context) (int64, error) {
 				errChan <- err
 				return
 			}
-			atomic.AddInt64(&count, __count)
+			sm.Store(sharding, count)
 			return
 		}(sharding)
 	}
@@ -130,8 +130,15 @@ func (c *multiCount) Do(ctx context.Context) (int64, error) {
 	}()
 	select {
 	case <-endChan:
-		return count, nil
+		count := int64(0)
+		sm.Range(func(key, value interface{}) bool {
+			v := value.(int64)
+			m[key.(string)] = v
+			count += v
+			return true
+		})
+		return count, m, nil
 	case err := <-errChan:
-		return 0, err
+		return 0, nil, err
 	}
 }
