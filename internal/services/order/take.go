@@ -32,3 +32,23 @@ func (o *Order) Take(ctx context.Context, sharding string, data *Take) (*models.
 		Where(conditions...).
 		Do(ctx)
 }
+
+func (o *Order) MultiTake(ctx context.Context, sharding []string, data *Take) (*models.Order, error) {
+	conditions := make([]order.ConditionOption, 0)
+	conditions = append(conditions, order.ConditionDeletedAtIsZero())
+	if data != nil {
+		if data.ID != nil {
+			conditions = append(conditions, order.ConditionID(*data.ID))
+		}
+		if data.UID != nil {
+			conditions = append(conditions, order.ConditionUID(*data.UID))
+		}
+		if data.OrderNo != nil {
+			conditions = append(conditions, order.ConditionOrderNo(*data.OrderNo))
+		}
+	}
+	return o.orderRepo.MultiTake(sharding).
+		Where(conditions...).
+		Order(order.OrderBy(o.q.Order.Amount.Desc())).
+		Do(ctx)
+}

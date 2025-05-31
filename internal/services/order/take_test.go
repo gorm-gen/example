@@ -22,3 +22,17 @@ func TestTake(t *testing.T) {
 	}
 	t.Log(string(bytes))
 }
+
+func TestMultiTake(t *testing.T) {
+	res, err := orderSvc.MultiTake(context.Background(), []string{"202505", "202506"}, &order.Take{})
+	if err != nil {
+		t.Fatal(err)
+		return
+	}
+	var bytes []byte
+	if bytes, err = json.Marshal(res); err != nil {
+		t.Fatal(err)
+		return
+	}
+	t.Log(string(bytes))
+}
