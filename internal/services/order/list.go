@@ -54,7 +54,7 @@ func (o *Order) MultiList(ctx context.Context, sharding []string, data *List) ([
 
 	return o.orderRepo.MultiList(sharding).
 		Where(conditions...).
-		Order(order.OrderIDDesc()).
+		Order(order.OrderBy(o.q.Order.Amount.Desc()), order.OrderIDDesc()).
 		Page(page, pageSize).
 		Do(ctx)
 }

@@ -24,7 +24,11 @@ func TestList(t *testing.T) {
 }
 
 func TestMultiList(t *testing.T) {
-	list, count, err := orderSvc.MultiList(context.Background(), []string{"202505", "202506"}, &order.List{})
+	sharding := []string{"202505", "202506"}
+	list, count, err := orderSvc.MultiList(context.Background(), sharding, &order.List{
+		Page:     1,
+		PageSize: 2,
+	})
 	if err != nil {
 		t.Error(err)
 		return
@@ -36,5 +40,47 @@ func TestMultiList(t *testing.T) {
 	}
 	t.Log(count)
 	t.Log("---------------------------------")
+	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.MultiList(context.Background(), sharding, &order.List{
+		Page:     2,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.MultiList(context.Background(), sharding, &order.List{
+		Page:     3,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.MultiList(context.Background(), sharding, &order.List{
+		Page:     4,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
 	t.Log(string(bytes))
 }
