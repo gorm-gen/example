@@ -22,3 +22,17 @@ func TestLast(t *testing.T) {
 	}
 	t.Log(string(bytes))
 }
+
+func TestMultiLast(t *testing.T) {
+	res, err := orderSvc.MultiLast(context.Background(), []string{"202505", "202506"}, &order.Last{})
+	if err != nil {
+		t.Fatal(err)
+		return
+	}
+	var bytes []byte
+	if bytes, err = json.Marshal(res); err != nil {
+		t.Fatal(err)
+		return
+	}
+	t.Log(string(bytes))
+}
