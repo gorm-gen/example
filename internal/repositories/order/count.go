@@ -95,7 +95,7 @@ func (c *multiCount) Do(ctx context.Context) (int64, error) {
 			defer func() {
 				if r := recover(); r != nil {
 					c.core.logger.Error(fmt.Sprintf("【Order.MultiCount.%s】执行异常", sharding), zap.Any("recover", r), zap.ByteString("debug.Stack", debug.Stack()))
-					errChan <- fmt.Errorf("recover:%v", r)
+					errChan <- fmt.Errorf("recovered from panic: %v", r)
 				}
 			}()
 			defer func() {
