@@ -16,3 +16,12 @@ func TestCount(t *testing.T) {
 	}
 	t.Log(count)
 }
+
+func TestMultiCount(t *testing.T) {
+	count, err := orderSvc.MultiCount(context.Background(), []string{"202505", "202506"}, &order.Count{})
+	if err != nil {
+		t.Fatal(err)
+		return
+	}
+	t.Log(count)
+}
