@@ -165,11 +165,14 @@ func (f *multiFirst) Do(ctx context.Context) (*models.Order, error) {
 			copy(_conditions, conditions)
 			_conditions = append(_conditions, ConditionSharding(sharding)(f.core))
 			fr := fq.WithContext(ctx)
+			if len(fieldExpr) > 0 {
+				fr = fr.Select(fieldExpr...)
+			}
 			if f.unscoped {
 				fr = fr.Unscoped()
 			}
-			if len(fieldExpr) > 0 {
-				fr = fr.Select(fieldExpr...)
+			if (f.tx != nil || f.qTx != nil) && f.lock != nil {
+				fr = fr.Clauses(f.lock)
 			}
 			res, err := fr.Where(_conditions...).First()
 			if err != nil {
