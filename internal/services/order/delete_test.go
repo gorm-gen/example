@@ -15,3 +15,19 @@ func TestDelete(t *testing.T) {
 		return
 	}
 }
+
+func TestPhysicalMultiDelete(t *testing.T) {
+	id := int64(3)
+	if err := orderSvc.PhysicalMultiDelete(context.Background(), []string{"202505", "202506"}, &order.Delete{ID: &id}); err != nil {
+		t.Error(err)
+		return
+	}
+}
+
+func TestMultiDelete(t *testing.T) {
+	id := int64(3)
+	if err := orderSvc.MultiDelete(context.Background(), []string{"202505", "202506"}, &order.Delete{ID: &id}); err != nil {
+		t.Error(err)
+		return
+	}
+}
