@@ -40,8 +40,9 @@ func (o *Order) MultiCount(ctx context.Context, sharding []string, data *Count) 
 			conditions = append(conditions, order.ConditionOrderNo(*data.OrderNo))
 		}
 	}
-	return o.orderRepo.
+	count, _, err := o.orderRepo.
 		MultiCount(sharding).
 		Where(conditions...).
 		Do(ctx)
+	return count, err
 }
