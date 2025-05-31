@@ -87,7 +87,6 @@ func (c *multiCount) Do(ctx context.Context) (int64, map[string]int64, error) {
 			conditions = append(conditions, opt(c.core))
 		}
 	}
-	m := make(map[string]int64, len(c.sharding))
 	sm := sync.Map{}
 	wg := sync.WaitGroup{}
 	errChan := make(chan error)
@@ -132,6 +131,7 @@ func (c *multiCount) Do(ctx context.Context) (int64, map[string]int64, error) {
 	select {
 	case <-endChan:
 		count := int64(0)
+		m := make(map[string]int64, len(c.sharding))
 		sm.Range(func(key, value interface{}) bool {
 			v := value.(int64)
 			m[key.(string)] = v

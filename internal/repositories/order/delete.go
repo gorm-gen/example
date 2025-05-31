@@ -91,7 +91,6 @@ func (d *multiDelete) Do(ctx context.Context) (int64, map[string]int64, error) {
 			conditions = append(conditions, opt(d.core))
 		}
 	}
-	m := make(map[string]int64, len(d.sharding))
 	sm := sync.Map{}
 	wg := sync.WaitGroup{}
 	errChan := make(chan error)
@@ -136,6 +135,7 @@ func (d *multiDelete) Do(ctx context.Context) (int64, map[string]int64, error) {
 	select {
 	case <-endChan:
 		rowsAffected := int64(0)
+		m := make(map[string]int64, len(d.sharding))
 		sm.Range(func(key, value interface{}) bool {
 			v := value.(int64)
 			m[key.(string)] = v

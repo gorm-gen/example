@@ -77,9 +77,9 @@ func (s *multiSum) Where(opts ...ConditionOption) *multiSum {
 }
 
 // Do 执行多表SUM数据
-func (s *multiSum) Do(ctx context.Context) (decimal.Decimal, error) {
+func (s *multiSum) Do(ctx context.Context) (decimal.Decimal, map[string]decimal.Decimal, error) {
 	if len(s.sharding) == 0 {
-		return decimal.Zero, nil
+		return decimal.Zero, nil, nil
 	}
 	sq := s.core.q.Order
 	if s.tx != nil {
@@ -96,7 +96,6 @@ func (s *multiSum) Do(ctx context.Context) (decimal.Decimal, error) {
 		}
 	}
 	expr := field.NewField("", s.genField.ColumnName().String()).Sum().As("sum")
-	sum := decimal.Zero
 	wg := sync.WaitGroup{}
 	sm := sync.Map{}
 	errChan := make(chan error)
@@ -140,12 +139,16 @@ func (s *multiSum) Do(ctx context.Context) (decimal.Decimal, error) {
 	}()
 	select {
 	case <-endChan:
+		sum := decimal.Zero
+		m := make(map[string]decimal.Decimal, len(s.sharding))
 		sm.Range(func(key, value interface{}) bool {
-			sum = sum.Add(value.(decimal.Decimal))
+			v := value.(decimal.Decimal)
+			m[key.(string)] = v
+			sum = sum.Add(v)
 			return true
 		})
-		return sum, nil
+		return sum, m, nil
 	case err := <-errChan:
-		return decimal.Zero, err
+		return decimal.Zero, nil, err
 	}
 }

@@ -106,7 +106,6 @@ func (u *multiUpdate) Do(ctx context.Context) (int64, map[string]int64, error) {
 	if len(columns) == 0 {
 		return 0, nil, nil
 	}
-	m := make(map[string]int64, len(u.sharding))
 	sm := sync.Map{}
 	wg := sync.WaitGroup{}
 	errChan := make(chan error)
@@ -151,6 +150,7 @@ func (u *multiUpdate) Do(ctx context.Context) (int64, map[string]int64, error) {
 	select {
 	case <-endChan:
 		rowsAffected := int64(0)
+		m := make(map[string]int64, len(u.sharding))
 		sm.Range(func(key, value interface{}) bool {
 			v := value.(int64)
 			m[key.(string)] = v
