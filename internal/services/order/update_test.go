@@ -21,3 +21,14 @@ func TestUpdate(t *testing.T) {
 		return
 	}
 }
+
+func TestMultiUpdate(t *testing.T) {
+	opts := make([]orderRepo.UpdateOption, 0)
+	var id int64 = 3
+	opts = append(opts, orderRepo.UpdateAmountAdd(decimal.NewFromFloat(66)))
+	err := orderSvc.MultiUpdate(context.Background(), []string{"202505", "202506"}, &order.Update{ID: &id}, opts...)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+}

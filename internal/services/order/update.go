@@ -33,3 +33,24 @@ func (o *Order) Update(ctx context.Context, sharding string, data *Update, opts 
 		Do(ctx)
 	return err
 }
+
+func (o *Order) MultiUpdate(ctx context.Context, sharding []string, data *Update, opts ...order.UpdateOption) error {
+	conditions := make([]order.ConditionOption, 0)
+	conditions = append(conditions, order.ConditionDeletedAtIsZero())
+	if data != nil {
+		if data.ID != nil {
+			conditions = append(conditions, order.ConditionID(*data.ID))
+		}
+		if data.UID != nil {
+			conditions = append(conditions, order.ConditionUID(*data.UID))
+		}
+		if data.OrderNo != nil {
+			conditions = append(conditions, order.ConditionOrderNo(*data.OrderNo))
+		}
+	}
+	_, _, err := o.orderRepo.MultiUpdate(sharding).
+		Where(conditions...).
+		Update(opts...).
+		Do(ctx)
+	return err
+}
