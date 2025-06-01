@@ -52,7 +52,7 @@ func (o *Order) MultiList(ctx context.Context, sharding []string, data *List) ([
 		pageSize = uint(data.PageSize)
 	}
 
-	return o.orderRepo.MultiList(sharding).
+	return o.orderRepo.ShardingList(sharding).
 		Where(conditions...).
 		Order(order.OrderBy(o.q.Order.Amount.Desc()), order.OrderIDDesc()).
 		Page(page, pageSize).

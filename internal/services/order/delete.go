@@ -73,7 +73,7 @@ func (o *Order) PhysicalMultiDelete(ctx context.Context, sharding []string, data
 			conditions = append(conditions, order.ConditionOrderNo(*data.OrderNo))
 		}
 	}
-	_, _, err := o.orderRepo.MultiDelete(sharding).
+	_, _, err := o.orderRepo.ShardingDelete(sharding).
 		Where(conditions...).
 		Do(ctx)
 	return err
@@ -94,7 +94,7 @@ func (o *Order) MultiDelete(ctx context.Context, sharding []string, data *Delete
 			conditions = append(conditions, order.ConditionOrderNo(*data.OrderNo))
 		}
 	}
-	_, _, err := o.orderRepo.MultiUpdate(sharding).
+	_, _, err := o.orderRepo.ShardingUpdate(sharding).
 		Where(conditions...).
 		Update(order.Update(o.q.Order.DeletedAt.Value(uint(time.Now().Unix())))).
 		Do(ctx)

@@ -41,7 +41,7 @@ func (o *Order) MultiCount(ctx context.Context, sharding []string, data *Count) 
 		}
 	}
 	count, _, err := o.orderRepo.
-		MultiCount(sharding).
+		ShardingCount(sharding).
 		Where(conditions...).
 		Do(ctx)
 	return count, err

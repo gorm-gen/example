@@ -55,7 +55,7 @@ func (o *Order) MultiLast(ctx context.Context, sharding []string, data *Last) (*
 			conditions = append(conditions, order.ConditionOrderNo(*data.OrderNo))
 		}
 	}
-	return o.orderRepo.MultiLast(sharding).
+	return o.orderRepo.ShardingLast(sharding).
 		Select(
 			o.q.Order.ID,
 			o.q.Order.UID,

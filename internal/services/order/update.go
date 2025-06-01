@@ -48,7 +48,7 @@ func (o *Order) MultiUpdate(ctx context.Context, sharding []string, data *Update
 			conditions = append(conditions, order.ConditionOrderNo(*data.OrderNo))
 		}
 	}
-	_, _, err := o.orderRepo.MultiUpdate(sharding).
+	_, _, err := o.orderRepo.ShardingUpdate(sharding).
 		Where(conditions...).
 		Update(opts...).
 		Do(ctx)

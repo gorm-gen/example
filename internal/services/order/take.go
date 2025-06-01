@@ -47,7 +47,7 @@ func (o *Order) MultiTake(ctx context.Context, sharding []string, data *Take) (*
 			conditions = append(conditions, order.ConditionOrderNo(*data.OrderNo))
 		}
 	}
-	return o.orderRepo.MultiTake(sharding).
+	return o.orderRepo.ShardingTake(sharding).
 		Where(conditions...).
 		Order(order.OrderBy(o.q.Order.Amount.Desc())).
 		Do(ctx)

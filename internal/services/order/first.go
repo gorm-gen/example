@@ -55,7 +55,7 @@ func (o *Order) MultiFirst(ctx context.Context, sharding []string, data *First) 
 			conditions = append(conditions, order.ConditionOrderNo(*data.OrderNo))
 		}
 	}
-	return o.orderRepo.MultiFirst(sharding).
+	return o.orderRepo.ShardingFirst(sharding).
 		Select(
 			o.q.Order.ID,
 			o.q.Order.UID,

@@ -34,7 +34,7 @@ func (o *Order) MultiSum(ctx context.Context, sharding []string, data *Sum) (dec
 			conditions = append(conditions, order.ConditionUID(*data.UID))
 		}
 	}
-	sum, _, err := o.orderRepo.MultiSum(o.q.Order.Amount, sharding).
+	sum, _, err := o.orderRepo.ShardingSum(o.q.Order.Amount, sharding).
 		Where(conditions...).
 		Do(ctx)
 	return sum, err
