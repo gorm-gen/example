@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/gorm-gen/plugin/generate"
-	"github.com/gorm-gen/plugin/repository"
+	"github.com/gorm-gen/repository"
 
 	"example/internal/global"
 	"example/internal/initialize/config"
