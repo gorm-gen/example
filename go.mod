@@ -5,7 +5,7 @@ go 1.24.3
 require (
 	github.com/go-dev-pkg/sn v0.0.2
 	github.com/gorm-gen/paginate v0.0.1
-	github.com/gorm-gen/plugin v0.2.5
+	github.com/gorm-gen/plugin v0.2.6
 	github.com/gorm-gen/sharding v0.0.1
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/shopspring/decimal v1.4.0

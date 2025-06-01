@@ -15,9 +15,9 @@ import (
 
 	"example/internal/query"
 
-    "example/internal/repositories"
+	"example/internal/repositories"
 
-    "example/internal/models"
+	"example/internal/models"
 )
 
 type _list struct {

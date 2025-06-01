@@ -72,4 +72,14 @@ func main() {
 		log.Fatal(err)
 		return
 	}
+
+	// 4、生成分表repository
+	if err := r.ShardingGenerate(
+		"Sharding",
+		models.Order{},
+		models.OrderItem{},
+	); err != nil {
+		log.Fatal(err)
+		return
+	}
 }
