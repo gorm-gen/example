@@ -23,8 +23,8 @@ func TestLast(t *testing.T) {
 	t.Log(string(bytes))
 }
 
-func TestMultiLast(t *testing.T) {
-	res, err := orderSvc.MultiLast(context.Background(), []string{"202505", "202506"}, &order.Last{})
+func TestShardingLast(t *testing.T) {
+	res, err := orderSvc.ShardingLast(context.Background(), []string{"202505", "202506"}, &order.Last{})
 	if err != nil {
 		t.Fatal(err)
 		return

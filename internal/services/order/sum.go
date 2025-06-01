@@ -26,7 +26,7 @@ func (o *Order) Sum(ctx context.Context, sharding string, data *Sum) (decimal.De
 		Do(ctx)
 }
 
-func (o *Order) MultiSum(ctx context.Context, sharding []string, data *Sum) (decimal.Decimal, error) {
+func (o *Order) ShardingSum(ctx context.Context, sharding []string, data *Sum) (decimal.Decimal, error) {
 	conditions := make([]order.ConditionOption, 0)
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	if data != nil {

@@ -34,7 +34,7 @@ func (o *Order) Update(ctx context.Context, sharding string, data *Update, opts 
 	return err
 }
 
-func (o *Order) MultiUpdate(ctx context.Context, sharding []string, data *Update, opts ...order.UpdateOption) error {
+func (o *Order) ShardingUpdate(ctx context.Context, sharding []string, data *Update, opts ...order.UpdateOption) error {
 	conditions := make([]order.ConditionOption, 0)
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	if data != nil {

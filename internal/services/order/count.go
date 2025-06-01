@@ -29,7 +29,7 @@ func (o *Order) Count(ctx context.Context, sharding string, data *Count) (int64,
 		Do(ctx)
 }
 
-func (o *Order) MultiCount(ctx context.Context, sharding []string, data *Count) (int64, error) {
+func (o *Order) ShardingCount(ctx context.Context, sharding []string, data *Count) (int64, error) {
 	conditions := make([]order.ConditionOption, 0)
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	if data != nil {

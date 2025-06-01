@@ -33,7 +33,7 @@ func (o *Order) Take(ctx context.Context, sharding string, data *Take) (*models.
 		Do(ctx)
 }
 
-func (o *Order) MultiTake(ctx context.Context, sharding []string, data *Take) (*models.Order, error) {
+func (o *Order) ShardingTake(ctx context.Context, sharding []string, data *Take) (*models.Order, error) {
 	conditions := make([]order.ConditionOption, 0)
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	if data != nil {

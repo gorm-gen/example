@@ -41,7 +41,7 @@ func (o *Order) First(ctx context.Context, sharding string, data *First) (*model
 		Do(ctx)
 }
 
-func (o *Order) MultiFirst(ctx context.Context, sharding []string, data *First) (*models.Order, error) {
+func (o *Order) ShardingFirst(ctx context.Context, sharding []string, data *First) (*models.Order, error) {
 	conditions := make([]order.ConditionOption, 0)
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	if data != nil {

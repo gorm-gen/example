@@ -23,9 +23,9 @@ func TestList(t *testing.T) {
 	t.Log(string(bytes))
 }
 
-func TestMultiList(t *testing.T) {
+func TestShardingList(t *testing.T) {
 	sharding := []string{"202505", "202506"}
-	list, count, err := orderSvc.MultiList(context.Background(), sharding, &order.List{
+	list, count, err := orderSvc.ShardingList(context.Background(), sharding, &order.List{
 		Page:     1,
 		PageSize: 2,
 	})
@@ -42,7 +42,7 @@ func TestMultiList(t *testing.T) {
 	t.Log("---------------------------------")
 	t.Log(string(bytes))
 	t.Log("---------------------------------")
-	list, count, err = orderSvc.MultiList(context.Background(), sharding, &order.List{
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
 		Page:     2,
 		PageSize: 2,
 	})
@@ -56,7 +56,7 @@ func TestMultiList(t *testing.T) {
 	}
 	t.Log(string(bytes))
 	t.Log("---------------------------------")
-	list, count, err = orderSvc.MultiList(context.Background(), sharding, &order.List{
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
 		Page:     3,
 		PageSize: 2,
 	})
@@ -70,7 +70,7 @@ func TestMultiList(t *testing.T) {
 	}
 	t.Log(string(bytes))
 	t.Log("---------------------------------")
-	list, count, err = orderSvc.MultiList(context.Background(), sharding, &order.List{
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
 		Page:     4,
 		PageSize: 2,
 	})

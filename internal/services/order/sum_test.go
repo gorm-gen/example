@@ -17,8 +17,8 @@ func TestSum(t *testing.T) {
 	t.Log(sum)
 }
 
-func TestMultiSum(t *testing.T) {
-	sum, err := orderSvc.MultiSum(context.Background(), []string{"202505", "202506"}, &order.Sum{})
+func TestShardingSum(t *testing.T) {
+	sum, err := orderSvc.ShardingSum(context.Background(), []string{"202505", "202506"}, &order.Sum{})
 	if err != nil {
 		t.Fatal(err)
 		return

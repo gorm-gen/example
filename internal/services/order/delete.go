@@ -58,8 +58,8 @@ func (o *Order) Delete(ctx context.Context, sharding string, data *Delete) error
 	return err
 }
 
-// PhysicalMultiDelete 多表物理删除/永久删除
-func (o *Order) PhysicalMultiDelete(ctx context.Context, sharding []string, data *Delete) error {
+// PhysicalShardingDelete 多表物理删除/永久删除
+func (o *Order) PhysicalShardingDelete(ctx context.Context, sharding []string, data *Delete) error {
 	conditions := make([]order.ConditionOption, 0)
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	if data != nil {
@@ -79,8 +79,8 @@ func (o *Order) PhysicalMultiDelete(ctx context.Context, sharding []string, data
 	return err
 }
 
-// MultiDelete 多表软删除
-func (o *Order) MultiDelete(ctx context.Context, sharding []string, data *Delete) error {
+// ShardingDelete 多表软删除
+func (o *Order) ShardingDelete(ctx context.Context, sharding []string, data *Delete) error {
 	conditions := make([]order.ConditionOption, 0)
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	if data != nil {

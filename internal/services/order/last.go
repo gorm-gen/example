@@ -41,7 +41,7 @@ func (o *Order) Last(ctx context.Context, sharding string, data *Last) (*models.
 		Do(ctx)
 }
 
-func (o *Order) MultiLast(ctx context.Context, sharding []string, data *Last) (*models.Order, error) {
+func (o *Order) ShardingLast(ctx context.Context, sharding []string, data *Last) (*models.Order, error) {
 	conditions := make([]order.ConditionOption, 0)
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	if data != nil {

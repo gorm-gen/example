@@ -37,7 +37,7 @@ func (o *Order) List(ctx context.Context, sharding string, data *List) ([]*model
 		Do(ctx)
 }
 
-func (o *Order) MultiList(ctx context.Context, sharding []string, data *List) ([]*models.Order, int64, error) {
+func (o *Order) ShardingList(ctx context.Context, sharding []string, data *List) ([]*models.Order, int64, error) {
 	conditions := make([]order.ConditionOption, 0)
 	conditions = append(conditions, order.ConditionDeletedAtIsZero())
 	var page, pageSize uint

@@ -16,17 +16,17 @@ func TestDelete(t *testing.T) {
 	}
 }
 
-func TestPhysicalMultiDelete(t *testing.T) {
+func TestPhysicalShardingDelete(t *testing.T) {
 	id := int64(3)
-	if err := orderSvc.PhysicalMultiDelete(context.Background(), []string{"202505", "202506"}, &order.Delete{ID: &id}); err != nil {
+	if err := orderSvc.PhysicalShardingDelete(context.Background(), []string{"202505", "202506"}, &order.Delete{ID: &id}); err != nil {
 		t.Error(err)
 		return
 	}
 }
 
-func TestMultiDelete(t *testing.T) {
+func TestShardingDelete(t *testing.T) {
 	id := int64(3)
-	if err := orderSvc.MultiDelete(context.Background(), []string{"202505", "202506"}, &order.Delete{ID: &id}); err != nil {
+	if err := orderSvc.ShardingDelete(context.Background(), []string{"202505", "202506"}, &order.Delete{ID: &id}); err != nil {
 		t.Error(err)
 		return
 	}
