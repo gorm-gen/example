@@ -24,7 +24,7 @@ func TestLast(t *testing.T) {
 }
 
 func TestShardingLast(t *testing.T) {
-	res, err := orderSvc.ShardingLast(context.Background(), []string{"202505", "202506"}, &order.Last{})
+	res, err := orderSvc.ShardingLast(context.Background(), shardingList, &order.Last{})
 	if err != nil {
 		t.Fatal(err)
 		return

@@ -18,7 +18,7 @@ func TestSum(t *testing.T) {
 }
 
 func TestShardingSum(t *testing.T) {
-	sum, err := orderSvc.ShardingSum(context.Background(), []string{"202505", "202506"}, &order.Sum{})
+	sum, err := orderSvc.ShardingSum(context.Background(), shardingList, &order.Sum{})
 	if err != nil {
 		t.Fatal(err)
 		return

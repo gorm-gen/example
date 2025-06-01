@@ -18,7 +18,7 @@ func TestCount(t *testing.T) {
 }
 
 func TestShardingCount(t *testing.T) {
-	count, err := orderSvc.ShardingCount(context.Background(), []string{"202505", "202506"}, &order.Count{})
+	count, err := orderSvc.ShardingCount(context.Background(), shardingList, &order.Count{})
 	if err != nil {
 		t.Fatal(err)
 		return

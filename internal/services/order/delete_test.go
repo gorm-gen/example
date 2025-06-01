@@ -18,7 +18,7 @@ func TestDelete(t *testing.T) {
 
 func TestPhysicalShardingDelete(t *testing.T) {
 	id := int64(3)
-	if err := orderSvc.PhysicalShardingDelete(context.Background(), []string{"202505", "202506"}, &order.Delete{ID: &id}); err != nil {
+	if err := orderSvc.PhysicalShardingDelete(context.Background(), shardingList, &order.Delete{ID: &id}); err != nil {
 		t.Error(err)
 		return
 	}
@@ -26,7 +26,7 @@ func TestPhysicalShardingDelete(t *testing.T) {
 
 func TestShardingDelete(t *testing.T) {
 	id := int64(3)
-	if err := orderSvc.ShardingDelete(context.Background(), []string{"202505", "202506"}, &order.Delete{ID: &id}); err != nil {
+	if err := orderSvc.ShardingDelete(context.Background(), shardingList, &order.Delete{ID: &id}); err != nil {
 		t.Error(err)
 		return
 	}

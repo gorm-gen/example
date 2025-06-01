@@ -24,7 +24,7 @@ func TestTake(t *testing.T) {
 }
 
 func TestShardingTake(t *testing.T) {
-	res, err := orderSvc.ShardingTake(context.Background(), []string{"202505", "202506"}, &order.Take{})
+	res, err := orderSvc.ShardingTake(context.Background(), shardingList, &order.Take{})
 	if err != nil {
 		t.Fatal(err)
 		return

@@ -24,7 +24,7 @@ func TestList(t *testing.T) {
 }
 
 func TestShardingList(t *testing.T) {
-	sharding := []string{"202505", "202506"}
+	sharding := shardingList
 	list, count, err := orderSvc.ShardingList(context.Background(), sharding, &order.List{
 		Page:     1,
 		PageSize: 2,

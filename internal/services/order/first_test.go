@@ -24,7 +24,7 @@ func TestFirst(t *testing.T) {
 }
 
 func TestShardingFirst(t *testing.T) {
-	res, err := orderSvc.ShardingFirst(context.Background(), []string{"202505", "202506"}, &order.First{})
+	res, err := orderSvc.ShardingFirst(context.Background(), shardingList, &order.First{})
 	if err != nil {
 		t.Fatal(err)
 		return
