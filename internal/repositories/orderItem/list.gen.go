@@ -7,7 +7,7 @@ package orderItem
 import (
 	"context"
 
-	"github.com/gorm-gen/plugin/paginate"
+	page "github.com/gorm-gen/paginate/gen"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
@@ -175,7 +175,7 @@ func (l *_list) Do(ctx context.Context) ([]*models.OrderItem, error) {
 		}
 	}
 	if l.page > 0 && l.pageSize > 0 {
-		lr = lr.Scopes(paginate.Gen(l.page, l.pageSize))
+		lr = lr.Scopes(page.Paginate(l.page, l.pageSize))
 	}
 	if len(l.relationOpts) > 0 {
 		relations := make([]field.RelationField, 0, len(l.relationOpts))
