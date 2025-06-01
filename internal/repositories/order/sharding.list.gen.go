@@ -31,6 +31,7 @@ type _shardingList struct {
 	qTx           *query.QueryTx
 	page          int
 	pageSize      int
+	offset        int64
 	lock          clause.Expression
 	unscoped      bool
 	selects       []field.Expr
@@ -59,6 +60,14 @@ func (l *_shardingList) Worker(worker chan struct{}) *_shardingList {
 		return l
 	}
 	l.worker = worker
+	return l
+}
+
+// Offset 单表单次查询最多一次查询多少条数据
+func (l *_shardingList) Offset(offset int64) *_shardingList {
+	if offset > 0 {
+		l.offset = offset
+	}
 	return l
 }
 
@@ -182,6 +191,9 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.Order, int64, error) 
 	listOpts := []list.Option{
 		list.WithPage(uint64(l.page)),
 		list.WithPageSize(uint64(l.pageSize)),
+	}
+	if l.offset > 0 {
+		listOpts = append(listOpts, list.WithOffset(uint64(l.offset)))
 	}
 	if l.asc {
 		listOpts = append(listOpts, list.WithAsc())
