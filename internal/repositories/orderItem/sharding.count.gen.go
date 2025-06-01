@@ -25,12 +25,12 @@ type _shardingCount struct {
 	qTx           *query.QueryTx
 	unscoped      bool
 	conditionOpts []ConditionOption
-	sharding      []string
+	sharding      []int
 	worker        chan struct{}
 }
 
 // ShardingCount 获取分表数据总记录
-func (o *OrderItem) ShardingCount(sharding []string) *_shardingCount {
+func (o *OrderItem) ShardingCount(sharding []int) *_shardingCount {
 	return &_shardingCount{
 		core:          o,
 		unscoped:      o.unscoped,
@@ -73,7 +73,7 @@ func (c *_shardingCount) Where(opts ...ConditionOption) *_shardingCount {
 }
 
 // Do 执行获取分表数据总记录
-func (c *_shardingCount) Do(ctx context.Context) (int64, map[string]int64, error) {
+func (c *_shardingCount) Do(ctx context.Context) (int64, map[int]int64, error) {
 	if len(c.sharding) == 0 {
 		return 0, nil, nil
 	}
@@ -98,10 +98,10 @@ func (c *_shardingCount) Do(ctx context.Context) (int64, map[string]int64, error
 	for _, sharding := range c.sharding {
 		c.worker <- struct{}{}
 		wg.Add(1)
-		go func(sharding string) {
+		go func(sharding int) {
 			defer func() {
 				if r := recover(); r != nil {
-					c.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingCount.%s】执行异常", sharding), zap.Any("recover", r), zap.ByteString("debug.Stack", debug.Stack()))
+					c.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingCount.%d】执行异常", sharding), zap.Any("recover", r), zap.ByteString("debug.Stack", debug.Stack()))
 					errChan <- fmt.Errorf("recovered from panic: %v", r)
 				}
 			}()
@@ -119,7 +119,7 @@ func (c *_shardingCount) Do(ctx context.Context) (int64, map[string]int64, error
 			count, err := cr.Where(_conditions...).Count()
 			if err != nil {
 				if repositories.IsRealErr(err) {
-					c.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingCount.%s】失败", sharding), zap.Error(err))
+					c.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingCount.%d】失败", sharding), zap.Error(err))
 				}
 				errChan <- err
 				return
@@ -135,10 +135,10 @@ func (c *_shardingCount) Do(ctx context.Context) (int64, map[string]int64, error
 	select {
 	case <-endChan:
 		count := int64(0)
-		m := make(map[string]int64, len(c.sharding))
+		m := make(map[int]int64, len(c.sharding))
 		sm.Range(func(key, value interface{}) bool {
 			v := value.(int64)
-			m[key.(string)] = v
+			m[key.(int)] = v
 			count += v
 			return true
 		})

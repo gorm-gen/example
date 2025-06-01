@@ -33,12 +33,12 @@ type _shardingLast struct {
 	unscoped      bool
 	selects       []field.Expr
 	conditionOpts []ConditionOption
-	sharding      []string
+	sharding      []int
 	worker        chan struct{}
 }
 
 // ShardingLast 获取分表中随机最后一条记录（主键降序）
-func (o *OrderItem) ShardingLast(sharding []string) *_shardingLast {
+func (o *OrderItem) ShardingLast(sharding []int) *_shardingLast {
 	return &_shardingLast{
 		core:          o,
 		unscoped:      o.unscoped,
@@ -157,10 +157,10 @@ func (l *_shardingLast) Do(ctx context.Context) (*models.OrderItem, error) {
 	for _, sharding := range l.sharding {
 		l.worker <- struct{}{}
 		wg.Add(1)
-		go func(sharding string) {
+		go func(sharding int) {
 			defer func() {
 				if r := recover(); r != nil {
-					l.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingLast.%s】执行异常", sharding), zap.Any("recover", r), zap.ByteString("debug.Stack", debug.Stack()))
+					l.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingLast.%d】执行异常", sharding), zap.Any("recover", r), zap.ByteString("debug.Stack", debug.Stack()))
 					errChan <- fmt.Errorf("recovered from panic: %v", r)
 				}
 			}()
@@ -184,7 +184,7 @@ func (l *_shardingLast) Do(ctx context.Context) (*models.OrderItem, error) {
 			res, err := fr.Where(_conditions...).Last()
 			if err != nil {
 				if repositories.IsRealErr(err) {
-					l.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingLast.%s】失败", sharding), zap.Error(err))
+					l.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingLast.%d】失败", sharding), zap.Error(err))
 				}
 				if !errors.Is(err, gorm.ErrRecordNotFound) {
 					errChan <- err

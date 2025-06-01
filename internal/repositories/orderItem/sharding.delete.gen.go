@@ -25,12 +25,12 @@ type _shardingDelete struct {
 	qTx           *query.QueryTx
 	unscoped      bool
 	conditionOpts []ConditionOption
-	sharding      []string
+	sharding      []int
 	worker        chan struct{}
 }
 
 // ShardingDelete 删除分表数据
-func (o *OrderItem) ShardingDelete(sharding []string) *_shardingDelete {
+func (o *OrderItem) ShardingDelete(sharding []int) *_shardingDelete {
 	return &_shardingDelete{
 		core:          o,
 		unscoped:      o.unscoped,
@@ -77,7 +77,7 @@ func (d *_shardingDelete) Where(opts ...ConditionOption) *_shardingDelete {
 }
 
 // Do 执行删除分表数据
-func (d *_shardingDelete) Do(ctx context.Context) (int64, map[string]int64, error) {
+func (d *_shardingDelete) Do(ctx context.Context) (int64, map[int]int64, error) {
 	if len(d.sharding) == 0 {
 		return 0, nil, nil
 	}
@@ -102,10 +102,10 @@ func (d *_shardingDelete) Do(ctx context.Context) (int64, map[string]int64, erro
 	for _, sharding := range d.sharding {
 		d.worker <- struct{}{}
 		wg.Add(1)
-		go func(sharding string) {
+		go func(sharding int) {
 			defer func() {
 				if r := recover(); r != nil {
-					d.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingDelete.%s】执行异常", sharding), zap.Any("recover", r), zap.ByteString("debug.Stack", debug.Stack()))
+					d.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingDelete.%d】执行异常", sharding), zap.Any("recover", r), zap.ByteString("debug.Stack", debug.Stack()))
 					errChan <- fmt.Errorf("recovered from panic: %v", r)
 				}
 			}()
@@ -123,7 +123,7 @@ func (d *_shardingDelete) Do(ctx context.Context) (int64, map[string]int64, erro
 			res, err := dr.Where(_conditions...).Delete()
 			if err != nil {
 				if repositories.IsRealErr(err) {
-					d.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingDelete.%s】失败", sharding), zap.Error(err))
+					d.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingDelete.%d】失败", sharding), zap.Error(err))
 				}
 				errChan <- err
 				return
@@ -139,10 +139,10 @@ func (d *_shardingDelete) Do(ctx context.Context) (int64, map[string]int64, erro
 	select {
 	case <-endChan:
 		rowsAffected := int64(0)
-		m := make(map[string]int64, len(d.sharding))
+		m := make(map[int]int64, len(d.sharding))
 		sm.Range(func(key, value interface{}) bool {
 			v := value.(int64)
-			m[key.(string)] = v
+			m[key.(int)] = v
 			rowsAffected += v
 			return true
 		})

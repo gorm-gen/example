@@ -206,39 +206,125 @@ func ConditionIDNotBetween(left, right int64) ConditionOption {
     }
 }
 
-func ConditionSharding(v string) ConditionOption {
+func ConditionSharding(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
+        length := len(v)
         if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.Eq(v)
+            if length == 0 {
+                return o.q.OrderItem.Table(*o.newTableName).Sharding.Eq(0)
+            }
+            if length == 1 {
+                return o.q.OrderItem.Table(*o.newTableName).Sharding.Eq(v[0])
+            }
+            return o.q.OrderItem.Table(*o.newTableName).Sharding.In(v...)
         }
-        return o.q.OrderItem.Sharding.Eq(v)
+        if length == 0 {
+            return o.q.OrderItem.Sharding.Eq(0)
+        }
+        if length == 1 {
+            return o.q.OrderItem.Sharding.Eq(v[0])
+        }
+        return o.q.OrderItem.Sharding.In(v...)
     }
 }
 
-func ConditionShardingNeq(v string) ConditionOption {
+func ConditionShardingNot(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
+        length := len(v)
         if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.Neq(v)
+            if length == 0 {
+                return o.q.OrderItem.Table(*o.newTableName).Sharding.Neq(0)
+            }
+            if length == 1 {
+                return o.q.OrderItem.Table(*o.newTableName).Sharding.Neq(v[0])
+            }
+            return o.q.OrderItem.Table(*o.newTableName).Sharding.NotIn(v...)
         }
-        return o.q.OrderItem.Sharding.Neq(v)
+        if length == 0 {
+            return o.q.OrderItem.Sharding.Neq(0)
+        }
+        if length == 1 {
+            return o.q.OrderItem.Sharding.Neq(v[0])
+        }
+        return o.q.OrderItem.Sharding.NotIn(v...)
     }
 }
 
-func ConditionShardingLike(v string) ConditionOption {
+func ConditionShardingGt(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
         if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.Like(v)
+            if len(v) == 0 {
+                return o.q.OrderItem.Table(*o.newTableName).Sharding.Gt(0)
+            }
+            return o.q.OrderItem.Table(*o.newTableName).Sharding.Gt(v[0])
         }
-        return o.q.OrderItem.Sharding.Like(v)
+        if len(v) == 0 {
+            return o.q.OrderItem.Sharding.Gt(0)
+        }
+        return o.q.OrderItem.Sharding.Gt(v[0])
     }
 }
 
-func ConditionShardingNotLike(v string) ConditionOption {
+func ConditionShardingGte(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
         if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.NotLike(v)
+            if len(v) == 0 {
+                return o.q.OrderItem.Table(*o.newTableName).Sharding.Gte(0)
+            }
+            return o.q.OrderItem.Table(*o.newTableName).Sharding.Gte(v[0])
         }
-        return o.q.OrderItem.Sharding.NotLike(v)
+        if len(v) == 0 {
+            return o.q.OrderItem.Sharding.Gte(0)
+        }
+        return o.q.OrderItem.Sharding.Gte(v[0])
+    }
+}
+
+func ConditionShardingLt(v ...int) ConditionOption {
+	return func(o *OrderItem) gen.Condition {
+        if o.newTableName != nil {
+            if len(v) == 0 {
+                return o.q.OrderItem.Table(*o.newTableName).Sharding.Lt(0)
+            }
+            return o.q.OrderItem.Table(*o.newTableName).Sharding.Lt(v[0])
+        }
+        if len(v) == 0 {
+            return o.q.OrderItem.Sharding.Lt(0)
+        }
+        return o.q.OrderItem.Sharding.Lt(v[0])
+    }
+}
+
+func ConditionShardingLte(v ...int) ConditionOption {
+	return func(o *OrderItem) gen.Condition {
+        if o.newTableName != nil {
+            if len(v) == 0 {
+                return o.q.OrderItem.Table(*o.newTableName).Sharding.Lte(0)
+            }
+            return o.q.OrderItem.Table(*o.newTableName).Sharding.Lte(v[0])
+        }
+        if len(v) == 0 {
+            return o.q.OrderItem.Sharding.Lte(0)
+        }
+        return o.q.OrderItem.Sharding.Lte(v[0])
+    }
+}
+
+func ConditionShardingBetween(left, right int) ConditionOption {
+	return func(o *OrderItem) gen.Condition {
+        if o.newTableName != nil {
+            return o.q.OrderItem.Table(*o.newTableName).Sharding.Between(left, right)
+        }
+        return o.q.OrderItem.Sharding.Between(left, right)
+    }
+}
+
+func ConditionShardingNotBetween(left, right int) ConditionOption {
+	return func(o *OrderItem) gen.Condition {
+        if o.newTableName != nil {
+            return o.q.OrderItem.Table(*o.newTableName).Sharding.NotBetween(left, right)
+        }
+        return o.q.OrderItem.Sharding.NotBetween(left, right)
     }
 }
 
@@ -716,12 +802,60 @@ func Update(update field.AssignExpr) UpdateOption {
     }
 }
 
-func UpdateSharding(v string) UpdateOption {
+func UpdateSharding(v int) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
         if o.newTableName != nil {
             return o.q.OrderItem.Table(*o.newTableName).Sharding.Value(v)
         }
         return o.q.OrderItem.Sharding.Value(v)
+    }
+}
+
+// UpdateShardingAdd +=
+func UpdateShardingAdd(v ...int) UpdateOption {
+	return func(o *OrderItem) field.AssignExpr {
+        _v := int(1)
+        if len(v) > 0 {
+            _v = v[0]
+        }
+        if o.newTableName != nil {
+            return o.q.OrderItem.Table(*o.newTableName).Sharding.Add(_v)
+        }
+        return o.q.OrderItem.Sharding.Add(_v)
+    }
+}
+
+// UpdateShardingSub -=
+func UpdateShardingSub(v ...int) UpdateOption {
+	return func(o *OrderItem) field.AssignExpr {
+        _v := int(1)
+        if len(v) > 0 {
+            _v = v[0]
+        }
+        if o.newTableName != nil {
+            return o.q.OrderItem.Table(*o.newTableName).Sharding.Sub(_v)
+        }
+        return o.q.OrderItem.Sharding.Sub(_v)
+    }
+}
+
+// UpdateShardingMul *=
+func UpdateShardingMul(v int) UpdateOption {
+	return func(o *OrderItem) field.AssignExpr {
+        if o.newTableName != nil {
+            return o.q.OrderItem.Table(*o.newTableName).Sharding.Mul(v)
+        }
+        return o.q.OrderItem.Sharding.Mul(v)
+    }
+}
+
+// UpdateShardingDiv /=
+func UpdateShardingDiv(v int) UpdateOption {
+	return func(o *OrderItem) field.AssignExpr {
+        if o.newTableName != nil {
+            return o.q.OrderItem.Table(*o.newTableName).Sharding.Div(v)
+        }
+        return o.q.OrderItem.Sharding.Div(v)
     }
 }
 

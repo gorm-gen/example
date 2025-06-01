@@ -28,12 +28,12 @@ type _shardingSum struct {
 	unscoped      bool
 	genField      field.Expr
 	conditionOpts []ConditionOption
-	sharding      []string
+	sharding      []int
 	worker        chan struct{}
 }
 
 // ShardingSum 分表SUM数据
-func (o *OrderItem) ShardingSum(genField field.Expr, sharding []string) *_shardingSum {
+func (o *OrderItem) ShardingSum(genField field.Expr, sharding []int) *_shardingSum {
 	return &_shardingSum{
 		core:          o,
 		unscoped:      o.unscoped,
@@ -81,7 +81,7 @@ func (s *_shardingSum) Where(opts ...ConditionOption) *_shardingSum {
 }
 
 // Do 执行分表SUM数据
-func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[string]decimal.Decimal, error) {
+func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[int]decimal.Decimal, error) {
 	if len(s.sharding) == 0 {
 		return decimal.Zero, nil, nil
 	}
@@ -107,10 +107,10 @@ func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[string]deci
 	for _, sharding := range s.sharding {
 		s.worker <- struct{}{}
 		wg.Add(1)
-		go func(sharding string) {
+		go func(sharding int) {
 			defer func() {
 				if r := recover(); r != nil {
-					s.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingSum.%s】执行异常", sharding), zap.Any("recover", r), zap.ByteString("debug.Stack", debug.Stack()))
+					s.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingSum.%d】执行异常", sharding), zap.Any("recover", r), zap.ByteString("debug.Stack", debug.Stack()))
 					errChan <- fmt.Errorf("recovered from panic: %v", r)
 				}
 			}()
@@ -128,7 +128,7 @@ func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[string]deci
 			var data Sum
 			if err := sr.Where(_conditions...).Scan(&data); err != nil {
 				if repositories.IsRealErr(err) {
-					s.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingSum.%s】失败", sharding), zap.Error(err))
+					s.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingSum.%d】失败", sharding), zap.Error(err))
 				}
 				errChan <- err
 				return
@@ -144,10 +144,10 @@ func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[string]deci
 	select {
 	case <-endChan:
 		sum := decimal.Zero
-		m := make(map[string]decimal.Decimal, len(s.sharding))
+		m := make(map[int]decimal.Decimal, len(s.sharding))
 		sm.Range(func(key, value interface{}) bool {
 			v := value.(decimal.Decimal)
-			m[key.(string)] = v
+			m[key.(int)] = v
 			sum = sum.Add(v)
 			return true
 		})

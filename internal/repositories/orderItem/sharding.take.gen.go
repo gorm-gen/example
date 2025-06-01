@@ -34,12 +34,12 @@ type _shardingTake struct {
 	selects       []field.Expr
 	orderOpts     []OrderOption
 	conditionOpts []ConditionOption
-	sharding      []string
+	sharding      []int
 	worker        chan struct{}
 }
 
 // ShardingTake 获取分表中随机一条记录
-func (o *OrderItem) ShardingTake(sharding []string) *_shardingTake {
+func (o *OrderItem) ShardingTake(sharding []int) *_shardingTake {
 	return &_shardingTake{
 		core:          o,
 		unscoped:      o.unscoped,
@@ -171,10 +171,10 @@ func (t *_shardingTake) Do(ctx context.Context) (*models.OrderItem, error) {
 	for _, sharding := range t.sharding {
 		t.worker <- struct{}{}
 		wg.Add(1)
-		go func(sharding string) {
+		go func(sharding int) {
 			defer func() {
 				if r := recover(); r != nil {
-					t.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingTake.%s】执行异常", sharding), zap.Any("recover", r), zap.ByteString("debug.Stack", debug.Stack()))
+					t.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingTake.%d】执行异常", sharding), zap.Any("recover", r), zap.ByteString("debug.Stack", debug.Stack()))
 					errChan <- fmt.Errorf("recovered from panic: %v", r)
 				}
 			}()
@@ -202,7 +202,7 @@ func (t *_shardingTake) Do(ctx context.Context) (*models.OrderItem, error) {
 			res, err := fr.Take()
 			if err != nil {
 				if repositories.IsRealErr(err) {
-					t.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingTake.%s】失败", sharding), zap.Error(err))
+					t.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingTake.%d】失败", sharding), zap.Error(err))
 				}
 				if !errors.Is(err, gorm.ErrRecordNotFound) {
 					errChan <- err

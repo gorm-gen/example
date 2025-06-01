@@ -13,6 +13,7 @@ import (
 
 	page "github.com/gorm-gen/paginate/gen"
 	"github.com/gorm-gen/sharding/query/list"
+    "github.com/shopspring/decimal"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
@@ -37,13 +38,13 @@ type _shardingList struct {
 	selects       []field.Expr
 	orderOpts     []OrderOption
 	conditionOpts []ConditionOption
-	sharding      []string
+	sharding      []int
 	worker        chan struct{}
 	asc           bool
 }
 
 // ShardingList 获取分表数据列表
-func (o *OrderItem) ShardingList(sharding []string) *_shardingList {
+func (o *OrderItem) ShardingList(sharding []int) *_shardingList {
 	return &_shardingList{
 		core:          o,
 		unscoped:      o.unscoped,
@@ -184,7 +185,7 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.OrderItem, int64, err
 	svs := make([]*list.St, 0, len(l.sharding))
 	for k, v := range m {
 		svs = append(svs, &list.St{
-			ShardingValue: k,
+			ShardingValue: fmt.Sprintf("%d", k),
 			Total:         uint64(v),
 		})
 	}
@@ -275,7 +276,8 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.OrderItem, int64, err
 					defer _wg.Done()
 					_conditions := make([]gen.Condition, len(conditions))
 					copy(_conditions, conditions)
-					shardingValue := v.ShardingValue
+					_shardingValue, _ := decimal.NewFromString(v.ShardingValue)
+					shardingValue := int(_shardingValue.BigInt().Int64())
 					_conditions = append(_conditions, ConditionSharding(shardingValue)(l.core))
 					lr := lq.WithContext(ctx)
 					if len(fieldExpr) > 0 {
