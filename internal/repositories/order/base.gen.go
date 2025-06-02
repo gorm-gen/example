@@ -15,11 +15,11 @@ import (
 	"gorm.io/gen/field"
 	"gorm.io/gorm"
 
-    "example/internal/global"
+	"example/internal/global"
 
-    "example/internal/query"
+	"example/internal/query"
 
-    "example/internal/repositories"
+	"example/internal/repositories"
 )
 
 // Order 仓库/Repository
