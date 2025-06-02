@@ -5,12 +5,12 @@
 package orderItem
 
 import (
-    "time"
+	"time"
 
-    "go.uber.org/zap"
-    "gorm.io/gen"
-    "gorm.io/gen/field"
-    "gorm.io/gorm"
+	"go.uber.org/zap"
+	"gorm.io/gen"
+	"gorm.io/gen/field"
+	"gorm.io/gorm"
 
     "example/internal/global"
 
@@ -86,710 +86,710 @@ func Condition(condition gen.Condition) ConditionOption {
 
 func ConditionID(v ...int64) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        length := len(v)
-        if o.newTableName != nil {
-            if length == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).ID.Eq(0)
-            }
-            if length == 1 {
-                return o.q.OrderItem.Table(*o.newTableName).ID.Eq(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).ID.In(v...)
-        }
-        if length == 0 {
-            return o.q.OrderItem.ID.Eq(0)
-        }
-        if length == 1 {
-            return o.q.OrderItem.ID.Eq(v[0])
-        }
-        return o.q.OrderItem.ID.In(v...)
-    }
+		length := len(v)
+		if o.newTableName != nil {
+			if length == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).ID.Eq(0)
+			}
+			if length == 1 {
+				return o.q.OrderItem.Table(*o.newTableName).ID.Eq(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).ID.In(v...)
+		}
+		if length == 0 {
+			return o.q.OrderItem.ID.Eq(0)
+		}
+		if length == 1 {
+			return o.q.OrderItem.ID.Eq(v[0])
+		}
+		return o.q.OrderItem.ID.In(v...)
+	}
 }
 
 func ConditionIDNot(v ...int64) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        length := len(v)
-        if o.newTableName != nil {
-            if length == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).ID.Neq(0)
-            }
-            if length == 1 {
-                return o.q.OrderItem.Table(*o.newTableName).ID.Neq(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).ID.NotIn(v...)
-        }
-        if length == 0 {
-            return o.q.OrderItem.ID.Neq(0)
-        }
-        if length == 1 {
-            return o.q.OrderItem.ID.Neq(v[0])
-        }
-        return o.q.OrderItem.ID.NotIn(v...)
-    }
+		length := len(v)
+		if o.newTableName != nil {
+			if length == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).ID.Neq(0)
+			}
+			if length == 1 {
+				return o.q.OrderItem.Table(*o.newTableName).ID.Neq(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).ID.NotIn(v...)
+		}
+		if length == 0 {
+			return o.q.OrderItem.ID.Neq(0)
+		}
+		if length == 1 {
+			return o.q.OrderItem.ID.Neq(v[0])
+		}
+		return o.q.OrderItem.ID.NotIn(v...)
+	}
 }
 
 func ConditionIDGt(v ...int64) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).ID.Gt(0)
-            }
-            return o.q.OrderItem.Table(*o.newTableName).ID.Gt(v[0])
-        }
-        if len(v) == 0 {
-            return o.q.OrderItem.ID.Gt(0)
-        }
-        return o.q.OrderItem.ID.Gt(v[0])
-    }
+		if o.newTableName != nil {
+			if len(v) == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).ID.Gt(0)
+			}
+			return o.q.OrderItem.Table(*o.newTableName).ID.Gt(v[0])
+		}
+		if len(v) == 0 {
+			return o.q.OrderItem.ID.Gt(0)
+		}
+		return o.q.OrderItem.ID.Gt(v[0])
+	}
 }
 
 func ConditionIDGte(v ...int64) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).ID.Gte(0)
-            }
-            return o.q.OrderItem.Table(*o.newTableName).ID.Gte(v[0])
-        }
-        if len(v) == 0 {
-            return o.q.OrderItem.ID.Gte(0)
-        }
-        return o.q.OrderItem.ID.Gte(v[0])
-    }
+		if o.newTableName != nil {
+			if len(v) == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).ID.Gte(0)
+			}
+			return o.q.OrderItem.Table(*o.newTableName).ID.Gte(v[0])
+		}
+		if len(v) == 0 {
+			return o.q.OrderItem.ID.Gte(0)
+		}
+		return o.q.OrderItem.ID.Gte(v[0])
+	}
 }
 
 func ConditionIDLt(v ...int64) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).ID.Lt(0)
-            }
-            return o.q.OrderItem.Table(*o.newTableName).ID.Lt(v[0])
-        }
-        if len(v) == 0 {
-            return o.q.OrderItem.ID.Lt(0)
-        }
-        return o.q.OrderItem.ID.Lt(v[0])
-    }
+		if o.newTableName != nil {
+			if len(v) == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).ID.Lt(0)
+			}
+			return o.q.OrderItem.Table(*o.newTableName).ID.Lt(v[0])
+		}
+		if len(v) == 0 {
+			return o.q.OrderItem.ID.Lt(0)
+		}
+		return o.q.OrderItem.ID.Lt(v[0])
+	}
 }
 
 func ConditionIDLte(v ...int64) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).ID.Lte(0)
-            }
-            return o.q.OrderItem.Table(*o.newTableName).ID.Lte(v[0])
-        }
-        if len(v) == 0 {
-            return o.q.OrderItem.ID.Lte(0)
-        }
-        return o.q.OrderItem.ID.Lte(v[0])
-    }
+		if o.newTableName != nil {
+			if len(v) == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).ID.Lte(0)
+			}
+			return o.q.OrderItem.Table(*o.newTableName).ID.Lte(v[0])
+		}
+		if len(v) == 0 {
+			return o.q.OrderItem.ID.Lte(0)
+		}
+		return o.q.OrderItem.ID.Lte(v[0])
+	}
 }
 
 func ConditionIDBetween(left, right int64) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).ID.Between(left, right)
-        }
-        return o.q.OrderItem.ID.Between(left, right)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).ID.Between(left, right)
+		}
+		return o.q.OrderItem.ID.Between(left, right)
+	}
 }
 
 func ConditionIDNotBetween(left, right int64) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).ID.NotBetween(left, right)
-        }
-        return o.q.OrderItem.ID.NotBetween(left, right)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).ID.NotBetween(left, right)
+		}
+		return o.q.OrderItem.ID.NotBetween(left, right)
+	}
 }
 
 func ConditionSharding(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        length := len(v)
-        if o.newTableName != nil {
-            if length == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).Sharding.Eq(0)
-            }
-            if length == 1 {
-                return o.q.OrderItem.Table(*o.newTableName).Sharding.Eq(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.In(v...)
-        }
-        if length == 0 {
-            return o.q.OrderItem.Sharding.Eq(0)
-        }
-        if length == 1 {
-            return o.q.OrderItem.Sharding.Eq(v[0])
-        }
-        return o.q.OrderItem.Sharding.In(v...)
-    }
+		length := len(v)
+		if o.newTableName != nil {
+			if length == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).Sharding.Eq(0)
+			}
+			if length == 1 {
+				return o.q.OrderItem.Table(*o.newTableName).Sharding.Eq(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).Sharding.In(v...)
+		}
+		if length == 0 {
+			return o.q.OrderItem.Sharding.Eq(0)
+		}
+		if length == 1 {
+			return o.q.OrderItem.Sharding.Eq(v[0])
+		}
+		return o.q.OrderItem.Sharding.In(v...)
+	}
 }
 
 func ConditionShardingNot(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        length := len(v)
-        if o.newTableName != nil {
-            if length == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).Sharding.Neq(0)
-            }
-            if length == 1 {
-                return o.q.OrderItem.Table(*o.newTableName).Sharding.Neq(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.NotIn(v...)
-        }
-        if length == 0 {
-            return o.q.OrderItem.Sharding.Neq(0)
-        }
-        if length == 1 {
-            return o.q.OrderItem.Sharding.Neq(v[0])
-        }
-        return o.q.OrderItem.Sharding.NotIn(v...)
-    }
+		length := len(v)
+		if o.newTableName != nil {
+			if length == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).Sharding.Neq(0)
+			}
+			if length == 1 {
+				return o.q.OrderItem.Table(*o.newTableName).Sharding.Neq(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).Sharding.NotIn(v...)
+		}
+		if length == 0 {
+			return o.q.OrderItem.Sharding.Neq(0)
+		}
+		if length == 1 {
+			return o.q.OrderItem.Sharding.Neq(v[0])
+		}
+		return o.q.OrderItem.Sharding.NotIn(v...)
+	}
 }
 
 func ConditionShardingGt(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).Sharding.Gt(0)
-            }
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.Gt(v[0])
-        }
-        if len(v) == 0 {
-            return o.q.OrderItem.Sharding.Gt(0)
-        }
-        return o.q.OrderItem.Sharding.Gt(v[0])
-    }
+		if o.newTableName != nil {
+			if len(v) == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).Sharding.Gt(0)
+			}
+			return o.q.OrderItem.Table(*o.newTableName).Sharding.Gt(v[0])
+		}
+		if len(v) == 0 {
+			return o.q.OrderItem.Sharding.Gt(0)
+		}
+		return o.q.OrderItem.Sharding.Gt(v[0])
+	}
 }
 
 func ConditionShardingGte(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).Sharding.Gte(0)
-            }
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.Gte(v[0])
-        }
-        if len(v) == 0 {
-            return o.q.OrderItem.Sharding.Gte(0)
-        }
-        return o.q.OrderItem.Sharding.Gte(v[0])
-    }
+		if o.newTableName != nil {
+			if len(v) == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).Sharding.Gte(0)
+			}
+			return o.q.OrderItem.Table(*o.newTableName).Sharding.Gte(v[0])
+		}
+		if len(v) == 0 {
+			return o.q.OrderItem.Sharding.Gte(0)
+		}
+		return o.q.OrderItem.Sharding.Gte(v[0])
+	}
 }
 
 func ConditionShardingLt(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).Sharding.Lt(0)
-            }
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.Lt(v[0])
-        }
-        if len(v) == 0 {
-            return o.q.OrderItem.Sharding.Lt(0)
-        }
-        return o.q.OrderItem.Sharding.Lt(v[0])
-    }
+		if o.newTableName != nil {
+			if len(v) == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).Sharding.Lt(0)
+			}
+			return o.q.OrderItem.Table(*o.newTableName).Sharding.Lt(v[0])
+		}
+		if len(v) == 0 {
+			return o.q.OrderItem.Sharding.Lt(0)
+		}
+		return o.q.OrderItem.Sharding.Lt(v[0])
+	}
 }
 
 func ConditionShardingLte(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).Sharding.Lte(0)
-            }
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.Lte(v[0])
-        }
-        if len(v) == 0 {
-            return o.q.OrderItem.Sharding.Lte(0)
-        }
-        return o.q.OrderItem.Sharding.Lte(v[0])
-    }
+		if o.newTableName != nil {
+			if len(v) == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).Sharding.Lte(0)
+			}
+			return o.q.OrderItem.Table(*o.newTableName).Sharding.Lte(v[0])
+		}
+		if len(v) == 0 {
+			return o.q.OrderItem.Sharding.Lte(0)
+		}
+		return o.q.OrderItem.Sharding.Lte(v[0])
+	}
 }
 
 func ConditionShardingBetween(left, right int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.Between(left, right)
-        }
-        return o.q.OrderItem.Sharding.Between(left, right)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).Sharding.Between(left, right)
+		}
+		return o.q.OrderItem.Sharding.Between(left, right)
+	}
 }
 
 func ConditionShardingNotBetween(left, right int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.NotBetween(left, right)
-        }
-        return o.q.OrderItem.Sharding.NotBetween(left, right)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).Sharding.NotBetween(left, right)
+		}
+		return o.q.OrderItem.Sharding.NotBetween(left, right)
+	}
 }
 
 func ConditionUID(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        length := len(v)
-        if o.newTableName != nil {
-            if length == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).UID.Eq(0)
-            }
-            if length == 1 {
-                return o.q.OrderItem.Table(*o.newTableName).UID.Eq(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).UID.In(v...)
-        }
-        if length == 0 {
-            return o.q.OrderItem.UID.Eq(0)
-        }
-        if length == 1 {
-            return o.q.OrderItem.UID.Eq(v[0])
-        }
-        return o.q.OrderItem.UID.In(v...)
-    }
+		length := len(v)
+		if o.newTableName != nil {
+			if length == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).UID.Eq(0)
+			}
+			if length == 1 {
+				return o.q.OrderItem.Table(*o.newTableName).UID.Eq(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).UID.In(v...)
+		}
+		if length == 0 {
+			return o.q.OrderItem.UID.Eq(0)
+		}
+		if length == 1 {
+			return o.q.OrderItem.UID.Eq(v[0])
+		}
+		return o.q.OrderItem.UID.In(v...)
+	}
 }
 
 func ConditionUIDNot(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        length := len(v)
-        if o.newTableName != nil {
-            if length == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).UID.Neq(0)
-            }
-            if length == 1 {
-                return o.q.OrderItem.Table(*o.newTableName).UID.Neq(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).UID.NotIn(v...)
-        }
-        if length == 0 {
-            return o.q.OrderItem.UID.Neq(0)
-        }
-        if length == 1 {
-            return o.q.OrderItem.UID.Neq(v[0])
-        }
-        return o.q.OrderItem.UID.NotIn(v...)
-    }
+		length := len(v)
+		if o.newTableName != nil {
+			if length == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).UID.Neq(0)
+			}
+			if length == 1 {
+				return o.q.OrderItem.Table(*o.newTableName).UID.Neq(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).UID.NotIn(v...)
+		}
+		if length == 0 {
+			return o.q.OrderItem.UID.Neq(0)
+		}
+		if length == 1 {
+			return o.q.OrderItem.UID.Neq(v[0])
+		}
+		return o.q.OrderItem.UID.NotIn(v...)
+	}
 }
 
 func ConditionUIDGt(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).UID.Gt(0)
-            }
-            return o.q.OrderItem.Table(*o.newTableName).UID.Gt(v[0])
-        }
-        if len(v) == 0 {
-            return o.q.OrderItem.UID.Gt(0)
-        }
-        return o.q.OrderItem.UID.Gt(v[0])
-    }
+		if o.newTableName != nil {
+			if len(v) == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).UID.Gt(0)
+			}
+			return o.q.OrderItem.Table(*o.newTableName).UID.Gt(v[0])
+		}
+		if len(v) == 0 {
+			return o.q.OrderItem.UID.Gt(0)
+		}
+		return o.q.OrderItem.UID.Gt(v[0])
+	}
 }
 
 func ConditionUIDGte(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).UID.Gte(0)
-            }
-            return o.q.OrderItem.Table(*o.newTableName).UID.Gte(v[0])
-        }
-        if len(v) == 0 {
-            return o.q.OrderItem.UID.Gte(0)
-        }
-        return o.q.OrderItem.UID.Gte(v[0])
-    }
+		if o.newTableName != nil {
+			if len(v) == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).UID.Gte(0)
+			}
+			return o.q.OrderItem.Table(*o.newTableName).UID.Gte(v[0])
+		}
+		if len(v) == 0 {
+			return o.q.OrderItem.UID.Gte(0)
+		}
+		return o.q.OrderItem.UID.Gte(v[0])
+	}
 }
 
 func ConditionUIDLt(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).UID.Lt(0)
-            }
-            return o.q.OrderItem.Table(*o.newTableName).UID.Lt(v[0])
-        }
-        if len(v) == 0 {
-            return o.q.OrderItem.UID.Lt(0)
-        }
-        return o.q.OrderItem.UID.Lt(v[0])
-    }
+		if o.newTableName != nil {
+			if len(v) == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).UID.Lt(0)
+			}
+			return o.q.OrderItem.Table(*o.newTableName).UID.Lt(v[0])
+		}
+		if len(v) == 0 {
+			return o.q.OrderItem.UID.Lt(0)
+		}
+		return o.q.OrderItem.UID.Lt(v[0])
+	}
 }
 
 func ConditionUIDLte(v ...int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) == 0 {
-                return o.q.OrderItem.Table(*o.newTableName).UID.Lte(0)
-            }
-            return o.q.OrderItem.Table(*o.newTableName).UID.Lte(v[0])
-        }
-        if len(v) == 0 {
-            return o.q.OrderItem.UID.Lte(0)
-        }
-        return o.q.OrderItem.UID.Lte(v[0])
-    }
+		if o.newTableName != nil {
+			if len(v) == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).UID.Lte(0)
+			}
+			return o.q.OrderItem.Table(*o.newTableName).UID.Lte(v[0])
+		}
+		if len(v) == 0 {
+			return o.q.OrderItem.UID.Lte(0)
+		}
+		return o.q.OrderItem.UID.Lte(v[0])
+	}
 }
 
 func ConditionUIDBetween(left, right int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).UID.Between(left, right)
-        }
-        return o.q.OrderItem.UID.Between(left, right)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).UID.Between(left, right)
+		}
+		return o.q.OrderItem.UID.Between(left, right)
+	}
 }
 
 func ConditionUIDNotBetween(left, right int) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).UID.NotBetween(left, right)
-        }
-        return o.q.OrderItem.UID.NotBetween(left, right)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).UID.NotBetween(left, right)
+		}
+		return o.q.OrderItem.UID.NotBetween(left, right)
+	}
 }
 
 func ConditionOrderNo(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).OrderNo.Eq(v)
-        }
-        return o.q.OrderItem.OrderNo.Eq(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).OrderNo.Eq(v)
+		}
+		return o.q.OrderItem.OrderNo.Eq(v)
+	}
 }
 
 func ConditionOrderNoNeq(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).OrderNo.Neq(v)
-        }
-        return o.q.OrderItem.OrderNo.Neq(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).OrderNo.Neq(v)
+		}
+		return o.q.OrderItem.OrderNo.Neq(v)
+	}
 }
 
 func ConditionOrderNoLike(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).OrderNo.Like(v)
-        }
-        return o.q.OrderItem.OrderNo.Like(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).OrderNo.Like(v)
+		}
+		return o.q.OrderItem.OrderNo.Like(v)
+	}
 }
 
 func ConditionOrderNoNotLike(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).OrderNo.NotLike(v)
-        }
-        return o.q.OrderItem.OrderNo.NotLike(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).OrderNo.NotLike(v)
+		}
+		return o.q.OrderItem.OrderNo.NotLike(v)
+	}
 }
 
 func ConditionComment(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Comment.Eq(v)
-        }
-        return o.q.OrderItem.Comment.Eq(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).Comment.Eq(v)
+		}
+		return o.q.OrderItem.Comment.Eq(v)
+	}
 }
 
 func ConditionCommentNeq(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Comment.Neq(v)
-        }
-        return o.q.OrderItem.Comment.Neq(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).Comment.Neq(v)
+		}
+		return o.q.OrderItem.Comment.Neq(v)
+	}
 }
 
 func ConditionCommentLike(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Comment.Like(v)
-        }
-        return o.q.OrderItem.Comment.Like(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).Comment.Like(v)
+		}
+		return o.q.OrderItem.Comment.Like(v)
+	}
 }
 
 func ConditionCommentNotLike(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Comment.NotLike(v)
-        }
-        return o.q.OrderItem.Comment.NotLike(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).Comment.NotLike(v)
+		}
+		return o.q.OrderItem.Comment.NotLike(v)
+	}
 }
 
 func ConditionExpressNumber(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Eq(v)
-        }
-        return o.q.OrderItem.ExpressNumber.Eq(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Eq(v)
+		}
+		return o.q.OrderItem.ExpressNumber.Eq(v)
+	}
 }
 
 func ConditionExpressNumberNeq(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Neq(v)
-        }
-        return o.q.OrderItem.ExpressNumber.Neq(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Neq(v)
+		}
+		return o.q.OrderItem.ExpressNumber.Neq(v)
+	}
 }
 
 func ConditionExpressNumberLike(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Like(v)
-        }
-        return o.q.OrderItem.ExpressNumber.Like(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Like(v)
+		}
+		return o.q.OrderItem.ExpressNumber.Like(v)
+	}
 }
 
 func ConditionExpressNumberNotLike(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.NotLike(v)
-        }
-        return o.q.OrderItem.ExpressNumber.NotLike(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.NotLike(v)
+		}
+		return o.q.OrderItem.ExpressNumber.NotLike(v)
+	}
 }
 
 func ConditionCreatedAt(v ...time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) > 0 && !v[0].IsZero() {
-                return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Eq(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Eq(time.Now())
-        }
-        if len(v) > 0 && !v[0].IsZero() {
-            return o.q.OrderItem.CreatedAt.Eq(v[0])
-        }
-        return o.q.OrderItem.CreatedAt.Eq(time.Now())
-    }
+		if o.newTableName != nil {
+			if len(v) > 0 && !v[0].IsZero() {
+				return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Eq(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Eq(time.Now())
+		}
+		if len(v) > 0 && !v[0].IsZero() {
+			return o.q.OrderItem.CreatedAt.Eq(v[0])
+		}
+		return o.q.OrderItem.CreatedAt.Eq(time.Now())
+	}
 }
 
 func ConditionCreatedAtNeq(v ...time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) > 0 && !v[0].IsZero() {
-                return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Neq(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Neq(time.Now())
-        }
-        if len(v) > 0 && !v[0].IsZero() {
-            return o.q.OrderItem.CreatedAt.Neq(v[0])
-        }
-        return o.q.OrderItem.CreatedAt.Neq(time.Now())
-    }
+		if o.newTableName != nil {
+			if len(v) > 0 && !v[0].IsZero() {
+				return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Neq(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Neq(time.Now())
+		}
+		if len(v) > 0 && !v[0].IsZero() {
+			return o.q.OrderItem.CreatedAt.Neq(v[0])
+		}
+		return o.q.OrderItem.CreatedAt.Neq(time.Now())
+	}
 }
 
 func ConditionCreatedAtGt(v ...time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) > 0 && !v[0].IsZero() {
-                return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Gt(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Gt(time.Now())
-        }
-        if len(v) > 0 && !v[0].IsZero() {
-            return o.q.OrderItem.CreatedAt.Gt(v[0])
-        }
-        return o.q.OrderItem.CreatedAt.Gt(time.Now())
-    }
+		if o.newTableName != nil {
+			if len(v) > 0 && !v[0].IsZero() {
+				return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Gt(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Gt(time.Now())
+		}
+		if len(v) > 0 && !v[0].IsZero() {
+			return o.q.OrderItem.CreatedAt.Gt(v[0])
+		}
+		return o.q.OrderItem.CreatedAt.Gt(time.Now())
+	}
 }
 
 func ConditionCreatedAtGte(v ...time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) > 0 && !v[0].IsZero() {
-                return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Gte(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Gte(time.Now())
-        }
-        if len(v) > 0 && !v[0].IsZero() {
-            return o.q.OrderItem.CreatedAt.Gte(v[0])
-        }
-        return o.q.OrderItem.CreatedAt.Gte(time.Now())
-    }
+		if o.newTableName != nil {
+			if len(v) > 0 && !v[0].IsZero() {
+				return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Gte(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Gte(time.Now())
+		}
+		if len(v) > 0 && !v[0].IsZero() {
+			return o.q.OrderItem.CreatedAt.Gte(v[0])
+		}
+		return o.q.OrderItem.CreatedAt.Gte(time.Now())
+	}
 }
 
 func ConditionCreatedAtLt(v ...time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) > 0 && !v[0].IsZero() {
-                return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Lt(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Lt(time.Now())
-        }
-        if len(v) > 0 && !v[0].IsZero() {
-            return o.q.OrderItem.CreatedAt.Lt(v[0])
-        }
-        return o.q.OrderItem.CreatedAt.Lt(time.Now())
-    }
+		if o.newTableName != nil {
+			if len(v) > 0 && !v[0].IsZero() {
+				return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Lt(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Lt(time.Now())
+		}
+		if len(v) > 0 && !v[0].IsZero() {
+			return o.q.OrderItem.CreatedAt.Lt(v[0])
+		}
+		return o.q.OrderItem.CreatedAt.Lt(time.Now())
+	}
 }
 
 func ConditionCreatedAtLte(v ...time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) > 0 && !v[0].IsZero() {
-                return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Lte(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Lte(time.Now())
-        }
-        if len(v) > 0 && !v[0].IsZero() {
-            return o.q.OrderItem.CreatedAt.Lte(v[0])
-        }
-        return o.q.OrderItem.CreatedAt.Lte(time.Now())
-    }
+		if o.newTableName != nil {
+			if len(v) > 0 && !v[0].IsZero() {
+				return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Lte(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Lte(time.Now())
+		}
+		if len(v) > 0 && !v[0].IsZero() {
+			return o.q.OrderItem.CreatedAt.Lte(v[0])
+		}
+		return o.q.OrderItem.CreatedAt.Lte(time.Now())
+	}
 }
 
 func ConditionCreatedAtBetween(left, right time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Between(left, right)
-        }
-        return o.q.OrderItem.CreatedAt.Between(left, right)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Between(left, right)
+		}
+		return o.q.OrderItem.CreatedAt.Between(left, right)
+	}
 }
 
 func ConditionCreatedAtNotBetween(left, right time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).CreatedAt.NotBetween(left, right)
-        }
-        return o.q.OrderItem.CreatedAt.NotBetween(left, right)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).CreatedAt.NotBetween(left, right)
+		}
+		return o.q.OrderItem.CreatedAt.NotBetween(left, right)
+	}
 }
 
 func ConditionUpdatedAt(v ...time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) > 0 && !v[0].IsZero() {
-                return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Eq(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Eq(time.Now())
-        }
-        if len(v) > 0 && !v[0].IsZero() {
-            return o.q.OrderItem.UpdatedAt.Eq(v[0])
-        }
-        return o.q.OrderItem.UpdatedAt.Eq(time.Now())
-    }
+		if o.newTableName != nil {
+			if len(v) > 0 && !v[0].IsZero() {
+				return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Eq(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Eq(time.Now())
+		}
+		if len(v) > 0 && !v[0].IsZero() {
+			return o.q.OrderItem.UpdatedAt.Eq(v[0])
+		}
+		return o.q.OrderItem.UpdatedAt.Eq(time.Now())
+	}
 }
 
 func ConditionUpdatedAtNeq(v ...time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) > 0 && !v[0].IsZero() {
-                return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Neq(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Neq(time.Now())
-        }
-        if len(v) > 0 && !v[0].IsZero() {
-            return o.q.OrderItem.UpdatedAt.Neq(v[0])
-        }
-        return o.q.OrderItem.UpdatedAt.Neq(time.Now())
-    }
+		if o.newTableName != nil {
+			if len(v) > 0 && !v[0].IsZero() {
+				return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Neq(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Neq(time.Now())
+		}
+		if len(v) > 0 && !v[0].IsZero() {
+			return o.q.OrderItem.UpdatedAt.Neq(v[0])
+		}
+		return o.q.OrderItem.UpdatedAt.Neq(time.Now())
+	}
 }
 
 func ConditionUpdatedAtGt(v ...time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) > 0 && !v[0].IsZero() {
-                return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Gt(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Gt(time.Now())
-        }
-        if len(v) > 0 && !v[0].IsZero() {
-            return o.q.OrderItem.UpdatedAt.Gt(v[0])
-        }
-        return o.q.OrderItem.UpdatedAt.Gt(time.Now())
-    }
+		if o.newTableName != nil {
+			if len(v) > 0 && !v[0].IsZero() {
+				return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Gt(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Gt(time.Now())
+		}
+		if len(v) > 0 && !v[0].IsZero() {
+			return o.q.OrderItem.UpdatedAt.Gt(v[0])
+		}
+		return o.q.OrderItem.UpdatedAt.Gt(time.Now())
+	}
 }
 
 func ConditionUpdatedAtGte(v ...time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) > 0 && !v[0].IsZero() {
-                return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Gte(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Gte(time.Now())
-        }
-        if len(v) > 0 && !v[0].IsZero() {
-            return o.q.OrderItem.UpdatedAt.Gte(v[0])
-        }
-        return o.q.OrderItem.UpdatedAt.Gte(time.Now())
-    }
+		if o.newTableName != nil {
+			if len(v) > 0 && !v[0].IsZero() {
+				return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Gte(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Gte(time.Now())
+		}
+		if len(v) > 0 && !v[0].IsZero() {
+			return o.q.OrderItem.UpdatedAt.Gte(v[0])
+		}
+		return o.q.OrderItem.UpdatedAt.Gte(time.Now())
+	}
 }
 
 func ConditionUpdatedAtLt(v ...time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) > 0 && !v[0].IsZero() {
-                return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Lt(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Lt(time.Now())
-        }
-        if len(v) > 0 && !v[0].IsZero() {
-            return o.q.OrderItem.UpdatedAt.Lt(v[0])
-        }
-        return o.q.OrderItem.UpdatedAt.Lt(time.Now())
-    }
+		if o.newTableName != nil {
+			if len(v) > 0 && !v[0].IsZero() {
+				return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Lt(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Lt(time.Now())
+		}
+		if len(v) > 0 && !v[0].IsZero() {
+			return o.q.OrderItem.UpdatedAt.Lt(v[0])
+		}
+		return o.q.OrderItem.UpdatedAt.Lt(time.Now())
+	}
 }
 
 func ConditionUpdatedAtLte(v ...time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            if len(v) > 0 && !v[0].IsZero() {
-                return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Lte(v[0])
-            }
-            return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Lte(time.Now())
-        }
-        if len(v) > 0 && !v[0].IsZero() {
-            return o.q.OrderItem.UpdatedAt.Lte(v[0])
-        }
-        return o.q.OrderItem.UpdatedAt.Lte(time.Now())
-    }
+		if o.newTableName != nil {
+			if len(v) > 0 && !v[0].IsZero() {
+				return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Lte(v[0])
+			}
+			return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Lte(time.Now())
+		}
+		if len(v) > 0 && !v[0].IsZero() {
+			return o.q.OrderItem.UpdatedAt.Lte(v[0])
+		}
+		return o.q.OrderItem.UpdatedAt.Lte(time.Now())
+	}
 }
 
 func ConditionUpdatedAtBetween(left, right time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Between(left, right)
-        }
-        return o.q.OrderItem.UpdatedAt.Between(left, right)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Between(left, right)
+		}
+		return o.q.OrderItem.UpdatedAt.Between(left, right)
+	}
 }
 
 func ConditionUpdatedAtNotBetween(left, right time.Time) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.NotBetween(left, right)
-        }
-        return o.q.OrderItem.UpdatedAt.NotBetween(left, right)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.NotBetween(left, right)
+		}
+		return o.q.OrderItem.UpdatedAt.NotBetween(left, right)
+	}
 }
 
 func ConditionDeletedAtIsNull() ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).DeletedAt.IsNull()
-        }
-        return o.q.OrderItem.DeletedAt.IsNull()
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).DeletedAt.IsNull()
+		}
+		return o.q.OrderItem.DeletedAt.IsNull()
+	}
 }
 
 func ConditionDeletedAtIsNotNull() ConditionOption {
 	return func(o *OrderItem) gen.Condition {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).DeletedAt.IsNotNull()
-        }
-        return o.q.OrderItem.DeletedAt.IsNotNull()
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).DeletedAt.IsNotNull()
+		}
+		return o.q.OrderItem.DeletedAt.IsNotNull()
+	}
 }
 
 // UpdateOption 数据更新选项
@@ -797,168 +797,168 @@ type UpdateOption func(*OrderItem) field.AssignExpr
 
 // Update 自定义数据更新
 func Update(update field.AssignExpr) UpdateOption {
-    return func(*OrderItem) field.AssignExpr {
-        return update
-    }
+	return func(*OrderItem) field.AssignExpr {
+		return update
+	}
 }
 
 func UpdateSharding(v int) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.Value(v)
-        }
-        return o.q.OrderItem.Sharding.Value(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).Sharding.Value(v)
+		}
+		return o.q.OrderItem.Sharding.Value(v)
+	}
 }
 
 // UpdateShardingAdd +=
 func UpdateShardingAdd(v ...int) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        _v := int(1)
-        if len(v) > 0 {
-            _v = v[0]
-        }
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.Add(_v)
-        }
-        return o.q.OrderItem.Sharding.Add(_v)
-    }
+		_v := int(1)
+		if len(v) > 0 {
+			_v = v[0]
+		}
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).Sharding.Add(_v)
+		}
+		return o.q.OrderItem.Sharding.Add(_v)
+	}
 }
 
 // UpdateShardingSub -=
 func UpdateShardingSub(v ...int) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        _v := int(1)
-        if len(v) > 0 {
-            _v = v[0]
-        }
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.Sub(_v)
-        }
-        return o.q.OrderItem.Sharding.Sub(_v)
-    }
+		_v := int(1)
+		if len(v) > 0 {
+			_v = v[0]
+		}
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).Sharding.Sub(_v)
+		}
+		return o.q.OrderItem.Sharding.Sub(_v)
+	}
 }
 
 // UpdateShardingMul *=
 func UpdateShardingMul(v int) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.Mul(v)
-        }
-        return o.q.OrderItem.Sharding.Mul(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).Sharding.Mul(v)
+		}
+		return o.q.OrderItem.Sharding.Mul(v)
+	}
 }
 
 // UpdateShardingDiv /=
 func UpdateShardingDiv(v int) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Sharding.Div(v)
-        }
-        return o.q.OrderItem.Sharding.Div(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).Sharding.Div(v)
+		}
+		return o.q.OrderItem.Sharding.Div(v)
+	}
 }
 
 func UpdateUID(v int) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).UID.Value(v)
-        }
-        return o.q.OrderItem.UID.Value(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).UID.Value(v)
+		}
+		return o.q.OrderItem.UID.Value(v)
+	}
 }
 
 // UpdateUIDAdd +=
 func UpdateUIDAdd(v ...int) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        _v := int(1)
-        if len(v) > 0 {
-            _v = v[0]
-        }
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).UID.Add(_v)
-        }
-        return o.q.OrderItem.UID.Add(_v)
-    }
+		_v := int(1)
+		if len(v) > 0 {
+			_v = v[0]
+		}
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).UID.Add(_v)
+		}
+		return o.q.OrderItem.UID.Add(_v)
+	}
 }
 
 // UpdateUIDSub -=
 func UpdateUIDSub(v ...int) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        _v := int(1)
-        if len(v) > 0 {
-            _v = v[0]
-        }
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).UID.Sub(_v)
-        }
-        return o.q.OrderItem.UID.Sub(_v)
-    }
+		_v := int(1)
+		if len(v) > 0 {
+			_v = v[0]
+		}
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).UID.Sub(_v)
+		}
+		return o.q.OrderItem.UID.Sub(_v)
+	}
 }
 
 // UpdateUIDMul *=
 func UpdateUIDMul(v int) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).UID.Mul(v)
-        }
-        return o.q.OrderItem.UID.Mul(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).UID.Mul(v)
+		}
+		return o.q.OrderItem.UID.Mul(v)
+	}
 }
 
 // UpdateUIDDiv /=
 func UpdateUIDDiv(v int) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).UID.Div(v)
-        }
-        return o.q.OrderItem.UID.Div(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).UID.Div(v)
+		}
+		return o.q.OrderItem.UID.Div(v)
+	}
 }
 
 func UpdateOrderNo(v string) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).OrderNo.Value(v)
-        }
-        return o.q.OrderItem.OrderNo.Value(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).OrderNo.Value(v)
+		}
+		return o.q.OrderItem.OrderNo.Value(v)
+	}
 }
 
 func UpdateComment(v string) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).Comment.Value(v)
-        }
-        return o.q.OrderItem.Comment.Value(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).Comment.Value(v)
+		}
+		return o.q.OrderItem.Comment.Value(v)
+	}
 }
 
 func UpdateExpressNumber(v string) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Value(v)
-        }
-        return o.q.OrderItem.ExpressNumber.Value(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Value(v)
+		}
+		return o.q.OrderItem.ExpressNumber.Value(v)
+	}
 }
 
 func UpdateCreatedAt(v time.Time) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Value(v)
-        }
-        return o.q.OrderItem.CreatedAt.Value(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).CreatedAt.Value(v)
+		}
+		return o.q.OrderItem.CreatedAt.Value(v)
+	}
 }
 
 func UpdateUpdatedAt(v time.Time) UpdateOption {
 	return func(o *OrderItem) field.AssignExpr {
-        if o.newTableName != nil {
-            return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Value(v)
-        }
-        return o.q.OrderItem.UpdatedAt.Value(v)
-    }
+		if o.newTableName != nil {
+			return o.q.OrderItem.Table(*o.newTableName).UpdatedAt.Value(v)
+		}
+		return o.q.OrderItem.UpdatedAt.Value(v)
+	}
 }
 
 // OrderOption 数据排序选项
@@ -966,9 +966,9 @@ type OrderOption func(*OrderItem) field.Expr
 
 // Order 自定义数据排序
 func OrderBy(order field.Expr) OrderOption {
-    return func(*OrderItem) field.Expr {
-        return order
-    }
+	return func(*OrderItem) field.Expr {
+		return order
+	}
 }
 
 func OrderIDAsc() OrderOption {
