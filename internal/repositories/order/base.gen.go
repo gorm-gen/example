@@ -1076,56 +1076,56 @@ func OrderBy(order field.Expr) OrderOption {
 
 func OrderIDAsc() OrderOption {
 	return func(o *Order) field.Expr {
-        if o.newTableName != nil {
-            return o.q.Order.Table(*o.newTableName).ID.Asc()
-        }
-        return o.q.Order.ID.Asc()
-    }
+		if o.newTableName != nil {
+			return o.q.Order.Table(*o.newTableName).ID.Asc()
+		}
+		return o.q.Order.ID.Asc()
+	}
 }
 
 func OrderIDDesc() OrderOption {
 	return func(o *Order) field.Expr {
-        if o.newTableName != nil {
-            return o.q.Order.Table(*o.newTableName).ID.Desc()
-        }
-        return o.q.Order.ID.Desc()
-    }
+		if o.newTableName != nil {
+			return o.q.Order.Table(*o.newTableName).ID.Desc()
+		}
+		return o.q.Order.ID.Desc()
+	}
 }
 
 func OrderCreatedAtAsc() OrderOption {
 	return func(o *Order) field.Expr {
-        if o.newTableName != nil {
-            return o.q.Order.Table(*o.newTableName).CreatedAt.Asc()
-        }
-        return o.q.Order.CreatedAt.Asc()
-    }
+		if o.newTableName != nil {
+			return o.q.Order.Table(*o.newTableName).CreatedAt.Asc()
+		}
+		return o.q.Order.CreatedAt.Asc()
+	}
 }
 
 func OrderCreatedAtDesc() OrderOption {
 	return func(o *Order) field.Expr {
-        if o.newTableName != nil {
-            return o.q.Order.Table(*o.newTableName).CreatedAt.Desc()
-        }
-        return o.q.Order.CreatedAt.Desc()
-    }
+		if o.newTableName != nil {
+			return o.q.Order.Table(*o.newTableName).CreatedAt.Desc()
+		}
+		return o.q.Order.CreatedAt.Desc()
+	}
 }
 
 func OrderUpdatedAtAsc() OrderOption {
 	return func(o *Order) field.Expr {
-        if o.newTableName != nil {
-            return o.q.Order.Table(*o.newTableName).UpdatedAt.Asc()
-        }
-        return o.q.Order.UpdatedAt.Asc()
-    }
+		if o.newTableName != nil {
+			return o.q.Order.Table(*o.newTableName).UpdatedAt.Asc()
+		}
+		return o.q.Order.UpdatedAt.Asc()
+	}
 }
 
 func OrderUpdatedAtDesc() OrderOption {
 	return func(o *Order) field.Expr {
-        if o.newTableName != nil {
-            return o.q.Order.Table(*o.newTableName).UpdatedAt.Desc()
-        }
-        return o.q.Order.UpdatedAt.Desc()
-    }
+		if o.newTableName != nil {
+			return o.q.Order.Table(*o.newTableName).UpdatedAt.Desc()
+		}
+		return o.q.Order.UpdatedAt.Desc()
+	}
 }
 
 // RelationOption 关联模型预加载选项
