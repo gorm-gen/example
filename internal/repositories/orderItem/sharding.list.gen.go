@@ -13,7 +13,7 @@ import (
 
 	page "github.com/gorm-gen/paginate/gen"
 	"github.com/gorm-gen/sharding/query/list"
-    "github.com/shopspring/decimal"
+	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
