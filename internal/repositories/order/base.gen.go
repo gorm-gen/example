@@ -5,6 +5,7 @@
 package order
 
 import (
+	"strings"
 	"time"
 
 	f "github.com/gorm-gen/plugin/field"
@@ -209,26 +210,43 @@ func ConditionIDNotBetween(left, right int64) ConditionOption {
 	}
 }
 
-func ConditionSharding(v string) ConditionOption {
+func ConditionSharding(v ...string) ConditionOption {
 	return func(o *Order) gen.Condition {
+		length := len(v)
 		if o.newTableName != nil {
-			return o.q.Order.Table(*o.newTableName).Sharding.Eq(v)
+			if length == 0 {
+				return o.q.Order.Table(*o.newTableName).Sharding.Eq("")
+			}
+			return o.q.Order.Table(*o.newTableName).Sharding.Eq(v[0])
 		}
-		return o.q.Order.Sharding.Eq(v)
+		if length == 0 {
+			return o.q.Order.Sharding.Eq("")
+		}
+		return o.q.Order.Sharding.Eq(v[0])
 	}
 }
 
-func ConditionShardingNeq(v string) ConditionOption {
+func ConditionShardingNeq(v ...string) ConditionOption {
 	return func(o *Order) gen.Condition {
+		length := len(v)
 		if o.newTableName != nil {
-			return o.q.Order.Table(*o.newTableName).Sharding.Neq(v)
+			if length == 0 {
+				return o.q.Order.Table(*o.newTableName).Sharding.Neq("")
+			}
+			return o.q.Order.Table(*o.newTableName).Sharding.Neq(v[0])
 		}
-		return o.q.Order.Sharding.Neq(v)
+		if length == 0 {
+			return o.q.Order.Sharding.Neq("")
+		}
+		return o.q.Order.Sharding.Neq(v[0])
 	}
 }
 
 func ConditionShardingLike(v string) ConditionOption {
 	return func(o *Order) gen.Condition {
+		if !strings.Contains(v, "%") {
+			v = "%" + v + "%"
+		}
 		if o.newTableName != nil {
 			return o.q.Order.Table(*o.newTableName).Sharding.Like(v)
 		}
@@ -238,6 +256,9 @@ func ConditionShardingLike(v string) ConditionOption {
 
 func ConditionShardingNotLike(v string) ConditionOption {
 	return func(o *Order) gen.Condition {
+		if !strings.Contains(v, "%") {
+			v = "%" + v + "%"
+		}
 		if o.newTableName != nil {
 			return o.q.Order.Table(*o.newTableName).Sharding.NotLike(v)
 		}
@@ -367,26 +388,43 @@ func ConditionUIDNotBetween(left, right int) ConditionOption {
 	}
 }
 
-func ConditionOrderNo(v string) ConditionOption {
+func ConditionOrderNo(v ...string) ConditionOption {
 	return func(o *Order) gen.Condition {
+		length := len(v)
 		if o.newTableName != nil {
-			return o.q.Order.Table(*o.newTableName).OrderNo.Eq(v)
+			if length == 0 {
+				return o.q.Order.Table(*o.newTableName).OrderNo.Eq("")
+			}
+			return o.q.Order.Table(*o.newTableName).OrderNo.Eq(v[0])
 		}
-		return o.q.Order.OrderNo.Eq(v)
+		if length == 0 {
+			return o.q.Order.OrderNo.Eq("")
+		}
+		return o.q.Order.OrderNo.Eq(v[0])
 	}
 }
 
-func ConditionOrderNoNeq(v string) ConditionOption {
+func ConditionOrderNoNeq(v ...string) ConditionOption {
 	return func(o *Order) gen.Condition {
+		length := len(v)
 		if o.newTableName != nil {
-			return o.q.Order.Table(*o.newTableName).OrderNo.Neq(v)
+			if length == 0 {
+				return o.q.Order.Table(*o.newTableName).OrderNo.Neq("")
+			}
+			return o.q.Order.Table(*o.newTableName).OrderNo.Neq(v[0])
 		}
-		return o.q.Order.OrderNo.Neq(v)
+		if length == 0 {
+			return o.q.Order.OrderNo.Neq("")
+		}
+		return o.q.Order.OrderNo.Neq(v[0])
 	}
 }
 
 func ConditionOrderNoLike(v string) ConditionOption {
 	return func(o *Order) gen.Condition {
+		if !strings.Contains(v, "%") {
+			v = "%" + v + "%"
+		}
 		if o.newTableName != nil {
 			return o.q.Order.Table(*o.newTableName).OrderNo.Like(v)
 		}
@@ -396,6 +434,9 @@ func ConditionOrderNoLike(v string) ConditionOption {
 
 func ConditionOrderNoNotLike(v string) ConditionOption {
 	return func(o *Order) gen.Condition {
+		if !strings.Contains(v, "%") {
+			v = "%" + v + "%"
+		}
 		if o.newTableName != nil {
 			return o.q.Order.Table(*o.newTableName).OrderNo.NotLike(v)
 		}

@@ -5,6 +5,7 @@
 package orderItem
 
 import (
+	"strings"
 	"time"
 
 	"go.uber.org/zap"
@@ -450,26 +451,43 @@ func ConditionUIDNotBetween(left, right int) ConditionOption {
 	}
 }
 
-func ConditionOrderNo(v string) ConditionOption {
+func ConditionOrderNo(v ...string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
+		length := len(v)
 		if o.newTableName != nil {
-			return o.q.OrderItem.Table(*o.newTableName).OrderNo.Eq(v)
+			if length == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).OrderNo.Eq("")
+			}
+			return o.q.OrderItem.Table(*o.newTableName).OrderNo.Eq(v[0])
 		}
-		return o.q.OrderItem.OrderNo.Eq(v)
+		if length == 0 {
+			return o.q.OrderItem.OrderNo.Eq("")
+		}
+		return o.q.OrderItem.OrderNo.Eq(v[0])
 	}
 }
 
-func ConditionOrderNoNeq(v string) ConditionOption {
+func ConditionOrderNoNeq(v ...string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
+		length := len(v)
 		if o.newTableName != nil {
-			return o.q.OrderItem.Table(*o.newTableName).OrderNo.Neq(v)
+			if length == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).OrderNo.Neq("")
+			}
+			return o.q.OrderItem.Table(*o.newTableName).OrderNo.Neq(v[0])
 		}
-		return o.q.OrderItem.OrderNo.Neq(v)
+		if length == 0 {
+			return o.q.OrderItem.OrderNo.Neq("")
+		}
+		return o.q.OrderItem.OrderNo.Neq(v[0])
 	}
 }
 
 func ConditionOrderNoLike(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
+		if !strings.Contains(v, "%") {
+			v = "%" + v + "%"
+		}
 		if o.newTableName != nil {
 			return o.q.OrderItem.Table(*o.newTableName).OrderNo.Like(v)
 		}
@@ -479,6 +497,9 @@ func ConditionOrderNoLike(v string) ConditionOption {
 
 func ConditionOrderNoNotLike(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
+		if !strings.Contains(v, "%") {
+			v = "%" + v + "%"
+		}
 		if o.newTableName != nil {
 			return o.q.OrderItem.Table(*o.newTableName).OrderNo.NotLike(v)
 		}
@@ -486,26 +507,43 @@ func ConditionOrderNoNotLike(v string) ConditionOption {
 	}
 }
 
-func ConditionComment(v string) ConditionOption {
+func ConditionComment(v ...string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
+		length := len(v)
 		if o.newTableName != nil {
-			return o.q.OrderItem.Table(*o.newTableName).Comment.Eq(v)
+			if length == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).Comment.Eq("")
+			}
+			return o.q.OrderItem.Table(*o.newTableName).Comment.Eq(v[0])
 		}
-		return o.q.OrderItem.Comment.Eq(v)
+		if length == 0 {
+			return o.q.OrderItem.Comment.Eq("")
+		}
+		return o.q.OrderItem.Comment.Eq(v[0])
 	}
 }
 
-func ConditionCommentNeq(v string) ConditionOption {
+func ConditionCommentNeq(v ...string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
+		length := len(v)
 		if o.newTableName != nil {
-			return o.q.OrderItem.Table(*o.newTableName).Comment.Neq(v)
+			if length == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).Comment.Neq("")
+			}
+			return o.q.OrderItem.Table(*o.newTableName).Comment.Neq(v[0])
 		}
-		return o.q.OrderItem.Comment.Neq(v)
+		if length == 0 {
+			return o.q.OrderItem.Comment.Neq("")
+		}
+		return o.q.OrderItem.Comment.Neq(v[0])
 	}
 }
 
 func ConditionCommentLike(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
+		if !strings.Contains(v, "%") {
+			v = "%" + v + "%"
+		}
 		if o.newTableName != nil {
 			return o.q.OrderItem.Table(*o.newTableName).Comment.Like(v)
 		}
@@ -515,6 +553,9 @@ func ConditionCommentLike(v string) ConditionOption {
 
 func ConditionCommentNotLike(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
+		if !strings.Contains(v, "%") {
+			v = "%" + v + "%"
+		}
 		if o.newTableName != nil {
 			return o.q.OrderItem.Table(*o.newTableName).Comment.NotLike(v)
 		}
@@ -522,26 +563,43 @@ func ConditionCommentNotLike(v string) ConditionOption {
 	}
 }
 
-func ConditionExpressNumber(v string) ConditionOption {
+func ConditionExpressNumber(v ...string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
+		length := len(v)
 		if o.newTableName != nil {
-			return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Eq(v)
+			if length == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Eq("")
+			}
+			return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Eq(v[0])
 		}
-		return o.q.OrderItem.ExpressNumber.Eq(v)
+		if length == 0 {
+			return o.q.OrderItem.ExpressNumber.Eq("")
+		}
+		return o.q.OrderItem.ExpressNumber.Eq(v[0])
 	}
 }
 
-func ConditionExpressNumberNeq(v string) ConditionOption {
+func ConditionExpressNumberNeq(v ...string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
+		length := len(v)
 		if o.newTableName != nil {
-			return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Neq(v)
+			if length == 0 {
+				return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Neq("")
+			}
+			return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Neq(v[0])
 		}
-		return o.q.OrderItem.ExpressNumber.Neq(v)
+		if length == 0 {
+			return o.q.OrderItem.ExpressNumber.Neq("")
+		}
+		return o.q.OrderItem.ExpressNumber.Neq(v[0])
 	}
 }
 
 func ConditionExpressNumberLike(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
+		if !strings.Contains(v, "%") {
+			v = "%" + v + "%"
+		}
 		if o.newTableName != nil {
 			return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Like(v)
 		}
@@ -551,6 +609,9 @@ func ConditionExpressNumberLike(v string) ConditionOption {
 
 func ConditionExpressNumberNotLike(v string) ConditionOption {
 	return func(o *OrderItem) gen.Condition {
+		if !strings.Contains(v, "%") {
+			v = "%" + v + "%"
+		}
 		if o.newTableName != nil {
 			return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.NotLike(v)
 		}
