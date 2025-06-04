@@ -5,14 +5,14 @@ go 1.24.3
 require (
 	github.com/go-dev-pkg/sn v0.0.2
 	github.com/gorm-gen/paginate v0.0.1
-	github.com/gorm-gen/plugin v0.2.6
+	github.com/gorm-gen/plugin v0.2.7
 	github.com/gorm-gen/repository v0.1.3
 	github.com/gorm-gen/sharding v0.0.1
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/shopspring/decimal v1.4.0
 	github.com/spf13/viper v1.20.1
 	go.uber.org/zap v1.27.0
-	gorm.io/driver/mysql v1.5.7
+	gorm.io/driver/mysql v1.6.0
 	gorm.io/gen v0.3.27
 	gorm.io/gorm v1.30.0
 	gorm.io/plugin/dbresolver v1.6.0
@@ -34,7 +34,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.14.0 // indirect
-	github.com/spf13/cast v1.8.0 // indirect
+	github.com/spf13/cast v1.9.2 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
