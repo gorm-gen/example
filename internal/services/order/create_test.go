@@ -11,3 +11,10 @@ func TestCreate(t *testing.T) {
 		return
 	}
 }
+
+func TestShardingCreate(t *testing.T) {
+	if err := orderSvc.ShardingCreate(context.Background()); err != nil {
+		t.Fatal(err)
+		return
+	}
+}
