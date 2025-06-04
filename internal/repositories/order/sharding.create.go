@@ -9,8 +9,6 @@ import (
 
 	"example/internal/query"
 
-	"example/internal/repositories"
-
 	"example/internal/models"
 )
 
@@ -68,33 +66,7 @@ func (c *_shardingCreate) BatchSize(batchSize uint) *_shardingCreate {
 
 // Do 执行添加数据
 func (c *_shardingCreate) do(ctx context.Context, tx *query.Query, qTx *query.QueryTx, values ...*models.Order) (err error) {
-	length := len(values)
-	if length == 0 {
-		return nil
-	}
-	cq := c.core.q.Order
-	if tx != nil {
-		cq = tx.Order
-	}
-	if qTx != nil {
-		cq = qTx.Order
-	}
-	cr := cq.WithContext(ctx)
-	if c.unscoped {
-		cr = cr.Unscoped()
-	}
-	if length > 1 && c.batchSize > 0 {
-		err = cr.CreateInBatches(values, c.batchSize)
-	} else {
-		err = cr.Create(values...)
-	}
-	if err != nil {
-		if repositories.IsRealErr(err) {
-			c.core.logger.Error("【Order.Create】失败", zap.Error(err))
-		}
-		return err
-	}
-	return nil
+	return c.core.Create().Tx(tx).QueryTx(qTx).Values(values...).Do(ctx)
 }
 
 // Do 执行添加数据
@@ -103,19 +75,20 @@ func (c *_shardingCreate) Do(ctx context.Context) (err error) {
 	if length == 0 {
 		return nil
 	}
+	batchSize := uint(c.batchSize)
 	if length == 1 {
-		return c.do(ctx, c.tx, c.qTx, c.values...)
+		return c.core.Create().Tx(c.tx).QueryTx(c.qTx).BatchSize(batchSize).Values(c.values...).Do(ctx)
 	}
 	m := make(map[string][]*models.Order, length)
 	for _, value := range c.values {
 		m[value.Sharding] = append(m[value.Sharding], value)
 	}
 	if len(m) == 1 {
-		return c.do(ctx, c.tx, c.qTx, c.values...)
+		return c.core.Create().Tx(c.tx).QueryTx(c.qTx).BatchSize(batchSize).Values(c.values...).Do(ctx)
 	}
 	if c.tx != nil || c.qTx != nil {
 		for _, values := range m {
-			if err = c.do(ctx, c.tx, c.qTx, values...); err != nil {
+			if err = c.core.Create().Tx(c.tx).QueryTx(c.qTx).BatchSize(batchSize).Values(values...).Do(ctx); err != nil {
 				return
 			}
 		}
@@ -130,7 +103,7 @@ func (c *_shardingCreate) Do(ctx context.Context) (err error) {
 			}
 		}()
 		for _, values := range m {
-			if err = c.do(ctx, tx, nil, values...); err != nil {
+			if err = c.core.Create().Tx(tx).BatchSize(batchSize).Values(values...).Do(ctx); err != nil {
 				return
 			}
 		}
