@@ -124,7 +124,7 @@ func (d *_shardingDelete) Do(ctx context.Context) (int64, map[string]int64, erro
 			res, err := dr.Where(_conditions...).Delete()
 			if err != nil {
 				if repositories.IsRealErr(err) {
-					d.core.logger.Error(fmt.Sprintf("【Order.ShardingDelete.%s】失败", sharding), zap.Error(err))
+					d.core.logger.Error(fmt.Sprintf("【Order.ShardingDelete.%s】失败", sharding), zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 				}
 				errChan <- err
 				return

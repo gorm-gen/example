@@ -202,7 +202,7 @@ func (t *_shardingTake) Do(ctx context.Context) (*models.OrderItem, error) {
 			res, err := fr.Take()
 			if err != nil {
 				if repositories.IsRealErr(err) {
-					t.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingTake.%d】失败", sharding), zap.Error(err))
+					t.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingTake.%d】失败", sharding), zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 				}
 				if !errors.Is(err, gorm.ErrRecordNotFound) {
 					errChan <- err

@@ -184,7 +184,7 @@ func (l *_shardingLast) Do(ctx context.Context) (*models.Order, error) {
 			res, err := fr.Where(_conditions...).Last()
 			if err != nil {
 				if repositories.IsRealErr(err) {
-					l.core.logger.Error(fmt.Sprintf("【Order.ShardingLast.%s】失败", sharding), zap.Error(err))
+					l.core.logger.Error(fmt.Sprintf("【Order.ShardingLast.%s】失败", sharding), zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 				}
 				if !errors.Is(err, gorm.ErrRecordNotFound) {
 					errChan <- err

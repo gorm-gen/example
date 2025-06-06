@@ -6,6 +6,7 @@ package identityCard
 
 import (
 	"context"
+	"runtime/debug"
 
 	"go.uber.org/zap"
 	"gorm.io/gen"
@@ -160,7 +161,7 @@ func (l *_last) Do(ctx context.Context) (*models.IdentityCard, error) {
 	res, err := lr.Last()
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			l.core.logger.Error("【IdentityCard.Last】失败", zap.Error(err))
+			l.core.logger.Error("【IdentityCard.Last】失败", zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 		}
 		return nil, err
 	}

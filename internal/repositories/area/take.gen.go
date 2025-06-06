@@ -6,6 +6,7 @@ package area
 
 import (
 	"context"
+	"runtime/debug"
 
 	"go.uber.org/zap"
 	"gorm.io/gen"
@@ -176,7 +177,7 @@ func (t *_take) Do(ctx context.Context) (*models.Area, error) {
 	res, err := tr.Take()
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			t.core.logger.Error("【Area.Take】失败", zap.Error(err))
+			t.core.logger.Error("【Area.Take】失败", zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 		}
 		return nil, err
 	}

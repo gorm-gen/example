@@ -6,6 +6,7 @@ package area
 
 import (
 	"context"
+	"runtime/debug"
 
 	page "github.com/gorm-gen/paginate/gen"
 	"go.uber.org/zap"
@@ -189,7 +190,7 @@ func (l *_list) Do(ctx context.Context) ([]*models.Area, error) {
 	list, err := lr.Find()
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			l.core.logger.Error("【Area.List】失败", zap.Error(err))
+			l.core.logger.Error("【Area.List】失败", zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 		}
 		return nil, err
 	}

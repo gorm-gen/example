@@ -295,7 +295,7 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.Order, int64, error) 
 					var res []*models.Order
 					if res, err = lr.Scopes(page.Paginate(vv.Page, vv.PageSize)).Find(); err != nil {
 						if repositories.IsRealErr(err) {
-							l.core.logger.Error(fmt.Sprintf("【Order.ShardingList.%s】失败", v.ShardingValue), zap.Error(err))
+							l.core.logger.Error(fmt.Sprintf("【Order.ShardingList.%s】失败", v.ShardingValue), zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 						}
 						_errChan <- err
 						return

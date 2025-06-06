@@ -120,7 +120,7 @@ func (c *_shardingCount) Do(ctx context.Context) (int64, map[string]int64, error
 			count, err := cr.Where(_conditions...).Count()
 			if err != nil {
 				if repositories.IsRealErr(err) {
-					c.core.logger.Error(fmt.Sprintf("【Order.ShardingCount.%s】失败", sharding), zap.Error(err))
+					c.core.logger.Error(fmt.Sprintf("【Order.ShardingCount.%s】失败", sharding), zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 				}
 				errChan <- err
 				return

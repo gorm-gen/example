@@ -140,7 +140,7 @@ func (u *_shardingUpdate) Do(ctx context.Context) (int64, map[string]int64, erro
 			res, err := ur.Where(_conditions...).UpdateSimple(columns...)
 			if err != nil {
 				if repositories.IsRealErr(err) {
-					u.core.logger.Error(fmt.Sprintf("【Order.ShardingUpdate.%s】失败", sharding), zap.Error(err))
+					u.core.logger.Error(fmt.Sprintf("【Order.ShardingUpdate.%s】失败", sharding), zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 				}
 				errChan <- err
 				return

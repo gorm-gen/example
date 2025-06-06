@@ -184,7 +184,7 @@ func (f *_shardingFirst) Do(ctx context.Context) (*models.Order, error) {
 			res, err := fr.Where(_conditions...).First()
 			if err != nil {
 				if repositories.IsRealErr(err) {
-					f.core.logger.Error(fmt.Sprintf("【Order.ShardingFirst.%s】失败", sharding), zap.Error(err))
+					f.core.logger.Error(fmt.Sprintf("【Order.ShardingFirst.%s】失败", sharding), zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 				}
 				if !errors.Is(err, gorm.ErrRecordNotFound) {
 					errChan <- err

@@ -6,6 +6,7 @@ package classify
 
 import (
 	"context"
+	"runtime/debug"
 
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
@@ -98,7 +99,7 @@ func (s *_sum) Do(ctx context.Context) (decimal.Decimal, error) {
 	var data Sum
 	if err := sr.Scan(&data); err != nil {
 		if repositories.IsRealErr(err) {
-			s.core.logger.Error("【Classify.Sum】失败", zap.Error(err))
+			s.core.logger.Error("【Classify.Sum】失败", zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 		}
 		return decimal.Zero, err
 	}

@@ -6,6 +6,7 @@ package userLanguage
 
 import (
 	"context"
+	"runtime/debug"
 
 	"go.uber.org/zap"
 	"gorm.io/gen"
@@ -107,7 +108,7 @@ func (u *_update) Do(ctx context.Context) (int64, error) {
 	res, err := ur.UpdateSimple(columns...)
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			u.core.logger.Error("【UserLanguage.Update】失败", zap.Error(err))
+			u.core.logger.Error("【UserLanguage.Update】失败", zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 		}
 		return 0, err
 	}

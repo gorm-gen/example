@@ -6,6 +6,7 @@ package creditCard
 
 import (
 	"context"
+	"runtime/debug"
 
 	"go.uber.org/zap"
 	"gorm.io/gen"
@@ -176,7 +177,7 @@ func (t *_take) Do(ctx context.Context) (*models.CreditCard, error) {
 	res, err := tr.Take()
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			t.core.logger.Error("【CreditCard.Take】失败", zap.Error(err))
+			t.core.logger.Error("【CreditCard.Take】失败", zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 		}
 		return nil, err
 	}

@@ -6,6 +6,7 @@ package user
 
 import (
 	"context"
+	"runtime/debug"
 
 	"go.uber.org/zap"
 
@@ -95,7 +96,7 @@ func (c *_create) Do(ctx context.Context) (err error) {
 	}
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			c.core.logger.Error("【User.Create】失败", zap.Error(err))
+			c.core.logger.Error("【User.Create】失败", zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 		}
 		return err
 	}

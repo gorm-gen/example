@@ -6,6 +6,7 @@ package order
 
 import (
 	"context"
+	"runtime/debug"
 
 	"go.uber.org/zap"
 	"gorm.io/gen"
@@ -160,7 +161,7 @@ func (f *_first) Do(ctx context.Context) (*models.Order, error) {
 	res, err := fr.First()
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			f.core.logger.Error("【Order.First】失败", zap.Error(err))
+			f.core.logger.Error("【Order.First】失败", zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 		}
 		return nil, err
 	}

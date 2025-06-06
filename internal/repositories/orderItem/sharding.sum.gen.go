@@ -129,7 +129,7 @@ func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[int]decimal
 			var data Sum
 			if err := sr.Where(_conditions...).Scan(&data); err != nil {
 				if repositories.IsRealErr(err) {
-					s.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingSum.%d】失败", sharding), zap.Error(err))
+					s.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingSum.%d】失败", sharding), zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 				}
 				errChan <- err
 				return

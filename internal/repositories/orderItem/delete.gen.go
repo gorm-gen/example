@@ -6,6 +6,7 @@ package orderItem
 
 import (
 	"context"
+	"runtime/debug"
 
 	"go.uber.org/zap"
 	"gorm.io/gen"
@@ -88,7 +89,7 @@ func (d *_delete) Do(ctx context.Context) (int64, error) {
 	res, err := dr.Delete()
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			d.core.logger.Error("【OrderItem.Delete】失败", zap.Error(err))
+			d.core.logger.Error("【OrderItem.Delete】失败", zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 		}
 		return 0, err
 	}

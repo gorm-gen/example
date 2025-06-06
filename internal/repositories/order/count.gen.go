@@ -6,6 +6,7 @@ package order
 
 import (
 	"context"
+	"runtime/debug"
 
 	"go.uber.org/zap"
 	"gorm.io/gen"
@@ -88,7 +89,7 @@ func (c *_count) Do(ctx context.Context) (int64, error) {
 	count, err := cr.Count()
 	if err != nil {
 		if repositories.IsRealErr(err) {
-			c.core.logger.Error("【Order.Count】失败", zap.Error(err))
+			c.core.logger.Error("【Order.Count】失败", zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
 		}
 		return 0, err
 	}
