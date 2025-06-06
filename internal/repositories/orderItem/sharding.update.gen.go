@@ -86,7 +86,9 @@ func (u *_shardingUpdate) Where(opts ...ConditionOption) *_shardingUpdate {
 
 // Do 执行更新分表数据
 func (u *_shardingUpdate) Do(ctx context.Context) (int64, map[int]int64, error) {
-	if len(u.updateOpts) == 0 || len(u.sharding) == 0 {
+	_lenSharding := len(u.sharding)
+	_lenUpdate := len(u.updateOpts)
+	if _lenUpdate == 0 || _lenSharding == 0 {
 		return 0, nil, nil
 	}
 	uq := u.core.q.OrderItem
@@ -97,13 +99,13 @@ func (u *_shardingUpdate) Do(ctx context.Context) (int64, map[int]int64, error) 
 		uq = u.qTx.OrderItem
 	}
 	var conditions []gen.Condition
-	if len(u.conditionOpts) > 0 {
-		conditions = make([]gen.Condition, 0, len(u.conditionOpts))
+	if _len := len(u.conditionOpts); _len > 0 {
+		conditions = make([]gen.Condition, 0, _len)
 		for _, opt := range u.conditionOpts {
 			conditions = append(conditions, opt(u.core))
 		}
 	}
-	columns := make([]field.AssignExpr, 0, len(u.updateOpts))
+	columns := make([]field.AssignExpr, 0, _lenUpdate)
 	for _, opt := range u.updateOpts {
 		columns = append(columns, opt(u.core))
 	}
@@ -154,7 +156,7 @@ func (u *_shardingUpdate) Do(ctx context.Context) (int64, map[int]int64, error) 
 	select {
 	case <-endChan:
 		rowsAffected := int64(0)
-		m := make(map[int]int64, len(u.sharding))
+		m := make(map[int]int64, _lenSharding)
 		sm.Range(func(key, value interface{}) bool {
 			v := value.(int64)
 			m[key.(int)] = v

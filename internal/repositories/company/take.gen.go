@@ -129,11 +129,11 @@ func (t *_take) Do(ctx context.Context) (*models.Company, error) {
 	if t.core.newTableName != nil && *t.core.newTableName != "" {
 		tr = tq.Table(*t.core.newTableName).WithContext(ctx)
 	}
-	if len(t.selects) > 0 {
+	if _len := len(t.selects); _len > 0 {
 		if t.core.newTableName == nil {
 			tr = tr.Select(t.selects...)
 		} else {
-			fs := make([]field.Expr, 0, len(t.selects))
+			fs := make([]field.Expr, 0, _len)
 			for _, v := range t.selects {
 				fs = append(fs, field.NewField(*t.core.newTableName, v.ColumnName().String()))
 			}
@@ -146,8 +146,8 @@ func (t *_take) Do(ctx context.Context) (*models.Company, error) {
 	if (t.tx != nil || t.qTx != nil) && t.lock != nil {
 		tr = tr.Clauses(t.lock)
 	}
-	if len(t.conditionOpts) > 0 {
-		conditions := make([]gen.Condition, 0, len(t.conditionOpts))
+	if _len := len(t.conditionOpts); _len > 0 {
+		conditions := make([]gen.Condition, 0, _len)
 		for _, opt := range t.conditionOpts {
 			conditions = append(conditions, opt(t.core))
 		}
@@ -155,8 +155,8 @@ func (t *_take) Do(ctx context.Context) (*models.Company, error) {
 			tr = tr.Where(conditions...)
 		}
 	}
-	if len(t.orderOpts) > 0 {
-		orders := make([]field.Expr, 0, len(t.orderOpts))
+	if _len := len(t.orderOpts); _len > 0 {
+		orders := make([]field.Expr, 0, _len)
 		for _, opt := range t.orderOpts {
 			orders = append(orders, opt(t.core))
 		}
@@ -164,8 +164,8 @@ func (t *_take) Do(ctx context.Context) (*models.Company, error) {
 			tr = tr.Order(orders...)
 		}
 	}
-	if len(t.relationOpts) > 0 {
-		relations := make([]field.RelationField, 0, len(t.relationOpts))
+	if _len := len(t.relationOpts); _len > 0 {
+		relations := make([]field.RelationField, 0, _len)
 		for _, opt := range t.relationOpts {
 			relations = append(relations, opt(t.core))
 		}

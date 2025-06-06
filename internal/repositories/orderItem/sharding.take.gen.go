@@ -140,15 +140,15 @@ func (t *_shardingTake) Do(ctx context.Context) (*models.OrderItem, error) {
 		fq = t.qTx.OrderItem
 	}
 	var conditions []gen.Condition
-	if len(t.conditionOpts) > 0 {
-		conditions = make([]gen.Condition, 0, len(t.conditionOpts))
+	if _len := len(t.conditionOpts); _len > 0 {
+		conditions = make([]gen.Condition, 0, _len)
 		for _, opt := range t.conditionOpts {
 			conditions = append(conditions, opt(t.core))
 		}
 	}
 	var fieldExpr []field.Expr
-	if len(t.selects) > 0 {
-		fieldExpr = make([]field.Expr, 0, len(t.selects))
+	if _len := len(t.selects); _len > 0 {
+		fieldExpr = make([]field.Expr, 0, _len)
 		if t.core.newTableName == nil {
 			fieldExpr = append(fieldExpr, t.selects...)
 		} else {
@@ -158,8 +158,8 @@ func (t *_shardingTake) Do(ctx context.Context) (*models.OrderItem, error) {
 		}
 	}
 	var orders []field.Expr
-	if len(t.orderOpts) > 0 {
-		orders = make([]field.Expr, 0, len(t.orderOpts))
+	if _len := len(t.orderOpts); _len > 0 {
+		orders = make([]field.Expr, 0, _len)
 		for _, opt := range t.orderOpts {
 			orders = append(orders, opt(t.core))
 		}

@@ -133,15 +133,15 @@ func (f *_shardingFirst) Do(ctx context.Context) (*models.OrderItem, error) {
 		fq = f.qTx.OrderItem
 	}
 	var conditions []gen.Condition
-	if len(f.conditionOpts) > 0 {
-		conditions = make([]gen.Condition, 0, len(f.conditionOpts))
+	if _len := len(f.conditionOpts); _len > 0 {
+		conditions = make([]gen.Condition, 0, _len)
 		for _, opt := range f.conditionOpts {
 			conditions = append(conditions, opt(f.core))
 		}
 	}
 	var fieldExpr []field.Expr
-	if len(f.selects) > 0 {
-		fieldExpr = make([]field.Expr, 0, len(f.selects))
+	if _len := len(f.selects); _len > 0 {
+		fieldExpr = make([]field.Expr, 0, _len)
 		if f.core.newTableName == nil {
 			fieldExpr = append(fieldExpr, f.selects...)
 		} else {

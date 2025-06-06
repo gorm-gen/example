@@ -76,8 +76,8 @@ func (d *_delete) Do(ctx context.Context) (int64, error) {
 	if d.unscoped {
 		dr = dr.Unscoped()
 	}
-	if len(d.conditionOpts) > 0 {
-		conditions := make([]gen.Condition, 0, len(d.conditionOpts))
+	if _len := len(d.conditionOpts); _len > 0 {
+		conditions := make([]gen.Condition, 0, _len)
 		for _, opt := range d.conditionOpts {
 			conditions = append(conditions, opt(d.core))
 		}

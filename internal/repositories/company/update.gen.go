@@ -70,7 +70,8 @@ func (u *_update) Where(opts ...ConditionOption) *_update {
 
 // Do 执行更新数据
 func (u *_update) Do(ctx context.Context) (int64, error) {
-	if len(u.updateOpts) == 0 {
+	_length := len(u.updateOpts)
+	if _length == 0 {
 		return 0, nil
 	}
 	uq := u.core.q.Company
@@ -87,8 +88,8 @@ func (u *_update) Do(ctx context.Context) (int64, error) {
 	if u.unscoped {
 		ur = ur.Unscoped()
 	}
-	if len(u.conditionOpts) > 0 {
-		conditions := make([]gen.Condition, 0, len(u.conditionOpts))
+	if _len := len(u.conditionOpts); _len > 0 {
+		conditions := make([]gen.Condition, 0, _len)
 		for _, opt := range u.conditionOpts {
 			conditions = append(conditions, opt(u.core))
 		}
@@ -96,7 +97,7 @@ func (u *_update) Do(ctx context.Context) (int64, error) {
 			ur = ur.Where(conditions...)
 		}
 	}
-	columns := make([]field.AssignExpr, 0, len(u.updateOpts))
+	columns := make([]field.AssignExpr, 0, _length)
 	for _, opt := range u.updateOpts {
 		columns = append(columns, opt(u.core))
 	}

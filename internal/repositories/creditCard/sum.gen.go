@@ -86,8 +86,8 @@ func (s *_sum) Do(ctx context.Context) (decimal.Decimal, error) {
 	if s.unscoped {
 		sr = sr.Unscoped()
 	}
-	if len(s.conditionOpts) > 0 {
-		conditions := make([]gen.Condition, 0, len(s.conditionOpts))
+	if _len := len(s.conditionOpts); _len > 0 {
+		conditions := make([]gen.Condition, 0, _len)
 		for _, opt := range s.conditionOpts {
 			conditions = append(conditions, opt(s.core))
 		}

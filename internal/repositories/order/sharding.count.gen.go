@@ -74,7 +74,8 @@ func (c *_shardingCount) Where(opts ...ConditionOption) *_shardingCount {
 
 // Do 执行获取分表数据总记录
 func (c *_shardingCount) Do(ctx context.Context) (int64, map[string]int64, error) {
-	if len(c.sharding) == 0 {
+	_lenSharding := len(c.sharding)
+	if _lenSharding == 0 {
 		return 0, nil, nil
 	}
 	cq := c.core.q.Order
@@ -85,8 +86,8 @@ func (c *_shardingCount) Do(ctx context.Context) (int64, map[string]int64, error
 		cq = c.qTx.Order
 	}
 	var conditions []gen.Condition
-	if len(c.conditionOpts) > 0 {
-		conditions = make([]gen.Condition, 0, len(c.conditionOpts))
+	if _len := len(c.conditionOpts); _len > 0 {
+		conditions = make([]gen.Condition, 0, _len)
 		for _, opt := range c.conditionOpts {
 			conditions = append(conditions, opt(c.core))
 		}
@@ -135,7 +136,7 @@ func (c *_shardingCount) Do(ctx context.Context) (int64, map[string]int64, error
 	select {
 	case <-endChan:
 		count := int64(0)
-		m := make(map[string]int64, len(c.sharding))
+		m := make(map[string]int64, _lenSharding)
 		sm.Range(func(key, value interface{}) bool {
 			v := value.(int64)
 			m[key.(string)] = v

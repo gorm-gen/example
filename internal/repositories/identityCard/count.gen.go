@@ -23,7 +23,7 @@ type _count struct {
 	conditionOpts []ConditionOption
 }
 
-// Count 获取数据总条数
+// Count 获取数据总记录
 func (i *IdentityCard) Count() *_count {
 	return &_count{
 		core:          i,
@@ -60,7 +60,7 @@ func (c *_count) Where(opts ...ConditionOption) *_count {
 	return c
 }
 
-// Do 执行获取数据总条数
+// Do 执行获取数据总记录
 func (c *_count) Do(ctx context.Context) (int64, error) {
 	cq := c.core.q.IdentityCard
 	if c.tx != nil {
@@ -76,8 +76,8 @@ func (c *_count) Do(ctx context.Context) (int64, error) {
 	if c.unscoped {
 		cr = cr.Unscoped()
 	}
-	if len(c.conditionOpts) > 0 {
-		conditions := make([]gen.Condition, 0, len(c.conditionOpts))
+	if _len := len(c.conditionOpts); _len > 0 {
+		conditions := make([]gen.Condition, 0, _len)
 		for _, opt := range c.conditionOpts {
 			conditions = append(conditions, opt(c.core))
 		}

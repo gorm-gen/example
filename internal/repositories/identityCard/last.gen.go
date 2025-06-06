@@ -122,11 +122,11 @@ func (l *_last) Do(ctx context.Context) (*models.IdentityCard, error) {
 	if l.core.newTableName != nil && *l.core.newTableName != "" {
 		lr = lq.Table(*l.core.newTableName).WithContext(ctx)
 	}
-	if len(l.selects) > 0 {
+	if _len := len(l.selects); _len > 0 {
 		if l.core.newTableName == nil {
 			lr = lr.Select(l.selects...)
 		} else {
-			fs := make([]field.Expr, 0, len(l.selects))
+			fs := make([]field.Expr, 0, _len)
 			for _, v := range l.selects {
 				fs = append(fs, field.NewField(*l.core.newTableName, v.ColumnName().String()))
 			}
@@ -139,8 +139,8 @@ func (l *_last) Do(ctx context.Context) (*models.IdentityCard, error) {
 	if (l.tx != nil || l.qTx != nil) && l.lock != nil {
 		lr = lr.Clauses(l.lock)
 	}
-	if len(l.conditionOpts) > 0 {
-		conditions := make([]gen.Condition, 0, len(l.conditionOpts))
+	if _len := len(l.conditionOpts); _len > 0 {
+		conditions := make([]gen.Condition, 0, _len)
 		for _, opt := range l.conditionOpts {
 			conditions = append(conditions, opt(l.core))
 		}
@@ -148,8 +148,8 @@ func (l *_last) Do(ctx context.Context) (*models.IdentityCard, error) {
 			lr = lr.Where(conditions...)
 		}
 	}
-	if len(l.relationOpts) > 0 {
-		relations := make([]field.RelationField, 0, len(l.relationOpts))
+	if _len := len(l.relationOpts); _len > 0 {
+		relations := make([]field.RelationField, 0, _len)
 		for _, opt := range l.relationOpts {
 			relations = append(relations, opt(l.core))
 		}

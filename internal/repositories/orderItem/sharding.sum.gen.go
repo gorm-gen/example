@@ -82,7 +82,8 @@ func (s *_shardingSum) Where(opts ...ConditionOption) *_shardingSum {
 
 // Do 执行分表SUM数据
 func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[int]decimal.Decimal, error) {
-	if len(s.sharding) == 0 {
+	_lenSharding := len(s.sharding)
+	if _lenSharding == 0 {
 		return decimal.Zero, nil, nil
 	}
 	sq := s.core.q.OrderItem
@@ -93,8 +94,8 @@ func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[int]decimal
 		sq = s.qTx.OrderItem
 	}
 	var conditions []gen.Condition
-	if len(s.conditionOpts) > 0 {
-		conditions = make([]gen.Condition, 0, len(s.conditionOpts))
+	if _len := len(s.conditionOpts); _len > 0 {
+		conditions = make([]gen.Condition, 0, _len)
 		for _, opt := range s.conditionOpts {
 			conditions = append(conditions, opt(s.core))
 		}
@@ -144,7 +145,7 @@ func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[int]decimal
 	select {
 	case <-endChan:
 		sum := decimal.Zero
-		m := make(map[int]decimal.Decimal, len(s.sharding))
+		m := make(map[int]decimal.Decimal, _lenSharding)
 		sm.Range(func(key, value interface{}) bool {
 			v := value.(decimal.Decimal)
 			m[key.(int)] = v

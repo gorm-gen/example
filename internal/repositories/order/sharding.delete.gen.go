@@ -78,7 +78,8 @@ func (d *_shardingDelete) Where(opts ...ConditionOption) *_shardingDelete {
 
 // Do 执行删除分表数据
 func (d *_shardingDelete) Do(ctx context.Context) (int64, map[string]int64, error) {
-	if len(d.sharding) == 0 {
+	_lenSharding := len(d.sharding)
+	if _lenSharding == 0 {
 		return 0, nil, nil
 	}
 	dq := d.core.q.Order
@@ -89,8 +90,8 @@ func (d *_shardingDelete) Do(ctx context.Context) (int64, map[string]int64, erro
 		dq = d.qTx.Order
 	}
 	var conditions []gen.Condition
-	if len(d.conditionOpts) > 0 {
-		conditions = make([]gen.Condition, 0, len(d.conditionOpts))
+	if _len := len(d.conditionOpts); _len > 0 {
+		conditions = make([]gen.Condition, 0, _len)
 		for _, opt := range d.conditionOpts {
 			conditions = append(conditions, opt(d.core))
 		}
@@ -139,7 +140,7 @@ func (d *_shardingDelete) Do(ctx context.Context) (int64, map[string]int64, erro
 	select {
 	case <-endChan:
 		rowsAffected := int64(0)
-		m := make(map[string]int64, len(d.sharding))
+		m := make(map[string]int64, _lenSharding)
 		sm.Range(func(key, value interface{}) bool {
 			v := value.(int64)
 			m[key.(string)] = v

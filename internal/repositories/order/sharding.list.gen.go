@@ -161,7 +161,8 @@ func (l *_shardingList) Page(page, pageSize uint) *_shardingList {
 // Do 执行获取分表数据列表
 func (l *_shardingList) Do(ctx context.Context) ([]*models.Order, int64, error) {
 	empty := make([]*models.Order, 0)
-	if len(l.sharding) == 0 {
+	_lenSharding := len(l.sharding)
+	if _lenSharding == 0 {
 		return empty, 0, nil
 	}
 	// 获取分表数据总记录
@@ -181,7 +182,7 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.Order, int64, error) 
 		return empty, 0, nil
 	}
 	// 获取分表分页数据
-	svs := make([]*list.St, 0, len(l.sharding))
+	svs := make([]*list.St, 0, _lenSharding)
 	for k, v := range m {
 		svs = append(svs, &list.St{
 			ShardingValue: k,
@@ -211,15 +212,15 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.Order, int64, error) 
 		lq = l.qTx.Order
 	}
 	var conditions []gen.Condition
-	if len(l.conditionOpts) > 0 {
-		conditions = make([]gen.Condition, 0, len(l.conditionOpts))
+	if _len := len(l.conditionOpts); _len > 0 {
+		conditions = make([]gen.Condition, 0, _len)
 		for _, opt := range l.conditionOpts {
 			conditions = append(conditions, opt(l.core))
 		}
 	}
 	var fieldExpr []field.Expr
-	if len(l.selects) > 0 {
-		fieldExpr = make([]field.Expr, 0, len(l.selects))
+	if _len := len(l.selects); _len > 0 {
+		fieldExpr = make([]field.Expr, 0, _len)
 		if l.core.newTableName == nil {
 			fieldExpr = append(fieldExpr, l.selects...)
 		} else {
@@ -229,8 +230,8 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.Order, int64, error) 
 		}
 	}
 	var orders []field.Expr
-	if len(l.orderOpts) > 0 {
-		orders = make([]field.Expr, 0, len(l.orderOpts))
+	if _len := len(l.orderOpts); _len > 0 {
+		orders = make([]field.Expr, 0, _len)
 		for _, opt := range l.orderOpts {
 			orders = append(orders, opt(l.core))
 		}

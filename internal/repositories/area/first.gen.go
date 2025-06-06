@@ -122,11 +122,11 @@ func (f *_first) Do(ctx context.Context) (*models.Area, error) {
 	if f.core.newTableName != nil && *f.core.newTableName != "" {
 		fr = fq.Table(*f.core.newTableName).WithContext(ctx)
 	}
-	if len(f.selects) > 0 {
+	if _len := len(f.selects); _len > 0 {
 		if f.core.newTableName == nil {
 			fr = fr.Select(f.selects...)
 		} else {
-			fs := make([]field.Expr, 0, len(f.selects))
+			fs := make([]field.Expr, 0, _len)
 			for _, v := range f.selects {
 				fs = append(fs, field.NewField(*f.core.newTableName, v.ColumnName().String()))
 			}
@@ -139,8 +139,8 @@ func (f *_first) Do(ctx context.Context) (*models.Area, error) {
 	if (f.tx != nil || f.qTx != nil) && f.lock != nil {
 		fr = fr.Clauses(f.lock)
 	}
-	if len(f.conditionOpts) > 0 {
-		conditions := make([]gen.Condition, 0, len(f.conditionOpts))
+	if _len := len(f.conditionOpts); _len > 0 {
+		conditions := make([]gen.Condition, 0, _len)
 		for _, opt := range f.conditionOpts {
 			conditions = append(conditions, opt(f.core))
 		}
@@ -148,8 +148,8 @@ func (f *_first) Do(ctx context.Context) (*models.Area, error) {
 			fr = fr.Where(conditions...)
 		}
 	}
-	if len(f.relationOpts) > 0 {
-		relations := make([]field.RelationField, 0, len(f.relationOpts))
+	if _len := len(f.relationOpts); _len > 0 {
+		relations := make([]field.RelationField, 0, _len)
 		for _, opt := range f.relationOpts {
 			relations = append(relations, opt(f.core))
 		}
