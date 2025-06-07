@@ -14,6 +14,7 @@ import (
 	"example/internal/initialize/logger"
 	"example/internal/initialize/mysql"
 	"example/internal/models"
+	"example/internal/query/methods"
 )
 
 var configPath string
@@ -154,6 +155,16 @@ func main() {
 		classifies,
 		areas,
 		userLanguage,
+	)
+
+	g.SetApplyInterface(
+		func(methods.Query) {},
+		user,
+		company,
+	)
+	g.SetApplyInterface(
+		func(methods.User) {},
+		user,
 	)
 
 	g.Execute()

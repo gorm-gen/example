@@ -7,6 +7,7 @@ package query
 import (
 	"context"
 	"database/sql"
+	"strings"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -167,6 +168,24 @@ type ICompanyDo interface {
 	Returning(value interface{}, columns ...string) ICompanyDo
 	UnderlyingDB() *gorm.DB
 	schema.Tabler
+
+	GetByID(id int) (result models.Company, err error)
+}
+
+// GetByID
+// SELECT * FROM @@table WHERE `id` = @id AND `deleted_at` = 0
+func (c companyDo) GetByID(id int) (result models.Company, err error) {
+	var params []interface{}
+
+	var generateSQL strings.Builder
+	params = append(params, id)
+	generateSQL.WriteString("SELECT * FROM company WHERE `id` = ? AND `deleted_at` = 0 ")
+
+	var executeSQL *gorm.DB
+	executeSQL = c.UnderlyingDB().Raw(generateSQL.String(), params...).Take(&result) // ignore_security_alert
+	err = executeSQL.Error
+
+	return
 }
 
 func (c companyDo) Debug() ICompanyDo {

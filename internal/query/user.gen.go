@@ -7,6 +7,7 @@ package query
 import (
 	"context"
 	"database/sql"
+	"strings"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -542,6 +543,42 @@ type IUserDo interface {
 	Returning(value interface{}, columns ...string) IUserDo
 	UnderlyingDB() *gorm.DB
 	schema.Tabler
+
+	GetByID(id int) (result models.User, err error)
+	GetCompanyName(id int) (result map[string]interface{}, err error)
+}
+
+// GetByID
+// SELECT * FROM @@table WHERE `id` = @id AND `deleted_at` = 0
+func (u userDo) GetByID(id int) (result models.User, err error) {
+	var params []interface{}
+
+	var generateSQL strings.Builder
+	params = append(params, id)
+	generateSQL.WriteString("SELECT * FROM user WHERE `id` = ? AND `deleted_at` = 0 ")
+
+	var executeSQL *gorm.DB
+	executeSQL = u.UnderlyingDB().Raw(generateSQL.String(), params...).Take(&result) // ignore_security_alert
+	err = executeSQL.Error
+
+	return
+}
+
+// GetCompanyName
+// SELECT `name` FROM `company` WHERE `id` = (SELECT `id` FROM @@table WHERE `id` = @id AND `deleted_at` = 0) AND `deleted_at` = 0
+func (u userDo) GetCompanyName(id int) (result map[string]interface{}, err error) {
+	var params []interface{}
+
+	var generateSQL strings.Builder
+	params = append(params, id)
+	generateSQL.WriteString("SELECT `name` FROM `company` WHERE `id` = (SELECT `id` FROM user WHERE `id` = ? AND `deleted_at` = 0) AND `deleted_at` = 0 ")
+
+	result = make(map[string]interface{})
+	var executeSQL *gorm.DB
+	executeSQL = u.UnderlyingDB().Raw(generateSQL.String(), params...).Take(result) // ignore_security_alert
+	err = executeSQL.Error
+
+	return
 }
 
 func (u userDo) Debug() IUserDo {
