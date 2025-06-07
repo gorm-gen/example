@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/gorm-gen/plugin/logger"
-	"github.com/gorm-gen/plugin/sharding"
+	"github.com/gorm-gen/sharding"
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"

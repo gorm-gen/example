@@ -5,7 +5,7 @@ go 1.24.3
 require (
 	github.com/go-dev-pkg/sn v0.0.2
 	github.com/gorm-gen/paginate v0.0.1
-	github.com/gorm-gen/plugin v0.2.7
+	github.com/gorm-gen/plugin v0.2.8
 	github.com/gorm-gen/repository v1.0.2
 	github.com/gorm-gen/sharding v0.0.1
 	github.com/natefinch/lumberjack v2.0.0+incompatible
@@ -39,11 +39,11 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/exp v0.0.0-20250531010427-b6e5de432a8b // indirect
-	golang.org/x/mod v0.24.0 // indirect
-	golang.org/x/sync v0.14.0 // indirect
+	golang.org/x/mod v0.25.0 // indirect
+	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/text v0.25.0 // indirect
-	golang.org/x/tools v0.33.0 // indirect
+	golang.org/x/text v0.26.0 // indirect
+	golang.org/x/tools v0.34.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/datatypes v1.2.5 // indirect
 	gorm.io/hints v1.1.2 // indirect
