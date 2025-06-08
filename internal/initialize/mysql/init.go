@@ -56,12 +56,15 @@ func newMySql(useSharding bool) {
 
 	if useSharding {
 		options := []sharding.Option{
-			sharding.WithTable("order"),
+			sharding.WithTable("order", "order_item"),
 			sharding.WithShardingAlgorithm(func(columnValue any) (suffix string, err error) {
 				switch columnValue.(type) {
 				case int, uint, int8, uint8, int16, uint16, int32, uint32, int64, uint64:
 					val := fmt.Sprintf("%d", columnValue)
 					d, _ := decimal.NewFromString(val)
+					if d.BigInt().Int64() >= 202501 {
+						return fmt.Sprintf("_%d", columnValue), nil
+					}
 					mod := d.Mod(decimal.NewFromInt(10)).BigInt().Int64()
 					return fmt.Sprintf("_%02d", mod), nil
 				case string:
