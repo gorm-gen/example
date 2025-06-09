@@ -143,15 +143,7 @@ func (s *_scan) Do(ctx context.Context) error {
 		sr = sq.Table(*s.core.newTableName).WithContext(ctx)
 	}
 	if _len := len(s.selects); _len > 0 {
-		if s.core.newTableName == nil {
-			sr = sr.Select(s.selects...)
-		} else {
-			fs := make([]field.Expr, 0, _len)
-			for _, v := range s.selects {
-				fs = append(fs, field.NewField(*s.core.newTableName, v.ColumnName().String()))
-			}
-			sr = sr.Select(fs...)
-		}
+		sr = sr.Select(s.selects...)
 	}
 	if s.writeDB {
 		sr = sr.WriteDB()
