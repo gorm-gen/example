@@ -9,6 +9,7 @@ import (
 	"runtime/debug"
 
 	"go.uber.org/zap"
+	"gorm.io/gen"
 
 	"example/internal/query"
 
@@ -24,6 +25,7 @@ type _create struct {
 	unscoped  bool
 	values    []*models.Order
 	batchSize int
+	scopes    []func(gen.Dao) gen.Dao
 }
 
 // Create 添加数据
@@ -32,6 +34,7 @@ func (o *Order) Create() *_create {
 		core:     o,
 		unscoped: o.unscoped,
 		values:   make([]*models.Order, 0),
+		scopes:   make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -55,6 +58,11 @@ func (c *_create) QueryTx(tx *query.QueryTx) *_create {
 
 func (c *_create) Unscoped() *_create {
 	c.unscoped = true
+	return c
+}
+
+func (c *_create) Scopes(funcs ...func(gen.Dao) gen.Dao) *_create {
+	c.scopes = append(c.scopes, funcs...)
 	return c
 }
 
@@ -88,6 +96,9 @@ func (c *_create) Do(ctx context.Context) (err error) {
 	}
 	if c.unscoped {
 		cr = cr.Unscoped()
+	}
+	if len(c.scopes) > 0 {
+		cr = cr.Scopes(c.scopes...)
 	}
 	if length > 1 && c.batchSize > 0 {
 		err = cr.CreateInBatches(c.values, c.batchSize)

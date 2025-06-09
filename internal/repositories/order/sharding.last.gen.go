@@ -36,6 +36,7 @@ type _shardingLast struct {
 	sharding      []string
 	worker        chan struct{}
 	writeDB       bool
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // ShardingLast 获取分表中随机最后一条记录（主键降序）
@@ -47,6 +48,7 @@ func (o *Order) ShardingLast(sharding []string) *_shardingLast {
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,
 		worker:        make(chan struct{}, runtime.NumCPU()),
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -113,6 +115,11 @@ func (l *_shardingLast) ForShareNoWait() *_shardingLast {
 
 func (l *_shardingLast) Unscoped() *_shardingLast {
 	l.unscoped = true
+	return l
+}
+
+func (l *_shardingLast) Scopes(funcs ...func(gen.Dao) gen.Dao) *_shardingLast {
+	l.scopes = append(l.scopes, funcs...)
 	return l
 }
 
@@ -186,6 +193,9 @@ func (l *_shardingLast) Do(ctx context.Context) (*models.Order, error) {
 			}
 			if l.unscoped {
 				lr = lr.Unscoped()
+			}
+			if len(l.scopes) > 0 {
+				lr = lr.Scopes(l.scopes...)
 			}
 			if (l.tx != nil || l.qTx != nil) && l.lock != nil {
 				lr = lr.Clauses(l.lock)

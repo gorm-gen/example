@@ -10,6 +10,7 @@ import (
 	"runtime/debug"
 
 	"go.uber.org/zap"
+	"gorm.io/gen"
 
 	"example/internal/query"
 
@@ -23,6 +24,7 @@ type _shardingCreate struct {
 	unscoped  bool
 	values    []*models.Order
 	batchSize int
+	scopes    []func(gen.Dao) gen.Dao
 }
 
 // ShardingCreate 分表添加数据
@@ -31,6 +33,7 @@ func (o *Order) ShardingCreate() *_shardingCreate {
 		core:     o,
 		unscoped: o.unscoped,
 		values:   make([]*models.Order, 0),
+		scopes:   make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -57,6 +60,11 @@ func (c *_shardingCreate) Unscoped() *_shardingCreate {
 	return c
 }
 
+func (c *_shardingCreate) Scopes(funcs ...func(gen.Dao) gen.Dao) *_shardingCreate {
+	c.scopes = append(c.scopes, funcs...)
+	return c
+}
+
 func (c *_shardingCreate) Values(values ...*models.Order) *_shardingCreate {
 	c.values = append(c.values, values...)
 	return c
@@ -76,18 +84,30 @@ func (c *_shardingCreate) Do(ctx context.Context) (err error) {
 	}
 	bs := uint(c.batchSize)
 	if length == 1 {
-		return c.core.Create().Tx(c.tx).QueryTx(c.qTx).BatchSize(bs).Values(c.values...).Do(ctx)
+		cr := c.core.Create().Tx(c.tx).QueryTx(c.qTx).BatchSize(bs).Values(c.values...).Scopes(c.scopes...)
+		if c.unscoped {
+			cr = cr.Unscoped()
+		}
+		return cr.Do(ctx)
 	}
 	m := make(map[string][]*models.Order, length)
 	for _, value := range c.values {
 		m[value.Sharding] = append(m[value.Sharding], value)
 	}
 	if len(m) == 1 {
-		return c.core.Create().Tx(c.tx).QueryTx(c.qTx).BatchSize(bs).Values(c.values...).Do(ctx)
+		cr := c.core.Create().Tx(c.tx).QueryTx(c.qTx).BatchSize(bs).Values(c.values...).Scopes(c.scopes...)
+		if c.unscoped {
+			cr = cr.Unscoped()
+		}
+		return cr.Do(ctx)
 	}
 	if c.tx != nil || c.qTx != nil {
 		for _, values := range m {
-			if err = c.core.Create().Tx(c.tx).QueryTx(c.qTx).BatchSize(bs).Values(values...).Do(ctx); err != nil {
+			cr := c.core.Create().Tx(c.tx).QueryTx(c.qTx).BatchSize(bs).Values(values...).Scopes(c.scopes...)
+			if c.unscoped {
+				cr = cr.Unscoped()
+			}
+			if err = cr.Do(ctx); err != nil {
 				return
 			}
 		}
@@ -102,7 +122,11 @@ func (c *_shardingCreate) Do(ctx context.Context) (err error) {
 			}
 		}()
 		for _, values := range m {
-			if err = c.core.Create().Tx(tx).BatchSize(bs).Values(values...).Do(ctx); err != nil {
+			cr := c.core.Create().Tx(tx).BatchSize(bs).Values(values...).Scopes(c.scopes...)
+			if c.unscoped {
+				cr = cr.Unscoped()
+			}
+			if err = cr.Do(ctx); err != nil {
 				return
 			}
 		}

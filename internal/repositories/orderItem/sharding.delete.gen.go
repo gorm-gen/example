@@ -27,6 +27,7 @@ type _shardingDelete struct {
 	conditionOpts []ConditionOption
 	sharding      []int
 	worker        chan struct{}
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // ShardingDelete 删除分表数据
@@ -37,6 +38,7 @@ func (o *OrderItem) ShardingDelete(sharding []int) *_shardingDelete {
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,
 		worker:        make(chan struct{}, runtime.NumCPU()),
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -68,6 +70,11 @@ func (d *_shardingDelete) QueryTx(tx *query.QueryTx) *_shardingDelete {
 
 func (d *_shardingDelete) Unscoped() *_shardingDelete {
 	d.unscoped = true
+	return d
+}
+
+func (d *_shardingDelete) Scopes(funcs ...func(gen.Dao) gen.Dao) *_shardingDelete {
+	d.scopes = append(d.scopes, funcs...)
 	return d
 }
 
@@ -120,6 +127,9 @@ func (d *_shardingDelete) Do(ctx context.Context) (int64, map[int]int64, error) 
 			dr := dq.WithContext(ctx)
 			if d.unscoped {
 				dr = dr.Unscoped()
+			}
+			if len(d.scopes) > 0 {
+				dr = dr.Scopes(d.scopes...)
 			}
 			res, err := dr.Where(_conditions...).Delete()
 			if err != nil {

@@ -24,6 +24,7 @@ type _update struct {
 	unscoped      bool
 	updateOpts    []UpdateOption
 	conditionOpts []ConditionOption
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // Update 更新数据
@@ -33,6 +34,7 @@ func (o *Order) Update() *_update {
 		unscoped:      o.unscoped,
 		updateOpts:    make([]UpdateOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -56,6 +58,11 @@ func (u *_update) QueryTx(tx *query.QueryTx) *_update {
 
 func (u *_update) Unscoped() *_update {
 	u.unscoped = true
+	return u
+}
+
+func (u *_update) Scopes(funcs ...func(gen.Dao) gen.Dao) *_update {
+	u.scopes = append(u.scopes, funcs...)
 	return u
 }
 
@@ -88,6 +95,9 @@ func (u *_update) Do(ctx context.Context) (int64, error) {
 	}
 	if u.unscoped {
 		ur = ur.Unscoped()
+	}
+	if len(u.scopes) > 0 {
+		ur = ur.Scopes(u.scopes...)
 	}
 	if _len := len(u.conditionOpts); _len > 0 {
 		conditions := make([]gen.Condition, 0, _len)

@@ -37,6 +37,7 @@ type _shardingTake struct {
 	sharding      []int
 	worker        chan struct{}
 	writeDB       bool
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // ShardingTake 获取分表中随机一条记录
@@ -49,6 +50,7 @@ func (o *OrderItem) ShardingTake(sharding []int) *_shardingTake {
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,
 		worker:        make(chan struct{}, runtime.NumCPU()),
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -118,6 +120,11 @@ func (t *_shardingTake) Unscoped() *_shardingTake {
 	return t
 }
 
+func (t *_shardingTake) Scopes(funcs ...func(gen.Dao) gen.Dao) *_shardingTake {
+	t.scopes = append(t.scopes, funcs...)
+	return t
+}
+
 func (t *_shardingTake) Order(opts ...OrderOption) *_shardingTake {
 	t.orderOpts = append(t.orderOpts, opts...)
 	return t
@@ -138,12 +145,12 @@ func (t *_shardingTake) Do(ctx context.Context) (*models.OrderItem, error) {
 	if len(t.sharding) == 0 {
 		return nil, gorm.ErrRecordNotFound
 	}
-	fq := t.core.q.OrderItem
+	tq := t.core.q.OrderItem
 	if t.tx != nil {
-		fq = t.tx.OrderItem
+		tq = t.tx.OrderItem
 	}
 	if t.qTx != nil {
-		fq = t.qTx.OrderItem
+		tq = t.qTx.OrderItem
 	}
 	var conditions []gen.Condition
 	if _len := len(t.conditionOpts); _len > 0 {
@@ -191,24 +198,27 @@ func (t *_shardingTake) Do(ctx context.Context) (*models.OrderItem, error) {
 			_conditions := make([]gen.Condition, len(conditions))
 			copy(_conditions, conditions)
 			_conditions = append(_conditions, ConditionSharding(sharding)(t.core))
-			fr := fq.WithContext(ctx)
+			tr := tq.WithContext(ctx)
 			if len(fieldExpr) > 0 {
-				fr = fr.Select(fieldExpr...)
+				tr = tr.Select(fieldExpr...)
 			}
 			if t.writeDB {
-				fr = fr.WriteDB()
+				tr = tr.WriteDB()
 			}
 			if t.unscoped {
-				fr = fr.Unscoped()
+				tr = tr.Unscoped()
+			}
+			if len(t.scopes) > 0 {
+				tr = tr.Scopes(t.scopes...)
 			}
 			if (t.tx != nil || t.qTx != nil) && t.lock != nil {
-				fr = fr.Clauses(t.lock)
+				tr = tr.Clauses(t.lock)
 			}
-			fr = fr.Where(_conditions...)
+			tr = tr.Where(_conditions...)
 			if len(orders) > 0 {
-				fr = fr.Order(orders...)
+				tr = tr.Order(orders...)
 			}
-			res, err := fr.Take()
+			res, err := tr.Take()
 			if err != nil {
 				if repositories.IsRealErr(err) {
 					t.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingTake.%d】失败", sharding), zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))

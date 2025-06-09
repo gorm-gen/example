@@ -29,6 +29,7 @@ type _shardingUpdate struct {
 	conditionOpts []ConditionOption
 	sharding      []string
 	worker        chan struct{}
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // ShardingUpdate 更新分表数据
@@ -36,6 +37,7 @@ func (o *Order) ShardingUpdate(sharding []string) *_shardingUpdate {
 	return &_shardingUpdate{
 		core:          o,
 		unscoped:      o.unscoped,
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 		updateOpts:    make([]UpdateOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,
@@ -71,6 +73,11 @@ func (u *_shardingUpdate) QueryTx(tx *query.QueryTx) *_shardingUpdate {
 
 func (u *_shardingUpdate) Unscoped() *_shardingUpdate {
 	u.unscoped = true
+	return u
+}
+
+func (u *_shardingUpdate) Scopes(funcs ...func(gen.Dao) gen.Dao) *_shardingUpdate {
+	u.scopes = append(u.scopes, funcs...)
 	return u
 }
 
@@ -136,6 +143,9 @@ func (u *_shardingUpdate) Do(ctx context.Context) (int64, map[string]int64, erro
 			ur := uq.WithContext(ctx)
 			if u.unscoped {
 				ur = ur.Unscoped()
+			}
+			if len(u.scopes) > 0 {
+				ur = ur.Scopes(u.scopes...)
 			}
 			res, err := ur.Where(_conditions...).UpdateSimple(columns...)
 			if err != nil {

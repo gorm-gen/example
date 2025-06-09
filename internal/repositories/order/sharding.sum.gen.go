@@ -31,6 +31,7 @@ type _shardingSum struct {
 	sharding      []string
 	worker        chan struct{}
 	writeDB       bool
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // ShardingSum 分表SUM数据
@@ -42,6 +43,7 @@ func (o *Order) ShardingSum(genField field.Expr, sharding []string) *_shardingSu
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,
 		worker:        make(chan struct{}, runtime.NumCPU()),
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -73,6 +75,11 @@ func (s *_shardingSum) QueryTx(tx *query.QueryTx) *_shardingSum {
 
 func (s *_shardingSum) Unscoped() *_shardingSum {
 	s.unscoped = true
+	return s
+}
+
+func (s *_shardingSum) Scopes(funcs ...func(gen.Dao) gen.Dao) *_shardingSum {
+	s.scopes = append(s.scopes, funcs...)
 	return s
 }
 
@@ -134,6 +141,9 @@ func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[string]deci
 			}
 			if s.unscoped {
 				sr = sr.Unscoped()
+			}
+			if len(s.scopes) > 0 {
+				sr = sr.Scopes(s.scopes...)
 			}
 			var data Sum
 			if err := sr.Where(_conditions...).Scan(&data); err != nil {

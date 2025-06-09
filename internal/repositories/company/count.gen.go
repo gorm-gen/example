@@ -23,6 +23,7 @@ type _count struct {
 	unscoped      bool
 	conditionOpts []ConditionOption
 	writeDB       bool
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // Count 获取数据总记录
@@ -31,6 +32,7 @@ func (c *Company) Count() *_count {
 		core:          c,
 		unscoped:      c.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -54,6 +56,11 @@ func (c *_count) QueryTx(tx *query.QueryTx) *_count {
 
 func (c *_count) Unscoped() *_count {
 	c.unscoped = true
+	return c
+}
+
+func (c *_count) Scopes(funcs ...func(gen.Dao) gen.Dao) *_count {
+	c.scopes = append(c.scopes, funcs...)
 	return c
 }
 
@@ -85,6 +92,9 @@ func (c *_count) Do(ctx context.Context) (int64, error) {
 	}
 	if c.unscoped {
 		cr = cr.Unscoped()
+	}
+	if len(c.scopes) > 0 {
+		cr = cr.Scopes(c.scopes...)
 	}
 	if _len := len(c.conditionOpts); _len > 0 {
 		conditions := make([]gen.Condition, 0, _len)

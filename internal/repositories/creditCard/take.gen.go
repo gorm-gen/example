@@ -31,6 +31,7 @@ type _take struct {
 	orderOpts     []OrderOption
 	conditionOpts []ConditionOption
 	writeDB       bool
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // Take 获取一条记录
@@ -42,6 +43,7 @@ func (c *CreditCard) Take() *_take {
 		relationOpts:  make([]RelationOption, 0),
 		orderOpts:     make([]OrderOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -103,6 +105,11 @@ func (t *_take) Unscoped() *_take {
 	return t
 }
 
+func (t *_take) Scopes(funcs ...func(gen.Dao) gen.Dao) *_take {
+	t.scopes = append(t.scopes, funcs...)
+	return t
+}
+
 func (t *_take) Relation(opts ...RelationOption) *_take {
 	t.relationOpts = append(t.relationOpts, opts...)
 	return t
@@ -152,6 +159,9 @@ func (t *_take) Do(ctx context.Context) (*models.CreditCard, error) {
 	}
 	if t.unscoped {
 		tr = tr.Unscoped()
+	}
+	if len(t.scopes) > 0 {
+		tr = tr.Scopes(t.scopes...)
 	}
 	if (t.tx != nil || t.qTx != nil) && t.lock != nil {
 		tr = tr.Clauses(t.lock)

@@ -34,6 +34,7 @@ type _list struct {
 	orderOpts     []OrderOption
 	conditionOpts []ConditionOption
 	writeDB       bool
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // List 获取数据列表
@@ -45,6 +46,7 @@ func (o *OrderItem) List() *_list {
 		relationOpts:  make([]RelationOption, 0),
 		orderOpts:     make([]OrderOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -106,6 +108,11 @@ func (l *_list) Unscoped() *_list {
 	return l
 }
 
+func (l *_list) Scopes(funcs ...func(gen.Dao) gen.Dao) *_list {
+	l.scopes = append(l.scopes, funcs...)
+	return l
+}
+
 func (l *_list) Relation(opts ...RelationOption) *_list {
 	l.relationOpts = append(l.relationOpts, opts...)
 	return l
@@ -162,6 +169,9 @@ func (l *_list) Do(ctx context.Context) ([]*models.OrderItem, error) {
 	}
 	if l.unscoped {
 		lr = lr.Unscoped()
+	}
+	if len(l.scopes) > 0 {
+		lr = lr.Scopes(l.scopes...)
 	}
 	if (l.tx != nil || l.qTx != nil) && l.lock != nil {
 		lr = lr.Clauses(l.lock)

@@ -26,6 +26,7 @@ type _sum struct {
 	genField      field.Expr
 	conditionOpts []ConditionOption
 	writeDB       bool
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // Sum SUM数据
@@ -35,6 +36,7 @@ func (u *UserLanguage) Sum(genField field.Expr) *_sum {
 		unscoped:      u.unscoped,
 		genField:      genField,
 		conditionOpts: make([]ConditionOption, 0),
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -58,6 +60,11 @@ func (s *_sum) QueryTx(tx *query.QueryTx) *_sum {
 
 func (s *_sum) Unscoped() *_sum {
 	s.unscoped = true
+	return s
+}
+
+func (s *_sum) Scopes(funcs ...func(gen.Dao) gen.Dao) *_sum {
+	s.scopes = append(s.scopes, funcs...)
 	return s
 }
 
@@ -95,6 +102,9 @@ func (s *_sum) Do(ctx context.Context) (decimal.Decimal, error) {
 	}
 	if s.unscoped {
 		sr = sr.Unscoped()
+	}
+	if len(s.scopes) > 0 {
+		sr = sr.Scopes(s.scopes...)
 	}
 	if _len := len(s.conditionOpts); _len > 0 {
 		conditions := make([]gen.Condition, 0, _len)

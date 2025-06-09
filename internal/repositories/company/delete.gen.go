@@ -22,6 +22,7 @@ type _delete struct {
 	qTx           *query.QueryTx
 	unscoped      bool
 	conditionOpts []ConditionOption
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // Delete 删除数据
@@ -30,6 +31,7 @@ func (c *Company) Delete() *_delete {
 		core:          c,
 		unscoped:      c.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -56,6 +58,11 @@ func (d *_delete) Unscoped() *_delete {
 	return d
 }
 
+func (d *_delete) Scopes(funcs ...func(gen.Dao) gen.Dao) *_delete {
+	d.scopes = append(d.scopes, funcs...)
+	return d
+}
+
 func (d *_delete) Where(opts ...ConditionOption) *_delete {
 	d.conditionOpts = append(d.conditionOpts, opts...)
 	return d
@@ -76,6 +83,9 @@ func (d *_delete) Do(ctx context.Context) (int64, error) {
 	}
 	if d.unscoped {
 		dr = dr.Unscoped()
+	}
+	if len(d.scopes) > 0 {
+		dr = dr.Scopes(d.scopes...)
 	}
 	if _len := len(d.conditionOpts); _len > 0 {
 		conditions := make([]gen.Condition, 0, _len)

@@ -30,6 +30,7 @@ type _first struct {
 	relationOpts  []RelationOption
 	conditionOpts []ConditionOption
 	writeDB       bool
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // First 获取第一条记录（主键升序）
@@ -40,6 +41,7 @@ func (c *Company) First() *_first {
 		selects:       make([]field.Expr, 0),
 		relationOpts:  make([]RelationOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -101,6 +103,11 @@ func (f *_first) Unscoped() *_first {
 	return f
 }
 
+func (f *_first) Scopes(funcs ...func(gen.Dao) gen.Dao) *_first {
+	f.scopes = append(f.scopes, funcs...)
+	return f
+}
+
 func (f *_first) Relation(opts ...RelationOption) *_first {
 	f.relationOpts = append(f.relationOpts, opts...)
 	return f
@@ -145,6 +152,9 @@ func (f *_first) Do(ctx context.Context) (*models.Company, error) {
 	}
 	if f.unscoped {
 		fr = fr.Unscoped()
+	}
+	if len(f.scopes) > 0 {
+		fr = fr.Scopes(f.scopes...)
 	}
 	if (f.tx != nil || f.qTx != nil) && f.lock != nil {
 		fr = fr.Clauses(f.lock)

@@ -42,6 +42,7 @@ type _shardingList struct {
 	worker        chan struct{}
 	asc           bool
 	writeDB       bool
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // ShardingList 获取分表数据列表
@@ -54,6 +55,7 @@ func (o *OrderItem) ShardingList(sharding []int) *_shardingList {
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,
 		worker:        make(chan struct{}, runtime.NumCPU()),
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -140,6 +142,11 @@ func (l *_shardingList) ForShareNoWait() *_shardingList {
 
 func (l *_shardingList) Unscoped() *_shardingList {
 	l.unscoped = true
+	return l
+}
+
+func (l *_shardingList) Scopes(funcs ...func(gen.Dao) gen.Dao) *_shardingList {
+	l.scopes = append(l.scopes, funcs...)
 	return l
 }
 
@@ -295,6 +302,9 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.OrderItem, int64, err
 					}
 					if l.unscoped {
 						lr = lr.Unscoped()
+					}
+					if len(l.scopes) > 0 {
+						lr = lr.Scopes(l.scopes...)
 					}
 					if (l.tx != nil || l.qTx != nil) && l.lock != nil {
 						lr = lr.Clauses(l.lock)

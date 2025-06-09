@@ -30,6 +30,7 @@ type _last struct {
 	relationOpts  []RelationOption
 	conditionOpts []ConditionOption
 	writeDB       bool
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // Last 获取最后一条记录（主键降序）
@@ -40,6 +41,7 @@ func (a *Area) Last() *_last {
 		selects:       make([]field.Expr, 0),
 		relationOpts:  make([]RelationOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -101,6 +103,11 @@ func (l *_last) Unscoped() *_last {
 	return l
 }
 
+func (l *_last) Scopes(funcs ...func(gen.Dao) gen.Dao) *_last {
+	l.scopes = append(l.scopes, funcs...)
+	return l
+}
+
 func (l *_last) Relation(opts ...RelationOption) *_last {
 	l.relationOpts = append(l.relationOpts, opts...)
 	return l
@@ -145,6 +152,9 @@ func (l *_last) Do(ctx context.Context) (*models.Area, error) {
 	}
 	if l.unscoped {
 		lr = lr.Unscoped()
+	}
+	if len(l.scopes) > 0 {
+		lr = lr.Scopes(l.scopes...)
 	}
 	if (l.tx != nil || l.qTx != nil) && l.lock != nil {
 		lr = lr.Clauses(l.lock)

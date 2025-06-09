@@ -28,6 +28,7 @@ type _shardingCount struct {
 	sharding      []int
 	worker        chan struct{}
 	writeDB       bool
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // ShardingCount 获取分表数据总记录
@@ -38,6 +39,7 @@ func (o *OrderItem) ShardingCount(sharding []int) *_shardingCount {
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,
 		worker:        make(chan struct{}, runtime.NumCPU()),
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -65,6 +67,11 @@ func (c *_shardingCount) QueryTx(tx *query.QueryTx) *_shardingCount {
 
 func (c *_shardingCount) Unscoped() *_shardingCount {
 	c.unscoped = true
+	return c
+}
+
+func (c *_shardingCount) Scopes(funcs ...func(gen.Dao) gen.Dao) *_shardingCount {
+	c.scopes = append(c.scopes, funcs...)
 	return c
 }
 
@@ -125,6 +132,9 @@ func (c *_shardingCount) Do(ctx context.Context) (int64, map[int]int64, error) {
 			}
 			if c.unscoped {
 				cr = cr.Unscoped()
+			}
+			if len(c.scopes) > 0 {
+				cr = cr.Scopes(c.scopes...)
 			}
 			count, err := cr.Where(_conditions...).Count()
 			if err != nil {

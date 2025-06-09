@@ -36,6 +36,7 @@ type _shardingFirst struct {
 	sharding      []int
 	worker        chan struct{}
 	writeDB       bool
+	scopes        []func(gen.Dao) gen.Dao
 }
 
 // ShardingFirst 获取分表中随机第一条记录（主键升序）
@@ -47,6 +48,7 @@ func (o *OrderItem) ShardingFirst(sharding []int) *_shardingFirst {
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,
 		worker:        make(chan struct{}, runtime.NumCPU()),
+		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -113,6 +115,11 @@ func (f *_shardingFirst) ForShareNoWait() *_shardingFirst {
 
 func (f *_shardingFirst) Unscoped() *_shardingFirst {
 	f.unscoped = true
+	return f
+}
+
+func (f *_shardingFirst) Scopes(funcs ...func(gen.Dao) gen.Dao) *_shardingFirst {
+	f.scopes = append(f.scopes, funcs...)
 	return f
 }
 
@@ -186,6 +193,9 @@ func (f *_shardingFirst) Do(ctx context.Context) (*models.OrderItem, error) {
 			}
 			if f.unscoped {
 				fr = fr.Unscoped()
+			}
+			if len(f.scopes) > 0 {
+				fr = fr.Scopes(f.scopes...)
 			}
 			if (f.tx != nil || f.qTx != nil) && f.lock != nil {
 				fr = fr.Clauses(f.lock)
