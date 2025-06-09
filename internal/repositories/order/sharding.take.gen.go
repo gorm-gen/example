@@ -36,6 +36,7 @@ type _shardingTake struct {
 	conditionOpts []ConditionOption
 	sharding      []string
 	worker        chan struct{}
+	writeDB       bool
 }
 
 // ShardingTake 获取分表中随机一条记录
@@ -127,6 +128,11 @@ func (t *_shardingTake) Where(opts ...ConditionOption) *_shardingTake {
 	return t
 }
 
+func (t *_shardingTake) WriteDB() *_shardingTake {
+	t.writeDB = true
+	return t
+}
+
 // Do 执行获取分表中随机一条记录
 func (t *_shardingTake) Do(ctx context.Context) (*models.Order, error) {
 	if len(t.sharding) == 0 {
@@ -188,6 +194,9 @@ func (t *_shardingTake) Do(ctx context.Context) (*models.Order, error) {
 			fr := fq.WithContext(ctx)
 			if len(fieldExpr) > 0 {
 				fr = fr.Select(fieldExpr...)
+			}
+			if t.writeDB {
+				fr = fr.WriteDB()
 			}
 			if t.unscoped {
 				fr = fr.Unscoped()

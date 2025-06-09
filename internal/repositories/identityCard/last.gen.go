@@ -29,6 +29,7 @@ type _last struct {
 	selects       []field.Expr
 	relationOpts  []RelationOption
 	conditionOpts []ConditionOption
+	writeDB       bool
 }
 
 // Last 获取最后一条记录（主键降序）
@@ -110,6 +111,11 @@ func (l *_last) Where(opts ...ConditionOption) *_last {
 	return l
 }
 
+func (l *_last) WriteDB() *_last {
+	l.writeDB = true
+	return l
+}
+
 // Do 执行获取最后一条记录（主键降序）
 func (l *_last) Do(ctx context.Context) (*models.IdentityCard, error) {
 	lq := l.core.q.IdentityCard
@@ -133,6 +139,9 @@ func (l *_last) Do(ctx context.Context) (*models.IdentityCard, error) {
 			}
 			lr = lr.Select(fs...)
 		}
+	}
+	if l.writeDB {
+		lr = lr.WriteDB()
 	}
 	if l.unscoped {
 		lr = lr.Unscoped()

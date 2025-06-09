@@ -33,6 +33,7 @@ type _list struct {
 	relationOpts  []RelationOption
 	orderOpts     []OrderOption
 	conditionOpts []ConditionOption
+	writeDB       bool
 }
 
 // List 获取数据列表
@@ -120,6 +121,11 @@ func (l *_list) Where(opts ...ConditionOption) *_list {
 	return l
 }
 
+func (l *_list) WriteDB() *_list {
+	l.writeDB = true
+	return l
+}
+
 // Page 列表分页
 func (l *_list) Page(page, pageSize uint) *_list {
 	l.page = int(page)
@@ -150,6 +156,9 @@ func (l *_list) Do(ctx context.Context) ([]*models.Company, error) {
 			}
 			lr = lr.Select(fs...)
 		}
+	}
+	if l.writeDB {
+		lr = lr.WriteDB()
 	}
 	if l.unscoped {
 		lr = lr.Unscoped()

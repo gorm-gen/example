@@ -29,6 +29,7 @@ type _first struct {
 	selects       []field.Expr
 	relationOpts  []RelationOption
 	conditionOpts []ConditionOption
+	writeDB       bool
 }
 
 // First 获取第一条记录（主键升序）
@@ -110,6 +111,11 @@ func (f *_first) Where(opts ...ConditionOption) *_first {
 	return f
 }
 
+func (f *_first) WriteDB() *_first {
+	f.writeDB = true
+	return f
+}
+
 // Do 执行获取第一条记录（主键升序）
 func (f *_first) Do(ctx context.Context) (*models.User, error) {
 	fq := f.core.q.User
@@ -133,6 +139,9 @@ func (f *_first) Do(ctx context.Context) (*models.User, error) {
 			}
 			fr = fr.Select(fs...)
 		}
+	}
+	if f.writeDB {
+		fr = fr.WriteDB()
 	}
 	if f.unscoped {
 		fr = fr.Unscoped()

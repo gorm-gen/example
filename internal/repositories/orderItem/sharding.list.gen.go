@@ -41,6 +41,7 @@ type _shardingList struct {
 	sharding      []int
 	worker        chan struct{}
 	asc           bool
+	writeDB       bool
 }
 
 // ShardingList 获取分表数据列表
@@ -156,6 +157,11 @@ func (l *_shardingList) Where(opts ...ConditionOption) *_shardingList {
 func (l *_shardingList) Page(page, pageSize uint) *_shardingList {
 	l.page = int(page)
 	l.pageSize = int(pageSize)
+	return l
+}
+
+func (l *_shardingList) WriteDB() *_shardingList {
+	l.writeDB = true
 	return l
 }
 
@@ -283,6 +289,9 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.OrderItem, int64, err
 					lr := lq.WithContext(ctx)
 					if len(fieldExpr) > 0 {
 						lr = lr.Select(fieldExpr...)
+					}
+					if l.writeDB {
+						lr = lr.WriteDB()
 					}
 					if l.unscoped {
 						lr = lr.Unscoped()

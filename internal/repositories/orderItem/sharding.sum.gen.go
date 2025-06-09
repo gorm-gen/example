@@ -30,6 +30,7 @@ type _shardingSum struct {
 	conditionOpts []ConditionOption
 	sharding      []int
 	worker        chan struct{}
+	writeDB       bool
 }
 
 // ShardingSum 分表SUM数据
@@ -80,6 +81,11 @@ func (s *_shardingSum) Where(opts ...ConditionOption) *_shardingSum {
 	return s
 }
 
+func (s *_shardingSum) WriteDB() *_shardingSum {
+	s.writeDB = true
+	return s
+}
+
 // Do 执行分表SUM数据
 func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[int]decimal.Decimal, error) {
 	_lenSharding := len(s.sharding)
@@ -123,6 +129,9 @@ func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[int]decimal
 			copy(_conditions, conditions)
 			_conditions = append(_conditions, ConditionSharding(sharding)(s.core))
 			sr := sq.WithContext(ctx).Select(expr)
+			if s.writeDB {
+				sr = sr.WriteDB()
+			}
 			if s.unscoped {
 				sr = sr.Unscoped()
 			}

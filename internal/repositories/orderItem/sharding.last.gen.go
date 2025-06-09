@@ -35,6 +35,7 @@ type _shardingLast struct {
 	conditionOpts []ConditionOption
 	sharding      []int
 	worker        chan struct{}
+	writeDB       bool
 }
 
 // ShardingLast 获取分表中随机最后一条记录（主键降序）
@@ -120,17 +121,22 @@ func (l *_shardingLast) Where(opts ...ConditionOption) *_shardingLast {
 	return l
 }
 
+func (l *_shardingLast) WriteDB() *_shardingLast {
+	l.writeDB = true
+	return l
+}
+
 // Do 执行获取分表中随机最后一条记录（主键降序）
 func (l *_shardingLast) Do(ctx context.Context) (*models.OrderItem, error) {
 	if len(l.sharding) == 0 {
 		return nil, gorm.ErrRecordNotFound
 	}
-	fq := l.core.q.OrderItem
+	lq := l.core.q.OrderItem
 	if l.tx != nil {
-		fq = l.tx.OrderItem
+		lq = l.tx.OrderItem
 	}
 	if l.qTx != nil {
-		fq = l.qTx.OrderItem
+		lq = l.qTx.OrderItem
 	}
 	var conditions []gen.Condition
 	if _len := len(l.conditionOpts); _len > 0 {
@@ -171,17 +177,20 @@ func (l *_shardingLast) Do(ctx context.Context) (*models.OrderItem, error) {
 			_conditions := make([]gen.Condition, len(conditions))
 			copy(_conditions, conditions)
 			_conditions = append(_conditions, ConditionSharding(sharding)(l.core))
-			fr := fq.WithContext(ctx)
+			lr := lq.WithContext(ctx)
 			if len(fieldExpr) > 0 {
-				fr = fr.Select(fieldExpr...)
+				lr = lr.Select(fieldExpr...)
+			}
+			if l.writeDB {
+				lr = lr.WriteDB()
 			}
 			if l.unscoped {
-				fr = fr.Unscoped()
+				lr = lr.Unscoped()
 			}
 			if (l.tx != nil || l.qTx != nil) && l.lock != nil {
-				fr = fr.Clauses(l.lock)
+				lr = lr.Clauses(l.lock)
 			}
-			res, err := fr.Where(_conditions...).Last()
+			res, err := lr.Where(_conditions...).Last()
 			if err != nil {
 				if repositories.IsRealErr(err) {
 					l.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingLast.%d】失败", sharding), zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))

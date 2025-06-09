@@ -30,6 +30,7 @@ type _take struct {
 	relationOpts  []RelationOption
 	orderOpts     []OrderOption
 	conditionOpts []ConditionOption
+	writeDB       bool
 }
 
 // Take 获取一条记录
@@ -117,6 +118,11 @@ func (t *_take) Where(opts ...ConditionOption) *_take {
 	return t
 }
 
+func (t *_take) WriteDB() *_take {
+	t.writeDB = true
+	return t
+}
+
 // Do 执行获取一条记录
 func (t *_take) Do(ctx context.Context) (*models.Company, error) {
 	tq := t.core.q.Company
@@ -140,6 +146,9 @@ func (t *_take) Do(ctx context.Context) (*models.Company, error) {
 			}
 			tr = tr.Select(fs...)
 		}
+	}
+	if t.writeDB {
+		tr = tr.WriteDB()
 	}
 	if t.unscoped {
 		tr = tr.Unscoped()

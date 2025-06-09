@@ -25,6 +25,7 @@ type _sum struct {
 	unscoped      bool
 	genField      field.Expr
 	conditionOpts []ConditionOption
+	writeDB       bool
 }
 
 // Sum SUM数据
@@ -60,6 +61,11 @@ func (s *_sum) Unscoped() *_sum {
 	return s
 }
 
+func (s *_sum) WriteDB() *_sum {
+	s.writeDB = true
+	return s
+}
+
 func (s *_sum) Where(opts ...ConditionOption) *_sum {
 	s.conditionOpts = append(s.conditionOpts, opts...)
 	return s
@@ -84,6 +90,9 @@ func (s *_sum) Do(ctx context.Context) (decimal.Decimal, error) {
 		sr = sq.Table(*s.core.newTableName).WithContext(ctx)
 	}
 	sr = sr.Select(expr)
+	if s.writeDB {
+		sr = sr.WriteDB()
+	}
 	if s.unscoped {
 		sr = sr.Unscoped()
 	}

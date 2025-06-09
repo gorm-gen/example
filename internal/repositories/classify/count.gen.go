@@ -22,6 +22,7 @@ type _count struct {
 	qTx           *query.QueryTx
 	unscoped      bool
 	conditionOpts []ConditionOption
+	writeDB       bool
 }
 
 // Count 获取数据总记录
@@ -61,6 +62,11 @@ func (c *_count) Where(opts ...ConditionOption) *_count {
 	return c
 }
 
+func (c *_count) WriteDB() *_count {
+	c.writeDB = true
+	return c
+}
+
 // Do 执行获取数据总记录
 func (c *_count) Do(ctx context.Context) (int64, error) {
 	cq := c.core.q.Classify
@@ -73,6 +79,9 @@ func (c *_count) Do(ctx context.Context) (int64, error) {
 	cr := cq.WithContext(ctx)
 	if c.core.newTableName != nil && *c.core.newTableName != "" {
 		cr = cq.Table(*c.core.newTableName).WithContext(ctx)
+	}
+	if c.writeDB {
+		cr = cr.WriteDB()
 	}
 	if c.unscoped {
 		cr = cr.Unscoped()

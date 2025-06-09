@@ -27,6 +27,7 @@ type _shardingCount struct {
 	conditionOpts []ConditionOption
 	sharding      []string
 	worker        chan struct{}
+	writeDB       bool
 }
 
 // ShardingCount 获取分表数据总记录
@@ -72,6 +73,11 @@ func (c *_shardingCount) Where(opts ...ConditionOption) *_shardingCount {
 	return c
 }
 
+func (c *_shardingCount) WriteDB() *_shardingCount {
+	c.writeDB = true
+	return c
+}
+
 // Do 执行获取分表数据总记录
 func (c *_shardingCount) Do(ctx context.Context) (int64, map[string]int64, error) {
 	_lenSharding := len(c.sharding)
@@ -114,6 +120,9 @@ func (c *_shardingCount) Do(ctx context.Context) (int64, map[string]int64, error
 			copy(_conditions, conditions)
 			_conditions = append(_conditions, ConditionSharding(sharding)(c.core))
 			cr := cq.WithContext(ctx)
+			if c.writeDB {
+				cr = cr.WriteDB()
+			}
 			if c.unscoped {
 				cr = cr.Unscoped()
 			}

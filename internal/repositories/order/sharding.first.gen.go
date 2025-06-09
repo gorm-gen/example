@@ -35,6 +35,7 @@ type _shardingFirst struct {
 	conditionOpts []ConditionOption
 	sharding      []string
 	worker        chan struct{}
+	writeDB       bool
 }
 
 // ShardingFirst 获取分表中随机第一条记录（主键升序）
@@ -120,6 +121,11 @@ func (f *_shardingFirst) Where(opts ...ConditionOption) *_shardingFirst {
 	return f
 }
 
+func (f *_shardingFirst) WriteDB() *_shardingFirst {
+	f.writeDB = true
+	return f
+}
+
 // Do 执行获取分表中随机第一条记录（主键升序）
 func (f *_shardingFirst) Do(ctx context.Context) (*models.Order, error) {
 	if len(f.sharding) == 0 {
@@ -174,6 +180,9 @@ func (f *_shardingFirst) Do(ctx context.Context) (*models.Order, error) {
 			fr := fq.WithContext(ctx)
 			if len(fieldExpr) > 0 {
 				fr = fr.Select(fieldExpr...)
+			}
+			if f.writeDB {
+				fr = fr.WriteDB()
 			}
 			if f.unscoped {
 				fr = fr.Unscoped()
