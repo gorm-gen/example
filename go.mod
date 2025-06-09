@@ -6,7 +6,7 @@ require (
 	github.com/go-dev-pkg/sn v0.0.2
 	github.com/gorm-gen/paginate v0.0.1
 	github.com/gorm-gen/plugin v0.2.8
-	github.com/gorm-gen/repository v1.0.2
+	github.com/gorm-gen/repository v1.0.3
 	github.com/gorm-gen/sharding v0.0.1
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/shopspring/decimal v1.4.0
@@ -38,7 +38,7 @@ require (
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/exp v0.0.0-20250531010427-b6e5de432a8b // indirect
+	golang.org/x/exp v0.0.0-20250606033433-dcc06ee1d476 // indirect
 	golang.org/x/mod v0.25.0 // indirect
 	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
