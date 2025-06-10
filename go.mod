@@ -4,6 +4,7 @@ go 1.24.3
 
 require (
 	github.com/go-dev-pkg/sn v0.0.2
+	github.com/gorm-gen/logger v0.0.1
 	github.com/gorm-gen/paginate v0.0.1
 	github.com/gorm-gen/plugin v0.2.8
 	github.com/gorm-gen/repository v1.0.4

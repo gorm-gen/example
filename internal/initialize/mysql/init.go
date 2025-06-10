@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gorm-gen/plugin/logger"
+	"github.com/gorm-gen/logger"
 	"github.com/gorm-gen/sharding"
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
@@ -46,6 +46,7 @@ func newMySql(useSharding bool) {
 			logger.WithPath(global.Config.Log.Path),
 			logger.WithMaxBackups(100),
 			logger.WithMaxAge(7),
+			logger.WithCompress(true),
 		).Logger(),
 	})
 	if err != nil {
