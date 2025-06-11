@@ -7,7 +7,7 @@ package userLanguage
 import (
 	"time"
 
-	f "github.com/gorm-gen/plugin/field"
+	f "github.com/gorm-gen/field"
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
 	"gorm.io/gen"

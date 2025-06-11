@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	f "github.com/gorm-gen/plugin/field"
-	"github.com/gorm-gen/plugin/field/value"
+	f "github.com/gorm-gen/field"
+	"github.com/gorm-gen/field/value"
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
 	"gorm.io/gen"
