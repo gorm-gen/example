@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/gorm-gen/plugin/generate"
+	"github.com/gorm-gen/generator"
 	"github.com/gorm-gen/repository"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
@@ -35,29 +35,29 @@ func init() {
 func main() {
 	flag.Parse()
 
-	opts := []generate.Option{
-		generate.WithReplaceJsonTagName(map[string]generate.JsonTag{
+	opts := []generator.Option{
+		generator.WithReplaceJsonTagName(map[string]generator.JsonTag{
 			"deleted_at": {
 				Replace: "-",
 			},
 		}),
 	}
 
-	g := generate.New(global.DB, opts...)
-	generator := g.Generator()
+	g := generator.New(global.DB, opts...)
+	_generator := g.Generator()
 
 	// 1、生成models
 	g.SetGenerateModel("order")
 	g.SetGenerateModel("order_item")
-	company := generator.GenerateModel("company")
-	identityCard := generator.GenerateModel("identity_card")
-	creditCard := generator.GenerateModel("credit_card")
-	language := generator.GenerateModel("language")
-	classify := generator.GenerateModel("classify")
-	area := generator.GenerateModel("area")
-	userLanguage := generator.GenerateModel("user_language")
+	company := _generator.GenerateModel("company")
+	identityCard := _generator.GenerateModel("identity_card")
+	creditCard := _generator.GenerateModel("credit_card")
+	language := _generator.GenerateModel("language")
+	classify := _generator.GenerateModel("classify")
+	area := _generator.GenerateModel("area")
+	userLanguage := _generator.GenerateModel("user_language")
 
-	user := generator.GenerateModel("user",
+	user := _generator.GenerateModel("user",
 		gen.FieldRelate(field.BelongsTo, "Company", company, &field.RelateConfig{
 			RelatePointer: true,
 			JSONTag:       "company,omitempty",
@@ -94,7 +94,7 @@ func main() {
 		}),
 	)
 
-	languages := generator.GenerateModel("language",
+	languages := _generator.GenerateModel("language",
 		gen.FieldRelate(field.Many2Many, "Users", user, &field.RelateConfig{
 			JSONTag: "users,omitempty",
 			GORMTag: field.GormTag{
@@ -107,7 +107,7 @@ func main() {
 		}),
 	)
 
-	classifies := generator.GenerateModel("classify",
+	classifies := _generator.GenerateModel("classify",
 		gen.FieldRelate(field.BelongsTo, "Parent", classify, &field.RelateConfig{
 			RelatePointer: true,
 			JSONTag:       "parent,omitempty",
@@ -125,7 +125,7 @@ func main() {
 		}),
 	)
 
-	areas := generator.GenerateModel("area",
+	areas := _generator.GenerateModel("area",
 		gen.FieldRelate(field.HasOne, "Parent", area, &field.RelateConfig{
 			RelatePointer: true,
 			JSONTag:       "parent,omitempty",
