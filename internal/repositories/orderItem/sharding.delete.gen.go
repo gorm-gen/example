@@ -68,8 +68,12 @@ func (d *_shardingDelete) QueryTx(tx *query.QueryTx) *_shardingDelete {
 	return d
 }
 
-func (d *_shardingDelete) Unscoped() *_shardingDelete {
-	d.unscoped = true
+func (d *_shardingDelete) Unscoped(unscoped ...bool) *_shardingDelete {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	d.unscoped = _unscoped
 	return d
 }
 

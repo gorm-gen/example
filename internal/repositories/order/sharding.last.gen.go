@@ -113,8 +113,12 @@ func (l *_shardingLast) ForShareNoWait() *_shardingLast {
 	return l
 }
 
-func (l *_shardingLast) Unscoped() *_shardingLast {
-	l.unscoped = true
+func (l *_shardingLast) Unscoped(unscoped ...bool) *_shardingLast {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	l.unscoped = _unscoped
 	return l
 }
 

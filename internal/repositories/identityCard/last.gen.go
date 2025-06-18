@@ -98,8 +98,12 @@ func (l *_last) ForShareNoWait() *_last {
 	return l
 }
 
-func (l *_last) Unscoped() *_last {
-	l.unscoped = true
+func (l *_last) Unscoped(unscoped ...bool) *_last {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	l.unscoped = _unscoped
 	return l
 }
 

@@ -56,8 +56,12 @@ func (c *_create) QueryTx(tx *query.QueryTx) *_create {
 	return c
 }
 
-func (c *_create) Unscoped() *_create {
-	c.unscoped = true
+func (c *_create) Unscoped(unscoped ...bool) *_create {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	c.unscoped = _unscoped
 	return c
 }
 

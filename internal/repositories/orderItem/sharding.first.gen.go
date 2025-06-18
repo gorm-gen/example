@@ -113,8 +113,12 @@ func (f *_shardingFirst) ForShareNoWait() *_shardingFirst {
 	return f
 }
 
-func (f *_shardingFirst) Unscoped() *_shardingFirst {
-	f.unscoped = true
+func (f *_shardingFirst) Unscoped(unscoped ...bool) *_shardingFirst {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	f.unscoped = _unscoped
 	return f
 }
 

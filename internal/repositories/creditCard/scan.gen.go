@@ -101,8 +101,12 @@ func (s *_scan) ForShareNoWait() *_scan {
 	return s
 }
 
-func (s *_scan) Unscoped() *_scan {
-	s.unscoped = true
+func (s *_scan) Unscoped(unscoped ...bool) *_scan {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	s.unscoped = _unscoped
 	return s
 }
 

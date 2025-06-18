@@ -71,8 +71,12 @@ func (u *_shardingUpdate) QueryTx(tx *query.QueryTx) *_shardingUpdate {
 	return u
 }
 
-func (u *_shardingUpdate) Unscoped() *_shardingUpdate {
-	u.unscoped = true
+func (u *_shardingUpdate) Unscoped(unscoped ...bool) *_shardingUpdate {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	u.unscoped = _unscoped
 	return u
 }
 

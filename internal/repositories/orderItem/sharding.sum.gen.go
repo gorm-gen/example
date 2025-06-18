@@ -73,8 +73,12 @@ func (s *_shardingSum) QueryTx(tx *query.QueryTx) *_shardingSum {
 	return s
 }
 
-func (s *_shardingSum) Unscoped() *_shardingSum {
-	s.unscoped = true
+func (s *_shardingSum) Unscoped(unscoped ...bool) *_shardingSum {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	s.unscoped = _unscoped
 	return s
 }
 

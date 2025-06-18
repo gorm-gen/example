@@ -65,8 +65,12 @@ func (c *_shardingCount) QueryTx(tx *query.QueryTx) *_shardingCount {
 	return c
 }
 
-func (c *_shardingCount) Unscoped() *_shardingCount {
-	c.unscoped = true
+func (c *_shardingCount) Unscoped(unscoped ...bool) *_shardingCount {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	c.unscoped = _unscoped
 	return c
 }
 

@@ -58,8 +58,12 @@ func (s *_sum) QueryTx(tx *query.QueryTx) *_sum {
 	return s
 }
 
-func (s *_sum) Unscoped() *_sum {
-	s.unscoped = true
+func (s *_sum) Unscoped(unscoped ...bool) *_sum {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	s.unscoped = _unscoped
 	return s
 }
 

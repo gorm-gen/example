@@ -115,8 +115,12 @@ func (t *_shardingTake) ForShareNoWait() *_shardingTake {
 	return t
 }
 
-func (t *_shardingTake) Unscoped() *_shardingTake {
-	t.unscoped = true
+func (t *_shardingTake) Unscoped(unscoped ...bool) *_shardingTake {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	t.unscoped = _unscoped
 	return t
 }
 

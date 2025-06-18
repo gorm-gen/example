@@ -56,8 +56,12 @@ func (u *_update) QueryTx(tx *query.QueryTx) *_update {
 	return u
 }
 
-func (u *_update) Unscoped() *_update {
-	u.unscoped = true
+func (u *_update) Unscoped(unscoped ...bool) *_update {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	u.unscoped = _unscoped
 	return u
 }
 

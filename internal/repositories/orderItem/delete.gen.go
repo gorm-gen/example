@@ -53,8 +53,12 @@ func (d *_delete) QueryTx(tx *query.QueryTx) *_delete {
 	return d
 }
 
-func (d *_delete) Unscoped() *_delete {
-	d.unscoped = true
+func (d *_delete) Unscoped(unscoped ...bool) *_delete {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	d.unscoped = _unscoped
 	return d
 }
 

@@ -54,8 +54,12 @@ func (c *_count) QueryTx(tx *query.QueryTx) *_count {
 	return c
 }
 
-func (c *_count) Unscoped() *_count {
-	c.unscoped = true
+func (c *_count) Unscoped(unscoped ...bool) *_count {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	c.unscoped = _unscoped
 	return c
 }
 

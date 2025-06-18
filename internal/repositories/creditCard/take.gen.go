@@ -100,8 +100,12 @@ func (t *_take) ForShareNoWait() *_take {
 	return t
 }
 
-func (t *_take) Unscoped() *_take {
-	t.unscoped = true
+func (t *_take) Unscoped(unscoped ...bool) *_take {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	t.unscoped = _unscoped
 	return t
 }
 

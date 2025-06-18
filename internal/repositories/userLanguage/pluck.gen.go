@@ -96,8 +96,12 @@ func (p *_pluck) ForShareNoWait() *_pluck {
 	return p
 }
 
-func (p *_pluck) Unscoped() *_pluck {
-	p.unscoped = true
+func (p *_pluck) Unscoped(unscoped ...bool) *_pluck {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	p.unscoped = _unscoped
 	return p
 }
 
