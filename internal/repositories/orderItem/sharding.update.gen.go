@@ -105,6 +105,14 @@ func (u *_shardingUpdate) Do(ctx context.Context) (int64, map[int]int64, error) 
 	if u.qTx != nil {
 		uq = u.qTx.OrderItem
 	}
+	var innerTx *query.QueryTx
+	var cancel context.CancelFunc
+	if u.tx == nil && u.qTx == nil {
+		innerTx = u.core.q.Begin()
+		uq = innerTx.OrderItem
+		ctx, cancel = context.WithCancel(ctx)
+		defer cancel()
+	}
 	var conditions []gen.Condition
 	if _len := len(u.conditionOpts); _len > 0 {
 		conditions = make([]gen.Condition, 0, _len)
@@ -165,6 +173,14 @@ func (u *_shardingUpdate) Do(ctx context.Context) (int64, map[int]int64, error) 
 	}()
 	select {
 	case <-endChan:
+		if innerTx != nil {
+			if err := innerTx.Commit(); err != nil {
+				if repositories.IsRealErr(err) {
+					u.core.logger.Error("【OrderItem.ShardingUpdate.Commit】失败", zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
+				}
+				return 0, nil, err
+			}
+		}
 		rowsAffected := int64(0)
 		m := make(map[int]int64, _lenSharding)
 		sm.Range(func(key, value interface{}) bool {
@@ -175,6 +191,10 @@ func (u *_shardingUpdate) Do(ctx context.Context) (int64, map[int]int64, error) 
 		})
 		return rowsAffected, m, nil
 	case err := <-errChan:
+		if innerTx != nil {
+			cancel()
+			_ = innerTx.Rollback()
+		}
 		return 0, nil, err
 	}
 }

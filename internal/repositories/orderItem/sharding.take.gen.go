@@ -152,6 +152,8 @@ func (t *_shardingTake) Do(ctx context.Context) (*models.OrderItem, error) {
 	if t.qTx != nil {
 		tq = t.qTx.OrderItem
 	}
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 	var conditions []gen.Condition
 	if _len := len(t.conditionOpts); _len > 0 {
 		conditions = make([]gen.Condition, 0, _len)

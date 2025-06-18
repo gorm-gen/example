@@ -106,6 +106,8 @@ func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[string]deci
 	if s.qTx != nil {
 		sq = s.qTx.Order
 	}
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 	var conditions []gen.Condition
 	if _len := len(s.conditionOpts); _len > 0 {
 		conditions = make([]gen.Condition, 0, _len)

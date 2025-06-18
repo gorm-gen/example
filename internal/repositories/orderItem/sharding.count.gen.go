@@ -98,6 +98,8 @@ func (c *_shardingCount) Do(ctx context.Context) (int64, map[int]int64, error) {
 	if c.qTx != nil {
 		cq = c.qTx.OrderItem
 	}
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 	var conditions []gen.Condition
 	if _len := len(c.conditionOpts); _len > 0 {
 		conditions = make([]gen.Condition, 0, _len)

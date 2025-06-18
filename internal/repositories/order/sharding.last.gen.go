@@ -145,6 +145,8 @@ func (l *_shardingLast) Do(ctx context.Context) (*models.Order, error) {
 	if l.qTx != nil {
 		lq = l.qTx.Order
 	}
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 	var conditions []gen.Condition
 	if _len := len(l.conditionOpts); _len > 0 {
 		conditions = make([]gen.Condition, 0, _len)
