@@ -83,4 +83,186 @@ func TestShardingList(t *testing.T) {
 		return
 	}
 	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
+		Page:     5,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
+		Page:     6,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
+		Page:     7,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
+		Page:     8,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
+		Page:     9,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
+		Page:     10,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
+		Page:     11,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
+		Page:     12,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
+		Page:     13,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
+		Page:     14,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
+		Page:     15,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
+		Page:     16,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(string(bytes))
+	t.Log("---------------------------------")
+	list, count, err = orderSvc.ShardingList(context.Background(), sharding, &order.List{
+		Page:     17,
+		PageSize: 2,
+	})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if bytes, err = json.Marshal(list); err != nil {
+		t.Error(err)
+		return
+	}
+	t.Log(string(bytes))
 }

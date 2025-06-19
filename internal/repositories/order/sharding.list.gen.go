@@ -20,8 +20,6 @@ import (
 
 	"example/internal/query"
 
-	"example/internal/repositories"
-
 	"example/internal/models"
 )
 
@@ -182,14 +180,17 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.Order, int64, error) 
 	if _lenSharding == 0 {
 		return empty, 0, nil
 	}
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 	// 获取分表数据总记录
 	shardingCount := l.core.ShardingCount(l.sharding).
 		Worker(l.worker).
 		Tx(l.tx).
 		QueryTx(l.qTx).
+		Unscoped(l.unscoped).
 		Where(l.conditionOpts...)
-	if l.unscoped {
-		shardingCount = shardingCount.Unscoped()
+	if l.writeDB {
+		shardingCount = shardingCount.WriteDB()
 	}
 	count, m, err := shardingCount.Do(ctx)
 	if err != nil {
@@ -221,38 +222,7 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.Order, int64, error) 
 	slList := list.New(svs, listOpts...).Analysis()
 	slList.ToSliceIndex()
 	// 获取分表数据
-	lq := l.core.q.Order
-	if l.tx != nil {
-		lq = l.tx.Order
-	}
-	if l.qTx != nil {
-		lq = l.qTx.Order
-	}
-	var conditions []gen.Condition
-	if _len := len(l.conditionOpts); _len > 0 {
-		conditions = make([]gen.Condition, 0, _len)
-		for _, opt := range l.conditionOpts {
-			conditions = append(conditions, opt(l.core))
-		}
-	}
-	var fieldExpr []field.Expr
-	if _len := len(l.selects); _len > 0 {
-		fieldExpr = make([]field.Expr, 0, _len)
-		if l.core.newTableName == nil {
-			fieldExpr = append(fieldExpr, l.selects...)
-		} else {
-			for _, v := range l.selects {
-				fieldExpr = append(fieldExpr, field.NewField(*l.core.newTableName, v.ColumnName().String()))
-			}
-		}
-	}
-	var orders []field.Expr
-	if _len := len(l.orderOpts); _len > 0 {
-		orders = make([]field.Expr, 0, _len)
-		for _, opt := range l.orderOpts {
-			orders = append(orders, opt(l.core))
-		}
-	}
+	_condLen := len(l.conditionOpts)
 	wg := sync.WaitGroup{}
 	_count_ := int64(0)
 	_list_ := make([][]*models.Order, len(slList))
@@ -291,35 +261,24 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.Order, int64, error) 
 						<-l.worker
 					}()
 					defer _wg.Done()
-					_conditions := make([]gen.Condition, len(conditions))
-					copy(_conditions, conditions)
 					shardingValue := v.ShardingValue
-					_conditions = append(_conditions, ConditionSharding(shardingValue)(l.core))
-					lr := lq.WithContext(ctx)
-					if len(fieldExpr) > 0 {
-						lr = lr.Select(fieldExpr...)
-					}
-					if l.writeDB {
-						lr = lr.WriteDB()
-					}
-					if l.unscoped {
-						lr = lr.Unscoped()
-					}
-					if len(l.scopes) > 0 {
-						lr = lr.Scopes(l.scopes...)
-					}
-					if (l.tx != nil || l.qTx != nil) && l.lock != nil {
-						lr = lr.Clauses(l.lock)
-					}
-					lr = lr.Where(_conditions...)
-					if len(orders) > 0 {
-						lr = lr.Order(orders...)
-					}
+					_conditionOpts := make([]ConditionOption, _condLen, _condLen+1)
+					copy(_conditionOpts, l.conditionOpts)
+					_conditionOpts = append(_conditionOpts, ConditionSharding(shardingValue))
+					lr := l.core.List()
+					lr.writeDB = l.writeDB
+					lr.lock = l.lock
 					var res []*models.Order
-					if res, err = lr.Scopes(page.Paginate(vv.Page, vv.PageSize)).Find(); err != nil {
-						if repositories.IsRealErr(err) {
-							l.core.logger.Error(fmt.Sprintf("【Order.ShardingList.%s】失败", v.ShardingValue), zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
-						}
+					res, err = lr.Tx(l.tx).
+						QueryTx(l.qTx).
+						Select(l.selects...).
+						Unscoped(l.unscoped).
+						Scopes(l.scopes...).
+						Where(_conditionOpts...).
+						Order(l.orderOpts...).
+						Scopes(page.Paginate(vv.Page, vv.PageSize)).
+						Do(ctx)
+					if err != nil {
 						_errChan <- err
 						return
 					}
