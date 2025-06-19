@@ -261,9 +261,9 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.Order, int64, error) 
 						<-l.worker
 					}()
 					defer _wg.Done()
-					shardingValue := v.ShardingValue
 					_conditionOpts := make([]ConditionOption, _condLen, _condLen+1)
 					copy(_conditionOpts, l.conditionOpts)
+					shardingValue := v.ShardingValue
 					_conditionOpts = append(_conditionOpts, ConditionSharding(shardingValue))
 					lr := l.core.List()
 					lr.writeDB = l.writeDB

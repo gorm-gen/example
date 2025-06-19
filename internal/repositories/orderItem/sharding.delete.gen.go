@@ -93,28 +93,16 @@ func (d *_shardingDelete) Do(ctx context.Context) (int64, map[int]int64, error) 
 	if _lenSharding == 0 {
 		return 0, nil, nil
 	}
-	dq := d.core.q.OrderItem
-	if d.tx != nil {
-		dq = d.tx.OrderItem
-	}
-	if d.qTx != nil {
-		dq = d.qTx.OrderItem
-	}
+	qTx := d.qTx
 	var innerTx *query.QueryTx
 	var cancel context.CancelFunc
 	if d.tx == nil && d.qTx == nil {
 		innerTx = d.core.q.Begin()
-		dq = innerTx.OrderItem
+		qTx = innerTx
 		ctx, cancel = context.WithCancel(ctx)
 		defer cancel()
 	}
-	var conditions []gen.Condition
-	if _len := len(d.conditionOpts); _len > 0 {
-		conditions = make([]gen.Condition, 0, _len)
-		for _, opt := range d.conditionOpts {
-			conditions = append(conditions, opt(d.core))
-		}
-	}
+	_condLen := len(d.conditionOpts)
 	sm := sync.Map{}
 	wg := sync.WaitGroup{}
 	errChan := make(chan error)
@@ -133,25 +121,21 @@ func (d *_shardingDelete) Do(ctx context.Context) (int64, map[int]int64, error) 
 				<-d.worker
 			}()
 			defer wg.Done()
-			_conditions := make([]gen.Condition, len(conditions))
-			copy(_conditions, conditions)
-			_conditions = append(_conditions, ConditionSharding(sharding)(d.core))
-			dr := dq.WithContext(ctx)
-			if d.unscoped {
-				dr = dr.Unscoped()
-			}
-			if len(d.scopes) > 0 {
-				dr = dr.Scopes(d.scopes...)
-			}
-			res, err := dr.Where(_conditions...).Delete()
+			_conditionOpts := make([]ConditionOption, _condLen, _condLen+1)
+			copy(_conditionOpts, d.conditionOpts)
+			_conditionOpts = append(_conditionOpts, ConditionSharding(sharding))
+			rows, err := d.core.Delete().
+				Tx(d.tx).
+				QueryTx(qTx).
+				Unscoped(d.unscoped).
+				Scopes(d.scopes...).
+				Where(_conditionOpts...).
+				Do(ctx)
 			if err != nil {
-				if repositories.IsRealErr(err) {
-					d.core.logger.Error(fmt.Sprintf("【OrderItem.ShardingDelete.%d】失败", sharding), zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
-				}
 				errChan <- err
 				return
 			}
-			sm.Store(sharding, res.RowsAffected)
+			sm.Store(sharding, rows)
 			return
 		}(sharding)
 	}
