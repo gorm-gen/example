@@ -8,7 +8,7 @@ require (
 	github.com/gorm-gen/generator v0.0.1
 	github.com/gorm-gen/logger v0.0.1
 	github.com/gorm-gen/paginate v0.0.1
-	github.com/gorm-gen/repository v1.0.5
+	github.com/gorm-gen/repository v1.0.6
 	github.com/gorm-gen/sharding v0.0.1
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/shopspring/decimal v1.4.0

@@ -35,8 +35,8 @@ github.com/gorm-gen/logger v0.0.1 h1:KJmA197Rpb/EL+2fsHVhjf35r5WY2NKMatC0YUtkv1E
 github.com/gorm-gen/logger v0.0.1/go.mod h1:5fNljT6XXA19N3MT//0SFgNvcGRVLrJd0DgHKvgRr9Y=
 github.com/gorm-gen/paginate v0.0.1 h1:eSbEtoVcuoi0VB3lqDq8HStXR6qVvBKrpDgSpOepRlM=
 github.com/gorm-gen/paginate v0.0.1/go.mod h1:yWbL978hqFcb9mRgvD9rIFBPnDP6ibPQGBs3VCahLd4=
-github.com/gorm-gen/repository v1.0.5 h1:5K3+eyyY+11+lOB2ixXpapZyxGVAlVxdq7MGnwn4LTg=
-github.com/gorm-gen/repository v1.0.5/go.mod h1:OEzzYOm5rpgovz/ZA8oO6lT/gIy2Zei5RHhXuS2JIb0=
+github.com/gorm-gen/repository v1.0.6 h1:p3Ax+saHF1/ugaHFBlvYCBO2HvxMMpKtCvEMVn55xMk=
+github.com/gorm-gen/repository v1.0.6/go.mod h1:7oJDJuG+rkXE1bjoU8kXDN7l+SESDZRRJDrDRgRhaW8=
 github.com/gorm-gen/sharding v0.0.1 h1:75DlhwxoZrmghfie8jBUQ1ChpYkLcSYdFsVrtuWpL54=
 github.com/gorm-gen/sharding v0.0.1/go.mod h1:qj13VUiKlPsgMU0or4nZ+n0gzFuj6phP32nsnzGwXN8=
 github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=
