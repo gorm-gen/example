@@ -15,8 +15,6 @@ import (
 	"gorm.io/gen"
 
 	"example/internal/query"
-
-	"example/internal/repositories"
 )
 
 type _shardingCount struct {
@@ -95,22 +93,9 @@ func (c *_shardingCount) Do(ctx context.Context) (int64, map[string]int64, error
 	if _lenSharding == 0 {
 		return 0, nil, nil
 	}
-	cq := c.core.q.Order
-	if c.tx != nil {
-		cq = c.tx.Order
-	}
-	if c.qTx != nil {
-		cq = c.qTx.Order
-	}
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
-	var conditions []gen.Condition
-	if _len := len(c.conditionOpts); _len > 0 {
-		conditions = make([]gen.Condition, 0, _len)
-		for _, opt := range c.conditionOpts {
-			conditions = append(conditions, opt(c.core))
-		}
-	}
+	_condLen := len(c.conditionOpts)
 	sm := sync.Map{}
 	wg := sync.WaitGroup{}
 	errChan := make(chan error)
@@ -129,24 +114,13 @@ func (c *_shardingCount) Do(ctx context.Context) (int64, map[string]int64, error
 				<-c.worker
 			}()
 			defer wg.Done()
-			_conditions := make([]gen.Condition, len(conditions))
-			copy(_conditions, conditions)
-			_conditions = append(_conditions, ConditionSharding(sharding)(c.core))
-			cr := cq.WithContext(ctx)
-			if c.writeDB {
-				cr = cr.WriteDB()
-			}
-			if c.unscoped {
-				cr = cr.Unscoped()
-			}
-			if len(c.scopes) > 0 {
-				cr = cr.Scopes(c.scopes...)
-			}
-			count, err := cr.Where(_conditions...).Count()
+			_conditionOpts := make([]ConditionOption, _condLen, _condLen+1)
+			copy(_conditionOpts, c.conditionOpts)
+			_conditionOpts = append(_conditionOpts, ConditionSharding(sharding))
+			cr := c.core.Count()
+			cr.writeDB = c.writeDB
+			count, err := cr.Tx(c.tx).QueryTx(c.qTx).Unscoped(c.unscoped).Scopes(c.scopes...).Where(_conditionOpts...).Do(ctx)
 			if err != nil {
-				if repositories.IsRealErr(err) {
-					c.core.logger.Error(fmt.Sprintf("【Order.ShardingCount.%s】失败", sharding), zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
-				}
 				errChan <- err
 				return
 			}
