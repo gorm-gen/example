@@ -13,7 +13,6 @@ import (
 
 	"go.uber.org/zap"
 	"gorm.io/gen"
-	"gorm.io/gen/field"
 
 	"example/internal/query"
 
@@ -98,39 +97,19 @@ func (u *_shardingUpdate) Where(opts ...ConditionOption) *_shardingUpdate {
 // Do 执行更新分表数据
 func (u *_shardingUpdate) Do(ctx context.Context) (int64, map[string]int64, error) {
 	_lenSharding := len(u.sharding)
-	_lenUpdate := len(u.updateOpts)
-	if _lenUpdate == 0 || _lenSharding == 0 {
+	if len(u.updateOpts) == 0 || _lenSharding == 0 {
 		return 0, nil, nil
 	}
-	uq := u.core.q.Order
-	if u.tx != nil {
-		uq = u.tx.Order
-	}
-	if u.qTx != nil {
-		uq = u.qTx.Order
-	}
+	qTx := u.qTx
 	var innerTx *query.QueryTx
 	var cancel context.CancelFunc
 	if u.tx == nil && u.qTx == nil {
 		innerTx = u.core.q.Begin()
-		uq = innerTx.Order
+		qTx = innerTx
 		ctx, cancel = context.WithCancel(ctx)
 		defer cancel()
 	}
-	var conditions []gen.Condition
-	if _len := len(u.conditionOpts); _len > 0 {
-		conditions = make([]gen.Condition, 0, _len)
-		for _, opt := range u.conditionOpts {
-			conditions = append(conditions, opt(u.core))
-		}
-	}
-	columns := make([]field.AssignExpr, 0, _lenUpdate)
-	for _, opt := range u.updateOpts {
-		columns = append(columns, opt(u.core))
-	}
-	if len(columns) == 0 {
-		return 0, nil, nil
-	}
+	_condLen := len(u.conditionOpts)
 	sm := sync.Map{}
 	wg := sync.WaitGroup{}
 	errChan := make(chan error)
@@ -149,25 +128,22 @@ func (u *_shardingUpdate) Do(ctx context.Context) (int64, map[string]int64, erro
 				<-u.worker
 			}()
 			defer wg.Done()
-			_conditions := make([]gen.Condition, len(conditions))
-			copy(_conditions, conditions)
-			_conditions = append(_conditions, ConditionSharding(sharding)(u.core))
-			ur := uq.WithContext(ctx)
-			if u.unscoped {
-				ur = ur.Unscoped()
-			}
-			if len(u.scopes) > 0 {
-				ur = ur.Scopes(u.scopes...)
-			}
-			res, err := ur.Where(_conditions...).UpdateSimple(columns...)
+			_conditionOpts := make([]ConditionOption, _condLen, _condLen+1)
+			copy(_conditionOpts, u.conditionOpts)
+			_conditionOpts = append(_conditionOpts, ConditionSharding(sharding))
+			rows, err := u.core.Update().
+				Tx(u.tx).
+				QueryTx(qTx).
+				Unscoped(u.unscoped).
+				Scopes(u.scopes...).
+				Where(_conditionOpts...).
+				Update(u.updateOpts...).
+				Do(ctx)
 			if err != nil {
-				if repositories.IsRealErr(err) {
-					u.core.logger.Error(fmt.Sprintf("【Order.ShardingUpdate.%s】失败", sharding), zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
-				}
 				errChan <- err
 				return
 			}
-			sm.Store(sharding, res.RowsAffected)
+			sm.Store(sharding, rows)
 			return
 		}(sharding)
 	}
