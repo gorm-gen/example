@@ -119,7 +119,12 @@ func (c *_shardingCount) Do(ctx context.Context) (int64, map[string]int64, error
 			_conditionOpts = append(_conditionOpts, ConditionSharding(sharding))
 			cr := c.core.Count()
 			cr.writeDB = c.writeDB
-			count, err := cr.Tx(c.tx).QueryTx(c.qTx).Unscoped(c.unscoped).Scopes(c.scopes...).Where(_conditionOpts...).Do(ctx)
+			count, err := cr.Tx(c.tx).
+				QueryTx(c.qTx).
+				Unscoped(c.unscoped).
+				Scopes(c.scopes...).
+				Where(_conditionOpts...).
+				Do(ctx)
 			if err != nil {
 				errChan <- err
 				return

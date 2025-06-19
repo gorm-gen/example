@@ -20,8 +20,6 @@ import (
 
 	"example/internal/query"
 
-	"example/internal/repositories"
-
 	"example/internal/models"
 )
 
@@ -142,33 +140,9 @@ func (f *_shardingFirst) Do(ctx context.Context) (*models.Order, error) {
 	if len(f.sharding) == 0 {
 		return nil, gorm.ErrRecordNotFound
 	}
-	fq := f.core.q.Order
-	if f.tx != nil {
-		fq = f.tx.Order
-	}
-	if f.qTx != nil {
-		fq = f.qTx.Order
-	}
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
-	var conditions []gen.Condition
-	if _len := len(f.conditionOpts); _len > 0 {
-		conditions = make([]gen.Condition, 0, _len)
-		for _, opt := range f.conditionOpts {
-			conditions = append(conditions, opt(f.core))
-		}
-	}
-	var fieldExpr []field.Expr
-	if _len := len(f.selects); _len > 0 {
-		fieldExpr = make([]field.Expr, 0, _len)
-		if f.core.newTableName == nil {
-			fieldExpr = append(fieldExpr, f.selects...)
-		} else {
-			for _, v := range f.selects {
-				fieldExpr = append(fieldExpr, field.NewField(*f.core.newTableName, v.ColumnName().String()))
-			}
-		}
-	}
+	_condLen := len(f.conditionOpts)
 	wg := sync.WaitGroup{}
 	endChan := make(chan struct{})
 	errChan := make(chan error)
@@ -187,30 +161,20 @@ func (f *_shardingFirst) Do(ctx context.Context) (*models.Order, error) {
 				<-f.worker
 			}()
 			defer wg.Done()
-			_conditions := make([]gen.Condition, len(conditions))
-			copy(_conditions, conditions)
-			_conditions = append(_conditions, ConditionSharding(sharding)(f.core))
-			fr := fq.WithContext(ctx)
-			if len(fieldExpr) > 0 {
-				fr = fr.Select(fieldExpr...)
-			}
-			if f.writeDB {
-				fr = fr.WriteDB()
-			}
-			if f.unscoped {
-				fr = fr.Unscoped()
-			}
-			if len(f.scopes) > 0 {
-				fr = fr.Scopes(f.scopes...)
-			}
-			if (f.tx != nil || f.qTx != nil) && f.lock != nil {
-				fr = fr.Clauses(f.lock)
-			}
-			res, err := fr.Where(_conditions...).First()
+			_conditionOpts := make([]ConditionOption, _condLen, _condLen+1)
+			copy(_conditionOpts, f.conditionOpts)
+			_conditionOpts = append(_conditionOpts, ConditionSharding(sharding))
+			fr := f.core.First()
+			fr.lock = f.lock
+			fr.writeDB = f.writeDB
+			res, err := fr.Tx(f.tx).
+				QueryTx(f.qTx).
+				Select(f.selects...).
+				Unscoped(f.unscoped).
+				Scopes(f.scopes...).
+				Where(_conditionOpts...).
+				Do(ctx)
 			if err != nil {
-				if repositories.IsRealErr(err) {
-					f.core.logger.Error(fmt.Sprintf("【Order.ShardingFirst.%s】失败", sharding), zap.Error(err), zap.ByteString("debug.Stack", debug.Stack()))
-				}
 				if !errors.Is(err, gorm.ErrRecordNotFound) {
 					errChan <- err
 				}
