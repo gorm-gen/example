@@ -33,7 +33,6 @@ type _sum struct {
 func (a *Area) Sum(genField field.Expr) *_sum {
 	return &_sum{
 		core:          a,
-		unscoped:      a.unscoped,
 		genField:      genField,
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),

@@ -33,7 +33,6 @@ type _sum struct {
 func (o *OrderItem) Sum(genField field.Expr) *_sum {
 	return &_sum{
 		core:          o,
-		unscoped:      o.unscoped,
 		genField:      genField,
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),

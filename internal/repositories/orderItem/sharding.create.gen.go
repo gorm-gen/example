@@ -31,7 +31,7 @@ type _shardingCreate struct {
 func (o *OrderItem) ShardingCreate() *_shardingCreate {
 	return &_shardingCreate{
 		core:     o,
-		unscoped: o.unscoped,
+		unscoped: true,
 		values:   make([]*models.OrderItem, 0),
 		scopes:   make([]func(gen.Dao) gen.Dao, 0),
 	}

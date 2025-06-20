@@ -30,7 +30,6 @@ type _count struct {
 func (l *Language) Count() *_count {
 	return &_count{
 		core:          l,
-		unscoped:      l.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}

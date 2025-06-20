@@ -30,7 +30,6 @@ type _count struct {
 func (a *Area) Count() *_count {
 	return &_count{
 		core:          a,
-		unscoped:      a.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}

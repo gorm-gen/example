@@ -31,10 +31,9 @@ type _create struct {
 // Create 添加数据
 func (c *CreditCard) Create() *_create {
 	return &_create{
-		core:     c,
-		unscoped: c.unscoped,
-		values:   make([]*models.CreditCard, 0),
-		scopes:   make([]func(gen.Dao) gen.Dao, 0),
+		core:   c,
+		values: make([]*models.CreditCard, 0),
+		scopes: make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 

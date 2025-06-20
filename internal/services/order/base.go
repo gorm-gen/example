@@ -22,6 +22,6 @@ func New() *Order {
 		q:         repositories.GetQuery(),
 		db:        global.DB,
 		logger:    global.Logger,
-		orderRepo: order.New(order.WithNewTableName(""), order.WithUnscoped()),
+		orderRepo: order.New(order.WithNewTableName("")),
 	}
 }

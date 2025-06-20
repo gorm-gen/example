@@ -27,7 +27,6 @@ type IdentityCard struct {
 	q            *query.Query
 	db           *gorm.DB
 	logger       *zap.Logger
-	unscoped     bool
 	newTableName *string
 }
 
@@ -55,12 +54,6 @@ func WithDB(db *gorm.DB) Option {
 func WithNewTableName(newTableName string) Option {
 	return func(i *IdentityCard) {
 		i.newTableName = &newTableName
-	}
-}
-
-func WithUnscoped() Option {
-	return func(i *IdentityCard) {
-		i.unscoped = true
 	}
 }
 

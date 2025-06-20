@@ -41,7 +41,6 @@ type _list struct {
 func (l *Language) List() *_list {
 	return &_list{
 		core:          l,
-		unscoped:      l.unscoped,
 		selects:       make([]field.Expr, 0),
 		relationOpts:  make([]RelationOption, 0),
 		orderOpts:     make([]OrderOption, 0),

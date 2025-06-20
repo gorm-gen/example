@@ -37,7 +37,6 @@ type _last struct {
 func (l *Language) Last() *_last {
 	return &_last{
 		core:          l,
-		unscoped:      l.unscoped,
 		selects:       make([]field.Expr, 0),
 		relationOpts:  make([]RelationOption, 0),
 		conditionOpts: make([]ConditionOption, 0),

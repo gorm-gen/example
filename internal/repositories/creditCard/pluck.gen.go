@@ -42,7 +42,6 @@ func (c *CreditCard) Pluck(genField field.Expr, dest interface{}) *_pluck {
 		genField:      genField,
 		dest:          dest,
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
-		unscoped:      c.unscoped,
 		orderOpts:     make([]OrderOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
 	}

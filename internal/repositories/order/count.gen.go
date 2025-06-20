@@ -30,7 +30,6 @@ type _count struct {
 func (o *Order) Count() *_count {
 	return &_count{
 		core:          o,
-		unscoped:      o.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}

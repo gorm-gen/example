@@ -34,7 +34,7 @@ type _shardingDelete struct {
 func (o *OrderItem) ShardingDelete(sharding []int) *_shardingDelete {
 	return &_shardingDelete{
 		core:          o,
-		unscoped:      o.unscoped,
+		unscoped:      true,
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,
 		worker:        make(chan struct{}, runtime.NumCPU()),

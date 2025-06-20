@@ -36,7 +36,7 @@ type _shardingSum struct {
 func (o *Order) ShardingSum(genField field.Expr, sharding []string) *_shardingSum {
 	return &_shardingSum{
 		core:          o,
-		unscoped:      o.unscoped,
+		unscoped:      true,
 		genField:      genField,
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,

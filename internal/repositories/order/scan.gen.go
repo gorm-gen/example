@@ -42,7 +42,6 @@ func (o *Order) Scan(dest interface{}) *_scan {
 		dest:          dest,
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 		selects:       make([]field.Expr, 0),
-		unscoped:      o.unscoped,
 		orderOpts:     make([]OrderOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
 	}

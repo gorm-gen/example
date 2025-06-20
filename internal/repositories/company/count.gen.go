@@ -30,7 +30,6 @@ type _count struct {
 func (c *Company) Count() *_count {
 	return &_count{
 		core:          c,
-		unscoped:      c.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}

@@ -41,7 +41,6 @@ type _list struct {
 func (a *Area) List() *_list {
 	return &_list{
 		core:          a,
-		unscoped:      a.unscoped,
 		selects:       make([]field.Expr, 0),
 		relationOpts:  make([]RelationOption, 0),
 		orderOpts:     make([]OrderOption, 0),

@@ -31,10 +31,9 @@ type _create struct {
 // Create 添加数据
 func (o *OrderItem) Create() *_create {
 	return &_create{
-		core:     o,
-		unscoped: o.unscoped,
-		values:   make([]*models.OrderItem, 0),
-		scopes:   make([]func(gen.Dao) gen.Dao, 0),
+		core:   o,
+		values: make([]*models.OrderItem, 0),
+		scopes: make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 

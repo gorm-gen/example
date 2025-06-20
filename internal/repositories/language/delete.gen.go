@@ -29,7 +29,6 @@ type _delete struct {
 func (l *Language) Delete() *_delete {
 	return &_delete{
 		core:          l,
-		unscoped:      l.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}

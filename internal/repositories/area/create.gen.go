@@ -31,10 +31,9 @@ type _create struct {
 // Create 添加数据
 func (a *Area) Create() *_create {
 	return &_create{
-		core:     a,
-		unscoped: a.unscoped,
-		values:   make([]*models.Area, 0),
-		scopes:   make([]func(gen.Dao) gen.Dao, 0),
+		core:   a,
+		values: make([]*models.Area, 0),
+		scopes: make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 

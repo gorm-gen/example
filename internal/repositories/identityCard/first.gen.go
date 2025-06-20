@@ -37,7 +37,6 @@ type _first struct {
 func (i *IdentityCard) First() *_first {
 	return &_first{
 		core:          i,
-		unscoped:      i.unscoped,
 		selects:       make([]field.Expr, 0),
 		relationOpts:  make([]RelationOption, 0),
 		conditionOpts: make([]ConditionOption, 0),

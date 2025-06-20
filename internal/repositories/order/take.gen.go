@@ -38,7 +38,6 @@ type _take struct {
 func (o *Order) Take() *_take {
 	return &_take{
 		core:          o,
-		unscoped:      o.unscoped,
 		selects:       make([]field.Expr, 0),
 		relationOpts:  make([]RelationOption, 0),
 		orderOpts:     make([]OrderOption, 0),

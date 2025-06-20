@@ -46,7 +46,7 @@ type _shardingList struct {
 func (o *Order) ShardingList(sharding []string) *_shardingList {
 	return &_shardingList{
 		core:          o,
-		unscoped:      o.unscoped,
+		unscoped:      true,
 		selects:       make([]field.Expr, 0),
 		orderOpts:     make([]OrderOption, 0),
 		conditionOpts: make([]ConditionOption, 0),

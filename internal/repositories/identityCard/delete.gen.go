@@ -29,7 +29,6 @@ type _delete struct {
 func (i *IdentityCard) Delete() *_delete {
 	return &_delete{
 		core:          i,
-		unscoped:      i.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}

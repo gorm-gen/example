@@ -30,7 +30,6 @@ type _count struct {
 func (i *IdentityCard) Count() *_count {
 	return &_count{
 		core:          i,
-		unscoped:      i.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}

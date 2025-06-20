@@ -29,7 +29,6 @@ type _delete struct {
 func (o *Order) Delete() *_delete {
 	return &_delete{
 		core:          o,
-		unscoped:      o.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}

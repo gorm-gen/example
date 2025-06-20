@@ -33,7 +33,7 @@ type _shardingCount struct {
 func (o *OrderItem) ShardingCount(sharding []int) *_shardingCount {
 	return &_shardingCount{
 		core:          o,
-		unscoped:      o.unscoped,
+		unscoped:      true,
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,
 		worker:        make(chan struct{}, runtime.NumCPU()),

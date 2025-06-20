@@ -31,7 +31,6 @@ type _update struct {
 func (a *Area) Update() *_update {
 	return &_update{
 		core:          a,
-		unscoped:      a.unscoped,
 		updateOpts:    make([]UpdateOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),

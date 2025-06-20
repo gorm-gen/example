@@ -41,7 +41,7 @@ type _shardingLast struct {
 func (o *Order) ShardingLast(sharding []string) *_shardingLast {
 	return &_shardingLast{
 		core:          o,
-		unscoped:      o.unscoped,
+		unscoped:      true,
 		selects:       make([]field.Expr, 0),
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,

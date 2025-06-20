@@ -37,7 +37,6 @@ type _first struct {
 func (a *Area) First() *_first {
 	return &_first{
 		core:          a,
-		unscoped:      a.unscoped,
 		selects:       make([]field.Expr, 0),
 		relationOpts:  make([]RelationOption, 0),
 		conditionOpts: make([]ConditionOption, 0),

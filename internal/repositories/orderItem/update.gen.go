@@ -31,7 +31,6 @@ type _update struct {
 func (o *OrderItem) Update() *_update {
 	return &_update{
 		core:          o,
-		unscoped:      o.unscoped,
 		updateOpts:    make([]UpdateOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),

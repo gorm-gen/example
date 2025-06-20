@@ -42,7 +42,7 @@ type _shardingTake struct {
 func (o *Order) ShardingTake(sharding []string) *_shardingTake {
 	return &_shardingTake{
 		core:          o,
-		unscoped:      o.unscoped,
+		unscoped:      true,
 		selects:       make([]field.Expr, 0),
 		orderOpts:     make([]OrderOption, 0),
 		conditionOpts: make([]ConditionOption, 0),

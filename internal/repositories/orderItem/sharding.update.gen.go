@@ -35,7 +35,7 @@ type _shardingUpdate struct {
 func (o *OrderItem) ShardingUpdate(sharding []int) *_shardingUpdate {
 	return &_shardingUpdate{
 		core:          o,
-		unscoped:      o.unscoped,
+		unscoped:      true,
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 		updateOpts:    make([]UpdateOption, 0),
 		conditionOpts: make([]ConditionOption, 0),

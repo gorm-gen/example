@@ -29,7 +29,6 @@ type _delete struct {
 func (a *Area) Delete() *_delete {
 	return &_delete{
 		core:          a,
-		unscoped:      a.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}

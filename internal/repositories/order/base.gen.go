@@ -28,7 +28,6 @@ type Order struct {
 	q            *query.Query
 	db           *gorm.DB
 	logger       *zap.Logger
-	unscoped     bool
 	newTableName *string
 }
 
@@ -56,12 +55,6 @@ func WithDB(db *gorm.DB) Option {
 func WithNewTableName(newTableName string) Option {
 	return func(o *Order) {
 		o.newTableName = &newTableName
-	}
-}
-
-func WithUnscoped() Option {
-	return func(o *Order) {
-		o.unscoped = true
 	}
 }
 

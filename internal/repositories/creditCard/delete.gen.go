@@ -29,7 +29,6 @@ type _delete struct {
 func (c *CreditCard) Delete() *_delete {
 	return &_delete{
 		core:          c,
-		unscoped:      c.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}

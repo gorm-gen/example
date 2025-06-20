@@ -41,7 +41,7 @@ type _shardingFirst struct {
 func (o *Order) ShardingFirst(sharding []string) *_shardingFirst {
 	return &_shardingFirst{
 		core:          o,
-		unscoped:      o.unscoped,
+		unscoped:      true,
 		selects:       make([]field.Expr, 0),
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,

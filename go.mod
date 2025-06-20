@@ -8,7 +8,7 @@ require (
 	github.com/gorm-gen/generator v0.0.1
 	github.com/gorm-gen/logger v0.0.1
 	github.com/gorm-gen/paginate v0.0.1
-	github.com/gorm-gen/repository v1.0.6
+	github.com/gorm-gen/repository v1.0.8
 	github.com/gorm-gen/sharding v0.0.1
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/shopspring/decimal v1.4.0
@@ -42,7 +42,7 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.39.0 // indirect
-	golang.org/x/exp v0.0.0-20250606033433-dcc06ee1d476 // indirect
+	golang.org/x/exp v0.0.0-20250620022241-b7579e27df2b // indirect
 	golang.org/x/mod v0.25.0 // indirect
 	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect

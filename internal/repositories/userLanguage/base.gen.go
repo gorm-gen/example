@@ -26,7 +26,6 @@ type UserLanguage struct {
 	q            *query.Query
 	db           *gorm.DB
 	logger       *zap.Logger
-	unscoped     bool
 	newTableName *string
 }
 
@@ -54,12 +53,6 @@ func WithDB(db *gorm.DB) Option {
 func WithNewTableName(newTableName string) Option {
 	return func(u *UserLanguage) {
 		u.newTableName = &newTableName
-	}
-}
-
-func WithUnscoped() Option {
-	return func(u *UserLanguage) {
-		u.unscoped = true
 	}
 }
 
