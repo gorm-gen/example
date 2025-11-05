@@ -11,6 +11,7 @@ import (
 	"runtime/debug"
 	"sync"
 
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 
@@ -28,13 +29,14 @@ type _shardingDelete struct {
 	sharding      []string
 	worker        chan struct{}
 	scopes        []func(gen.Dao) gen.Dao
+	trace         bool
 }
 
 // ShardingDelete 删除分表数据
 func (o *Order) ShardingDelete(sharding []string) *_shardingDelete {
 	return &_shardingDelete{
 		core:          o,
-		unscoped:      true,
+		unscoped:      o.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,
 		worker:        make(chan struct{}, runtime.NumCPU()),
@@ -87,8 +89,21 @@ func (d *_shardingDelete) Where(opts ...ConditionOption) *_shardingDelete {
 	return d
 }
 
+func (d *_shardingDelete) Trace() *_shardingDelete {
+	d.trace = true
+	return d
+}
+
 // Do 执行删除分表数据
 func (d *_shardingDelete) Do(ctx context.Context) (int64, map[string]int64, error) {
+	if d.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:Order.ShardingDelete", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	_lenSharding := len(d.sharding)
 	if _lenSharding == 0 {
 		return 0, nil, nil
@@ -168,5 +183,7 @@ func (d *_shardingDelete) Do(ctx context.Context) (int64, map[string]int64, erro
 			_ = innerTx.Rollback()
 		}
 		return 0, nil, err
+	case <-ctx.Done():
+		return 0, nil, ctx.Err()
 	}
 }

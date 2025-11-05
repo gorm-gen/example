@@ -27,6 +27,7 @@ type UserLanguage struct {
 	db           *gorm.DB
 	logger       *zap.Logger
 	newTableName *string
+	unscoped     bool
 }
 
 // Option UserLanguage仓库初始化选项
@@ -53,6 +54,16 @@ func WithDB(db *gorm.DB) Option {
 func WithNewTableName(newTableName string) Option {
 	return func(u *UserLanguage) {
 		u.newTableName = &newTableName
+	}
+}
+
+func WithUnscoped(unscoped ...bool) Option {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	return func(u *UserLanguage) {
+		u.unscoped = _unscoped
 	}
 }
 

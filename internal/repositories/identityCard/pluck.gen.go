@@ -9,6 +9,7 @@ import (
 	"runtime/debug"
 
 	page "github.com/gorm-gen/paginate/gen"
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
@@ -33,12 +34,14 @@ type _pluck struct {
 	orderOpts     []OrderOption
 	conditionOpts []ConditionOption
 	writeDB       bool
+	trace         bool
 }
 
 // Pluck 从数据库中查询单列并扫描结果到切片
 func (i *IdentityCard) Pluck(genField field.Expr, dest interface{}) *_pluck {
 	return &_pluck{
 		core:          i,
+		unscoped:      i.unscoped,
 		genField:      genField,
 		dest:          dest,
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
@@ -131,8 +134,21 @@ func (p *_pluck) Scopes(funcs ...func(gen.Dao) gen.Dao) *_pluck {
 	return p
 }
 
+func (p *_pluck) Trace() *_pluck {
+	p.trace = true
+	return p
+}
+
 // Do 执行从数据库中查询单列并扫描结果到切片
 func (p *_pluck) Do(ctx context.Context) error {
+	if p.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:IdentityCard.Pluck", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	pq := p.core.q.IdentityCard
 	if p.tx != nil {
 		pq = p.tx.IdentityCard

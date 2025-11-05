@@ -8,6 +8,7 @@ import (
 	"context"
 	"runtime/debug"
 
+	"github.com/opentracing/opentracing-go"
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
 	"gorm.io/gen"
@@ -27,12 +28,14 @@ type _sum struct {
 	conditionOpts []ConditionOption
 	writeDB       bool
 	scopes        []func(gen.Dao) gen.Dao
+	trace         bool
 }
 
 // Sum SUM数据
 func (u *User) Sum(genField field.Expr) *_sum {
 	return &_sum{
 		core:          u,
+		unscoped:      u.unscoped,
 		genField:      genField,
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
@@ -76,6 +79,11 @@ func (s *_sum) WriteDB() *_sum {
 	return s
 }
 
+func (s *_sum) Trace() *_sum {
+	s.trace = true
+	return s
+}
+
 func (s *_sum) Where(opts ...ConditionOption) *_sum {
 	s.conditionOpts = append(s.conditionOpts, opts...)
 	return s
@@ -87,6 +95,14 @@ type Sum struct {
 
 // Do 执行SUM数据
 func (s *_sum) Do(ctx context.Context) (decimal.Decimal, error) {
+	if s.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:User.Sum", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	sq := s.core.q.User
 	if s.tx != nil {
 		sq = s.tx.User

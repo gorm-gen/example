@@ -28,6 +28,7 @@ type Company struct {
 	db           *gorm.DB
 	logger       *zap.Logger
 	newTableName *string
+	unscoped     bool
 }
 
 // Option Company仓库初始化选项
@@ -54,6 +55,16 @@ func WithDB(db *gorm.DB) Option {
 func WithNewTableName(newTableName string) Option {
 	return func(c *Company) {
 		c.newTableName = &newTableName
+	}
+}
+
+func WithUnscoped(unscoped ...bool) Option {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	return func(c *Company) {
+		c.unscoped = _unscoped
 	}
 }
 
@@ -209,10 +220,16 @@ func ConditionName(v ...string) ConditionOption {
 			if length == 0 {
 				return c.q.Company.Table(*c.newTableName).Name.Eq("")
 			}
+			if length > 1 {
+				return c.q.Company.Table(*c.newTableName).Name.In(v...)
+			}
 			return c.q.Company.Table(*c.newTableName).Name.Eq(v[0])
 		}
 		if length == 0 {
 			return c.q.Company.Name.Eq("")
+		}
+		if length > 1 {
+			return c.q.Company.Name.In(v...)
 		}
 		return c.q.Company.Name.Eq(v[0])
 	}
@@ -225,10 +242,16 @@ func ConditionNameNeq(v ...string) ConditionOption {
 			if length == 0 {
 				return c.q.Company.Table(*c.newTableName).Name.Neq("")
 			}
+			if length > 1 {
+				return c.q.Company.Table(*c.newTableName).Name.NotIn(v...)
+			}
 			return c.q.Company.Table(*c.newTableName).Name.Neq(v[0])
 		}
 		if length == 0 {
 			return c.q.Company.Name.Neq("")
+		}
+		if length > 1 {
+			return c.q.Company.Name.NotIn(v...)
 		}
 		return c.q.Company.Name.Neq(v[0])
 	}

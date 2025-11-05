@@ -9,6 +9,7 @@ import (
 	"runtime/debug"
 
 	page "github.com/gorm-gen/paginate/gen"
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
@@ -35,12 +36,14 @@ type _list struct {
 	conditionOpts []ConditionOption
 	writeDB       bool
 	scopes        []func(gen.Dao) gen.Dao
+	trace         bool
 }
 
 // List 获取数据列表
 func (c *Company) List() *_list {
 	return &_list{
 		core:          c,
+		unscoped:      c.unscoped,
 		selects:       make([]field.Expr, 0),
 		relationOpts:  make([]RelationOption, 0),
 		orderOpts:     make([]OrderOption, 0),
@@ -143,8 +146,21 @@ func (l *_list) Page(page, pageSize uint) *_list {
 	return l
 }
 
+func (l *_list) Trace() *_list {
+	l.trace = true
+	return l
+}
+
 // Do 执行获取数据列表
 func (l *_list) Do(ctx context.Context) ([]*models.Company, error) {
+	if l.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:Company.List", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	lq := l.core.q.Company
 	if l.tx != nil {
 		lq = l.tx.Company

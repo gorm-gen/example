@@ -28,6 +28,7 @@ type IdentityCard struct {
 	db           *gorm.DB
 	logger       *zap.Logger
 	newTableName *string
+	unscoped     bool
 }
 
 // Option IdentityCard仓库初始化选项
@@ -54,6 +55,16 @@ func WithDB(db *gorm.DB) Option {
 func WithNewTableName(newTableName string) Option {
 	return func(i *IdentityCard) {
 		i.newTableName = &newTableName
+	}
+}
+
+func WithUnscoped(unscoped ...bool) Option {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	return func(i *IdentityCard) {
+		i.unscoped = _unscoped
 	}
 }
 
@@ -209,10 +220,16 @@ func ConditionNumber(v ...string) ConditionOption {
 			if length == 0 {
 				return i.q.IdentityCard.Table(*i.newTableName).Number.Eq("")
 			}
+			if length > 1 {
+				return i.q.IdentityCard.Table(*i.newTableName).Number.In(v...)
+			}
 			return i.q.IdentityCard.Table(*i.newTableName).Number.Eq(v[0])
 		}
 		if length == 0 {
 			return i.q.IdentityCard.Number.Eq("")
+		}
+		if length > 1 {
+			return i.q.IdentityCard.Number.In(v...)
 		}
 		return i.q.IdentityCard.Number.Eq(v[0])
 	}
@@ -225,10 +242,16 @@ func ConditionNumberNeq(v ...string) ConditionOption {
 			if length == 0 {
 				return i.q.IdentityCard.Table(*i.newTableName).Number.Neq("")
 			}
+			if length > 1 {
+				return i.q.IdentityCard.Table(*i.newTableName).Number.NotIn(v...)
+			}
 			return i.q.IdentityCard.Table(*i.newTableName).Number.Neq(v[0])
 		}
 		if length == 0 {
 			return i.q.IdentityCard.Number.Neq("")
+		}
+		if length > 1 {
+			return i.q.IdentityCard.Number.NotIn(v...)
 		}
 		return i.q.IdentityCard.Number.Neq(v[0])
 	}

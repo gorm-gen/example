@@ -11,6 +11,7 @@ import (
 	"runtime/debug"
 	"sync"
 
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 
@@ -27,13 +28,14 @@ type _shardingCount struct {
 	worker        chan struct{}
 	writeDB       bool
 	scopes        []func(gen.Dao) gen.Dao
+	trace         bool
 }
 
 // ShardingCount 获取分表数据总记录
 func (o *Order) ShardingCount(sharding []string) *_shardingCount {
 	return &_shardingCount{
 		core:          o,
-		unscoped:      true,
+		unscoped:      o.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,
 		worker:        make(chan struct{}, runtime.NumCPU()),
@@ -87,13 +89,27 @@ func (c *_shardingCount) WriteDB() *_shardingCount {
 	return c
 }
 
+func (c *_shardingCount) Trace() *_shardingCount {
+	c.trace = true
+	return c
+}
+
 // Do 执行获取分表数据总记录
 func (c *_shardingCount) Do(ctx context.Context) (int64, map[string]int64, error) {
+	if c.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:Order.ShardingCount", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	_lenSharding := len(c.sharding)
 	if _lenSharding == 0 {
 		return 0, nil, nil
 	}
-	ctx, cancel := context.WithCancel(ctx)
+	var cancel context.CancelFunc
+	ctx, cancel = context.WithCancel(ctx)
 	defer cancel()
 	_condLen := len(c.conditionOpts)
 	sm := sync.Map{}
@@ -150,5 +166,7 @@ func (c *_shardingCount) Do(ctx context.Context) (int64, map[string]int64, error
 		return count, m, nil
 	case err := <-errChan:
 		return 0, nil, err
+	case <-ctx.Done():
+		return 0, nil, ctx.Err()
 	}
 }

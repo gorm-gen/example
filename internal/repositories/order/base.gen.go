@@ -29,6 +29,7 @@ type Order struct {
 	db           *gorm.DB
 	logger       *zap.Logger
 	newTableName *string
+	unscoped     bool
 }
 
 // Option Order仓库初始化选项
@@ -55,6 +56,16 @@ func WithDB(db *gorm.DB) Option {
 func WithNewTableName(newTableName string) Option {
 	return func(o *Order) {
 		o.newTableName = &newTableName
+	}
+}
+
+func WithUnscoped(unscoped ...bool) Option {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	return func(o *Order) {
+		o.unscoped = _unscoped
 	}
 }
 
@@ -210,10 +221,16 @@ func ConditionSharding(v ...string) ConditionOption {
 			if length == 0 {
 				return o.q.Order.Table(*o.newTableName).Sharding.Eq("")
 			}
+			if length > 1 {
+				return o.q.Order.Table(*o.newTableName).Sharding.In(v...)
+			}
 			return o.q.Order.Table(*o.newTableName).Sharding.Eq(v[0])
 		}
 		if length == 0 {
 			return o.q.Order.Sharding.Eq("")
+		}
+		if length > 1 {
+			return o.q.Order.Sharding.In(v...)
 		}
 		return o.q.Order.Sharding.Eq(v[0])
 	}
@@ -226,10 +243,16 @@ func ConditionShardingNeq(v ...string) ConditionOption {
 			if length == 0 {
 				return o.q.Order.Table(*o.newTableName).Sharding.Neq("")
 			}
+			if length > 1 {
+				return o.q.Order.Table(*o.newTableName).Sharding.NotIn(v...)
+			}
 			return o.q.Order.Table(*o.newTableName).Sharding.Neq(v[0])
 		}
 		if length == 0 {
 			return o.q.Order.Sharding.Neq("")
+		}
+		if length > 1 {
+			return o.q.Order.Sharding.NotIn(v...)
 		}
 		return o.q.Order.Sharding.Neq(v[0])
 	}
@@ -388,10 +411,16 @@ func ConditionOrderNo(v ...string) ConditionOption {
 			if length == 0 {
 				return o.q.Order.Table(*o.newTableName).OrderNo.Eq("")
 			}
+			if length > 1 {
+				return o.q.Order.Table(*o.newTableName).OrderNo.In(v...)
+			}
 			return o.q.Order.Table(*o.newTableName).OrderNo.Eq(v[0])
 		}
 		if length == 0 {
 			return o.q.Order.OrderNo.Eq("")
+		}
+		if length > 1 {
+			return o.q.Order.OrderNo.In(v...)
 		}
 		return o.q.Order.OrderNo.Eq(v[0])
 	}
@@ -404,10 +433,16 @@ func ConditionOrderNoNeq(v ...string) ConditionOption {
 			if length == 0 {
 				return o.q.Order.Table(*o.newTableName).OrderNo.Neq("")
 			}
+			if length > 1 {
+				return o.q.Order.Table(*o.newTableName).OrderNo.NotIn(v...)
+			}
 			return o.q.Order.Table(*o.newTableName).OrderNo.Neq(v[0])
 		}
 		if length == 0 {
 			return o.q.Order.OrderNo.Neq("")
+		}
+		if length > 1 {
+			return o.q.Order.OrderNo.NotIn(v...)
 		}
 		return o.q.Order.OrderNo.Neq(v[0])
 	}

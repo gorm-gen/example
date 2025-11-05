@@ -9,6 +9,7 @@ import (
 	"runtime/debug"
 
 	page "github.com/gorm-gen/paginate/gen"
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
@@ -33,12 +34,14 @@ type _scan struct {
 	orderOpts     []OrderOption
 	conditionOpts []ConditionOption
 	writeDB       bool
+	trace         bool
 }
 
 // Scan 从数据库中查询多个列并扫描结果到切片
 func (a *Area) Scan(dest interface{}) *_scan {
 	return &_scan{
 		core:          a,
+		unscoped:      a.unscoped,
 		dest:          dest,
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 		selects:       make([]field.Expr, 0),
@@ -136,8 +139,21 @@ func (s *_scan) Scopes(funcs ...func(gen.Dao) gen.Dao) *_scan {
 	return s
 }
 
+func (s *_scan) Trace() *_scan {
+	s.trace = true
+	return s
+}
+
 // Do 执行从数据库中查询多个列并扫描结果到切片
 func (s *_scan) Do(ctx context.Context) error {
+	if s.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:Area.Scan", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	sq := s.core.q.Area
 	if s.tx != nil {
 		sq = s.tx.Area

@@ -8,6 +8,7 @@ import (
 	"context"
 	"runtime/debug"
 
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
@@ -31,12 +32,14 @@ type _first struct {
 	conditionOpts []ConditionOption
 	writeDB       bool
 	scopes        []func(gen.Dao) gen.Dao
+	trace         bool
 }
 
 // First 获取第一条记录（主键升序）
 func (o *OrderItem) First() *_first {
 	return &_first{
 		core:          o,
+		unscoped:      o.unscoped,
 		selects:       make([]field.Expr, 0),
 		relationOpts:  make([]RelationOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
@@ -126,8 +129,21 @@ func (f *_first) WriteDB() *_first {
 	return f
 }
 
+func (f *_first) Trace() *_first {
+	f.trace = true
+	return f
+}
+
 // Do 执行获取第一条记录（主键升序）
 func (f *_first) Do(ctx context.Context) (*models.OrderItem, error) {
+	if f.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:OrderItem.First", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	fq := f.core.q.OrderItem
 	if f.tx != nil {
 		fq = f.tx.OrderItem

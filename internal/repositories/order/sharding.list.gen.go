@@ -13,6 +13,7 @@ import (
 
 	page "github.com/gorm-gen/paginate/gen"
 	"github.com/gorm-gen/sharding/query/list"
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
@@ -40,13 +41,14 @@ type _shardingList struct {
 	asc           bool
 	writeDB       bool
 	scopes        []func(gen.Dao) gen.Dao
+	trace         bool
 }
 
 // ShardingList 获取分表数据列表
 func (o *Order) ShardingList(sharding []string) *_shardingList {
 	return &_shardingList{
 		core:          o,
-		unscoped:      true,
+		unscoped:      o.unscoped,
 		selects:       make([]field.Expr, 0),
 		orderOpts:     make([]OrderOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
@@ -173,14 +175,28 @@ func (l *_shardingList) WriteDB() *_shardingList {
 	return l
 }
 
+func (l *_shardingList) Trace() *_shardingList {
+	l.trace = true
+	return l
+}
+
 // Do 执行获取分表数据列表
 func (l *_shardingList) Do(ctx context.Context) ([]*models.Order, int64, error) {
+	if l.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:Order.ShardingList", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	empty := make([]*models.Order, 0)
 	_lenSharding := len(l.sharding)
 	if _lenSharding == 0 {
 		return empty, 0, nil
 	}
-	ctx, cancel := context.WithCancel(ctx)
+	var cancel context.CancelFunc
+	ctx, cancel = context.WithCancel(ctx)
 	defer cancel()
 	// 获取分表数据总记录
 	shardingCount := l.core.ShardingCount(l.sharding).
@@ -316,5 +332,7 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.Order, int64, error) 
 		return __list, count, nil
 	case err = <-errChan:
 		return nil, 0, err
+	case <-ctx.Done():
+		return nil, 0, ctx.Err()
 	}
 }

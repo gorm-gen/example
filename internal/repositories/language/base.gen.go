@@ -28,6 +28,7 @@ type Language struct {
 	db           *gorm.DB
 	logger       *zap.Logger
 	newTableName *string
+	unscoped     bool
 }
 
 // Option Language仓库初始化选项
@@ -54,6 +55,16 @@ func WithDB(db *gorm.DB) Option {
 func WithNewTableName(newTableName string) Option {
 	return func(l *Language) {
 		l.newTableName = &newTableName
+	}
+}
+
+func WithUnscoped(unscoped ...bool) Option {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	return func(l *Language) {
+		l.unscoped = _unscoped
 	}
 }
 
@@ -209,10 +220,16 @@ func ConditionName(v ...string) ConditionOption {
 			if length == 0 {
 				return l.q.Language.Table(*l.newTableName).Name.Eq("")
 			}
+			if length > 1 {
+				return l.q.Language.Table(*l.newTableName).Name.In(v...)
+			}
 			return l.q.Language.Table(*l.newTableName).Name.Eq(v[0])
 		}
 		if length == 0 {
 			return l.q.Language.Name.Eq("")
+		}
+		if length > 1 {
+			return l.q.Language.Name.In(v...)
 		}
 		return l.q.Language.Name.Eq(v[0])
 	}
@@ -225,10 +242,16 @@ func ConditionNameNeq(v ...string) ConditionOption {
 			if length == 0 {
 				return l.q.Language.Table(*l.newTableName).Name.Neq("")
 			}
+			if length > 1 {
+				return l.q.Language.Table(*l.newTableName).Name.NotIn(v...)
+			}
 			return l.q.Language.Table(*l.newTableName).Name.Neq(v[0])
 		}
 		if length == 0 {
 			return l.q.Language.Name.Neq("")
+		}
+		if length > 1 {
+			return l.q.Language.Name.NotIn(v...)
 		}
 		return l.q.Language.Name.Neq(v[0])
 	}

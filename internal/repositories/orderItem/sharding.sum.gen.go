@@ -11,6 +11,7 @@ import (
 	"runtime/debug"
 	"sync"
 
+	"github.com/opentracing/opentracing-go"
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
 	"gorm.io/gen"
@@ -30,13 +31,14 @@ type _shardingSum struct {
 	worker        chan struct{}
 	writeDB       bool
 	scopes        []func(gen.Dao) gen.Dao
+	trace         bool
 }
 
 // ShardingSum 分表SUM数据
 func (o *OrderItem) ShardingSum(genField field.Expr, sharding []int) *_shardingSum {
 	return &_shardingSum{
 		core:          o,
-		unscoped:      true,
+		unscoped:      o.unscoped,
 		genField:      genField,
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,
@@ -95,13 +97,27 @@ func (s *_shardingSum) WriteDB() *_shardingSum {
 	return s
 }
 
+func (s *_shardingSum) Trace() *_shardingSum {
+	s.trace = true
+	return s
+}
+
 // Do 执行分表SUM数据
 func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[int]decimal.Decimal, error) {
+	if s.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:OrderItem.ShardingSum", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	_lenSharding := len(s.sharding)
 	if _lenSharding == 0 {
 		return decimal.Zero, nil, nil
 	}
-	ctx, cancel := context.WithCancel(ctx)
+	var cancel context.CancelFunc
+	ctx, cancel = context.WithCancel(ctx)
 	defer cancel()
 	_condLen := len(s.conditionOpts)
 	wg := sync.WaitGroup{}
@@ -158,5 +174,7 @@ func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[int]decimal
 		return sum, m, nil
 	case err := <-errChan:
 		return decimal.Zero, nil, err
+	case <-ctx.Done():
+		return decimal.Zero, nil, ctx.Err()
 	}
 }

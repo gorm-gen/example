@@ -8,6 +8,7 @@ import (
 	"context"
 	"runtime/debug"
 
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 
@@ -23,12 +24,14 @@ type _delete struct {
 	unscoped      bool
 	conditionOpts []ConditionOption
 	scopes        []func(gen.Dao) gen.Dao
+	trace         bool
 }
 
 // Delete 删除数据
 func (a *Area) Delete() *_delete {
 	return &_delete{
 		core:          a,
+		unscoped:      a.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
@@ -71,8 +74,21 @@ func (d *_delete) Where(opts ...ConditionOption) *_delete {
 	return d
 }
 
+func (d *_delete) Trace() *_delete {
+	d.trace = true
+	return d
+}
+
 // Do 执行删除数据
 func (d *_delete) Do(ctx context.Context) (int64, error) {
+	if d.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:Area.Delete", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	dq := d.core.q.Area
 	if d.tx != nil {
 		dq = d.tx.Area

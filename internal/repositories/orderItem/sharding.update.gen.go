@@ -11,6 +11,7 @@ import (
 	"runtime/debug"
 	"sync"
 
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 
@@ -29,13 +30,14 @@ type _shardingUpdate struct {
 	sharding      []int
 	worker        chan struct{}
 	scopes        []func(gen.Dao) gen.Dao
+	trace         bool
 }
 
 // ShardingUpdate 更新分表数据
 func (o *OrderItem) ShardingUpdate(sharding []int) *_shardingUpdate {
 	return &_shardingUpdate{
 		core:          o,
-		unscoped:      true,
+		unscoped:      o.unscoped,
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 		updateOpts:    make([]UpdateOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
@@ -84,7 +86,16 @@ func (u *_shardingUpdate) Scopes(funcs ...func(gen.Dao) gen.Dao) *_shardingUpdat
 	return u
 }
 
+// Update update fields
+//
+// Deprecated: The future will be removed, this function simply calls [Set].
+//
+//go:fix inline
 func (u *_shardingUpdate) Update(opts ...UpdateOption) *_shardingUpdate {
+	return u.Set(opts...)
+}
+
+func (u *_shardingUpdate) Set(opts ...UpdateOption) *_shardingUpdate {
 	u.updateOpts = append(u.updateOpts, opts...)
 	return u
 }
@@ -94,8 +105,21 @@ func (u *_shardingUpdate) Where(opts ...ConditionOption) *_shardingUpdate {
 	return u
 }
 
+func (u *_shardingUpdate) Trace() *_shardingUpdate {
+	u.trace = true
+	return u
+}
+
 // Do 执行更新分表数据
 func (u *_shardingUpdate) Do(ctx context.Context) (int64, map[int]int64, error) {
+	if u.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:OrderItem.ShardingUpdate", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	_lenSharding := len(u.sharding)
 	if len(u.updateOpts) == 0 || _lenSharding == 0 {
 		return 0, nil, nil
@@ -176,5 +200,7 @@ func (u *_shardingUpdate) Do(ctx context.Context) (int64, map[int]int64, error) 
 			_ = innerTx.Rollback()
 		}
 		return 0, nil, err
+	case <-ctx.Done():
+		return 0, nil, ctx.Err()
 	}
 }

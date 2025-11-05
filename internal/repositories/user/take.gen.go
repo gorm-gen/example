@@ -8,6 +8,7 @@ import (
 	"context"
 	"runtime/debug"
 
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
@@ -32,12 +33,14 @@ type _take struct {
 	conditionOpts []ConditionOption
 	writeDB       bool
 	scopes        []func(gen.Dao) gen.Dao
+	trace         bool
 }
 
 // Take 获取一条记录
 func (u *User) Take() *_take {
 	return &_take{
 		core:          u,
+		unscoped:      u.unscoped,
 		selects:       make([]field.Expr, 0),
 		relationOpts:  make([]RelationOption, 0),
 		orderOpts:     make([]OrderOption, 0),
@@ -133,8 +136,21 @@ func (t *_take) WriteDB() *_take {
 	return t
 }
 
+func (t *_take) Trace() *_take {
+	t.trace = true
+	return t
+}
+
 // Do 执行获取一条记录
 func (t *_take) Do(ctx context.Context) (*models.User, error) {
+	if t.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:User.Take", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	tq := t.core.q.User
 	if t.tx != nil {
 		tq = t.tx.User

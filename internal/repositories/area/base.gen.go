@@ -28,6 +28,7 @@ type Area struct {
 	db           *gorm.DB
 	logger       *zap.Logger
 	newTableName *string
+	unscoped     bool
 }
 
 // Option Area仓库初始化选项
@@ -54,6 +55,16 @@ func WithDB(db *gorm.DB) Option {
 func WithNewTableName(newTableName string) Option {
 	return func(a *Area) {
 		a.newTableName = &newTableName
+	}
+}
+
+func WithUnscoped(unscoped ...bool) Option {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	return func(a *Area) {
+		a.unscoped = _unscoped
 	}
 }
 
@@ -209,10 +220,16 @@ func ConditionName(v ...string) ConditionOption {
 			if length == 0 {
 				return a.q.Area.Table(*a.newTableName).Name.Eq("")
 			}
+			if length > 1 {
+				return a.q.Area.Table(*a.newTableName).Name.In(v...)
+			}
 			return a.q.Area.Table(*a.newTableName).Name.Eq(v[0])
 		}
 		if length == 0 {
 			return a.q.Area.Name.Eq("")
+		}
+		if length > 1 {
+			return a.q.Area.Name.In(v...)
 		}
 		return a.q.Area.Name.Eq(v[0])
 	}
@@ -225,10 +242,16 @@ func ConditionNameNeq(v ...string) ConditionOption {
 			if length == 0 {
 				return a.q.Area.Table(*a.newTableName).Name.Neq("")
 			}
+			if length > 1 {
+				return a.q.Area.Table(*a.newTableName).Name.NotIn(v...)
+			}
 			return a.q.Area.Table(*a.newTableName).Name.Neq(v[0])
 		}
 		if length == 0 {
 			return a.q.Area.Name.Neq("")
+		}
+		if length > 1 {
+			return a.q.Area.Name.NotIn(v...)
 		}
 		return a.q.Area.Name.Neq(v[0])
 	}

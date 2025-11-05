@@ -26,6 +26,7 @@ type OrderItem struct {
 	db           *gorm.DB
 	logger       *zap.Logger
 	newTableName *string
+	unscoped     bool
 }
 
 // Option OrderItem仓库初始化选项
@@ -52,6 +53,16 @@ func WithDB(db *gorm.DB) Option {
 func WithNewTableName(newTableName string) Option {
 	return func(o *OrderItem) {
 		o.newTableName = &newTableName
+	}
+}
+
+func WithUnscoped(unscoped ...bool) Option {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	return func(o *OrderItem) {
+		o.unscoped = _unscoped
 	}
 }
 
@@ -451,10 +462,16 @@ func ConditionOrderNo(v ...string) ConditionOption {
 			if length == 0 {
 				return o.q.OrderItem.Table(*o.newTableName).OrderNo.Eq("")
 			}
+			if length > 1 {
+				return o.q.OrderItem.Table(*o.newTableName).OrderNo.In(v...)
+			}
 			return o.q.OrderItem.Table(*o.newTableName).OrderNo.Eq(v[0])
 		}
 		if length == 0 {
 			return o.q.OrderItem.OrderNo.Eq("")
+		}
+		if length > 1 {
+			return o.q.OrderItem.OrderNo.In(v...)
 		}
 		return o.q.OrderItem.OrderNo.Eq(v[0])
 	}
@@ -467,10 +484,16 @@ func ConditionOrderNoNeq(v ...string) ConditionOption {
 			if length == 0 {
 				return o.q.OrderItem.Table(*o.newTableName).OrderNo.Neq("")
 			}
+			if length > 1 {
+				return o.q.OrderItem.Table(*o.newTableName).OrderNo.NotIn(v...)
+			}
 			return o.q.OrderItem.Table(*o.newTableName).OrderNo.Neq(v[0])
 		}
 		if length == 0 {
 			return o.q.OrderItem.OrderNo.Neq("")
+		}
+		if length > 1 {
+			return o.q.OrderItem.OrderNo.NotIn(v...)
 		}
 		return o.q.OrderItem.OrderNo.Neq(v[0])
 	}
@@ -507,10 +530,16 @@ func ConditionComment(v ...string) ConditionOption {
 			if length == 0 {
 				return o.q.OrderItem.Table(*o.newTableName).Comment.Eq("")
 			}
+			if length > 1 {
+				return o.q.OrderItem.Table(*o.newTableName).Comment.In(v...)
+			}
 			return o.q.OrderItem.Table(*o.newTableName).Comment.Eq(v[0])
 		}
 		if length == 0 {
 			return o.q.OrderItem.Comment.Eq("")
+		}
+		if length > 1 {
+			return o.q.OrderItem.Comment.In(v...)
 		}
 		return o.q.OrderItem.Comment.Eq(v[0])
 	}
@@ -523,10 +552,16 @@ func ConditionCommentNeq(v ...string) ConditionOption {
 			if length == 0 {
 				return o.q.OrderItem.Table(*o.newTableName).Comment.Neq("")
 			}
+			if length > 1 {
+				return o.q.OrderItem.Table(*o.newTableName).Comment.NotIn(v...)
+			}
 			return o.q.OrderItem.Table(*o.newTableName).Comment.Neq(v[0])
 		}
 		if length == 0 {
 			return o.q.OrderItem.Comment.Neq("")
+		}
+		if length > 1 {
+			return o.q.OrderItem.Comment.NotIn(v...)
 		}
 		return o.q.OrderItem.Comment.Neq(v[0])
 	}
@@ -563,10 +598,16 @@ func ConditionExpressNumber(v ...string) ConditionOption {
 			if length == 0 {
 				return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Eq("")
 			}
+			if length > 1 {
+				return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.In(v...)
+			}
 			return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Eq(v[0])
 		}
 		if length == 0 {
 			return o.q.OrderItem.ExpressNumber.Eq("")
+		}
+		if length > 1 {
+			return o.q.OrderItem.ExpressNumber.In(v...)
 		}
 		return o.q.OrderItem.ExpressNumber.Eq(v[0])
 	}
@@ -579,10 +620,16 @@ func ConditionExpressNumberNeq(v ...string) ConditionOption {
 			if length == 0 {
 				return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Neq("")
 			}
+			if length > 1 {
+				return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.NotIn(v...)
+			}
 			return o.q.OrderItem.Table(*o.newTableName).ExpressNumber.Neq(v[0])
 		}
 		if length == 0 {
 			return o.q.OrderItem.ExpressNumber.Neq("")
+		}
+		if length > 1 {
+			return o.q.OrderItem.ExpressNumber.NotIn(v...)
 		}
 		return o.q.OrderItem.ExpressNumber.Neq(v[0])
 	}

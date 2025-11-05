@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"runtime/debug"
 
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 
@@ -25,13 +26,14 @@ type _shardingCreate struct {
 	values    []*models.OrderItem
 	batchSize int
 	scopes    []func(gen.Dao) gen.Dao
+	trace     bool
 }
 
 // ShardingCreate 分表添加数据
 func (o *OrderItem) ShardingCreate() *_shardingCreate {
 	return &_shardingCreate{
 		core:     o,
-		unscoped: true,
+		unscoped: o.unscoped,
 		values:   make([]*models.OrderItem, 0),
 		scopes:   make([]func(gen.Dao) gen.Dao, 0),
 	}
@@ -80,8 +82,21 @@ func (c *_shardingCreate) BatchSize(batchSize uint) *_shardingCreate {
 	return c
 }
 
+func (c *_shardingCreate) Trace() *_shardingCreate {
+	c.trace = true
+	return c
+}
+
 // Do 执行添加数据
 func (c *_shardingCreate) Do(ctx context.Context) (err error) {
+	if c.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:OrderItem.ShardingCreate", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	length := len(c.values)
 	if length == 0 {
 		return nil

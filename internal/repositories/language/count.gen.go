@@ -8,6 +8,7 @@ import (
 	"context"
 	"runtime/debug"
 
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 
@@ -24,12 +25,14 @@ type _count struct {
 	conditionOpts []ConditionOption
 	writeDB       bool
 	scopes        []func(gen.Dao) gen.Dao
+	trace         bool
 }
 
 // Count 获取数据总记录
 func (l *Language) Count() *_count {
 	return &_count{
 		core:          l,
+		unscoped:      l.unscoped,
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
 	}
@@ -77,8 +80,21 @@ func (c *_count) WriteDB() *_count {
 	return c
 }
 
+func (c *_count) Trace() *_count {
+	c.trace = true
+	return c
+}
+
 // Do 执行获取数据总记录
 func (c *_count) Do(ctx context.Context) (int64, error) {
+	if c.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:Language.Count", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	cq := c.core.q.Language
 	if c.tx != nil {
 		cq = c.tx.Language

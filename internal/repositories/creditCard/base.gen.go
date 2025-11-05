@@ -28,6 +28,7 @@ type CreditCard struct {
 	db           *gorm.DB
 	logger       *zap.Logger
 	newTableName *string
+	unscoped     bool
 }
 
 // Option CreditCard仓库初始化选项
@@ -54,6 +55,16 @@ func WithDB(db *gorm.DB) Option {
 func WithNewTableName(newTableName string) Option {
 	return func(c *CreditCard) {
 		c.newTableName = &newTableName
+	}
+}
+
+func WithUnscoped(unscoped ...bool) Option {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	return func(c *CreditCard) {
+		c.unscoped = _unscoped
 	}
 }
 
@@ -209,10 +220,16 @@ func ConditionNumber(v ...string) ConditionOption {
 			if length == 0 {
 				return c.q.CreditCard.Table(*c.newTableName).Number.Eq("")
 			}
+			if length > 1 {
+				return c.q.CreditCard.Table(*c.newTableName).Number.In(v...)
+			}
 			return c.q.CreditCard.Table(*c.newTableName).Number.Eq(v[0])
 		}
 		if length == 0 {
 			return c.q.CreditCard.Number.Eq("")
+		}
+		if length > 1 {
+			return c.q.CreditCard.Number.In(v...)
 		}
 		return c.q.CreditCard.Number.Eq(v[0])
 	}
@@ -225,10 +242,16 @@ func ConditionNumberNeq(v ...string) ConditionOption {
 			if length == 0 {
 				return c.q.CreditCard.Table(*c.newTableName).Number.Neq("")
 			}
+			if length > 1 {
+				return c.q.CreditCard.Table(*c.newTableName).Number.NotIn(v...)
+			}
 			return c.q.CreditCard.Table(*c.newTableName).Number.Neq(v[0])
 		}
 		if length == 0 {
 			return c.q.CreditCard.Number.Neq("")
+		}
+		if length > 1 {
+			return c.q.CreditCard.Number.NotIn(v...)
 		}
 		return c.q.CreditCard.Number.Neq(v[0])
 	}

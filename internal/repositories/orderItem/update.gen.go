@@ -8,6 +8,7 @@ import (
 	"context"
 	"runtime/debug"
 
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
@@ -25,12 +26,14 @@ type _update struct {
 	updateOpts    []UpdateOption
 	conditionOpts []ConditionOption
 	scopes        []func(gen.Dao) gen.Dao
+	trace         bool
 }
 
 // Update 更新数据
 func (o *OrderItem) Update() *_update {
 	return &_update{
 		core:          o,
+		unscoped:      o.unscoped,
 		updateOpts:    make([]UpdateOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
 		scopes:        make([]func(gen.Dao) gen.Dao, 0),
@@ -69,7 +72,16 @@ func (u *_update) Scopes(funcs ...func(gen.Dao) gen.Dao) *_update {
 	return u
 }
 
+// Update update fields
+//
+// Deprecated: The future will be removed, this function simply calls [Set].
+//
+//go:fix inline
 func (u *_update) Update(opts ...UpdateOption) *_update {
+	return u.Set(opts...)
+}
+
+func (u *_update) Set(opts ...UpdateOption) *_update {
 	u.updateOpts = append(u.updateOpts, opts...)
 	return u
 }
@@ -79,8 +91,21 @@ func (u *_update) Where(opts ...ConditionOption) *_update {
 	return u
 }
 
+func (u *_update) Trace() *_update {
+	u.trace = true
+	return u
+}
+
 // Do 执行更新数据
 func (u *_update) Do(ctx context.Context) (int64, error) {
+	if u.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:OrderItem.Update", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	_length := len(u.updateOpts)
 	if _length == 0 {
 		return 0, nil

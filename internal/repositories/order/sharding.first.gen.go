@@ -12,6 +12,7 @@ import (
 	"runtime/debug"
 	"sync"
 
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
@@ -35,13 +36,14 @@ type _shardingFirst struct {
 	worker        chan struct{}
 	writeDB       bool
 	scopes        []func(gen.Dao) gen.Dao
+	trace         bool
 }
 
 // ShardingFirst 获取分表中随机第一条记录（主键升序）
 func (o *Order) ShardingFirst(sharding []string) *_shardingFirst {
 	return &_shardingFirst{
 		core:          o,
-		unscoped:      true,
+		unscoped:      o.unscoped,
 		selects:       make([]field.Expr, 0),
 		conditionOpts: make([]ConditionOption, 0),
 		sharding:      sharding,
@@ -135,12 +137,26 @@ func (f *_shardingFirst) WriteDB() *_shardingFirst {
 	return f
 }
 
+func (f *_shardingFirst) Trace() *_shardingFirst {
+	f.trace = true
+	return f
+}
+
 // Do 执行获取分表中随机第一条记录（主键升序）
 func (f *_shardingFirst) Do(ctx context.Context) (*models.Order, error) {
+	if f.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:Order.ShardingFirst", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	if len(f.sharding) == 0 {
 		return nil, gorm.ErrRecordNotFound
 	}
-	ctx, cancel := context.WithCancel(ctx)
+	var cancel context.CancelFunc
+	ctx, cancel = context.WithCancel(ctx)
 	defer cancel()
 	_condLen := len(f.conditionOpts)
 	wg := sync.WaitGroup{}
@@ -195,5 +211,7 @@ func (f *_shardingFirst) Do(ctx context.Context) (*models.Order, error) {
 		return nil, gorm.ErrRecordNotFound
 	case err := <-errChan:
 		return nil, err
+	case <-ctx.Done():
+		return nil, ctx.Err()
 	}
 }

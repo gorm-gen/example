@@ -12,6 +12,7 @@ import (
 	"runtime/debug"
 	"sync"
 
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
@@ -36,13 +37,14 @@ type _shardingTake struct {
 	worker        chan struct{}
 	writeDB       bool
 	scopes        []func(gen.Dao) gen.Dao
+	trace         bool
 }
 
 // ShardingTake 获取分表中随机一条记录
 func (o *OrderItem) ShardingTake(sharding []int) *_shardingTake {
 	return &_shardingTake{
 		core:          o,
-		unscoped:      true,
+		unscoped:      o.unscoped,
 		selects:       make([]field.Expr, 0),
 		orderOpts:     make([]OrderOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
@@ -142,12 +144,26 @@ func (t *_shardingTake) WriteDB() *_shardingTake {
 	return t
 }
 
+func (t *_shardingTake) Trace() *_shardingTake {
+	t.trace = true
+	return t
+}
+
 // Do 执行获取分表中随机一条记录
 func (t *_shardingTake) Do(ctx context.Context) (*models.OrderItem, error) {
+	if t.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:OrderItem.ShardingTake", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	if len(t.sharding) == 0 {
 		return nil, gorm.ErrRecordNotFound
 	}
-	ctx, cancel := context.WithCancel(ctx)
+	var cancel context.CancelFunc
+	ctx, cancel = context.WithCancel(ctx)
 	defer cancel()
 	_condLen := len(t.conditionOpts)
 	wg := sync.WaitGroup{}
@@ -203,5 +219,7 @@ func (t *_shardingTake) Do(ctx context.Context) (*models.OrderItem, error) {
 		return nil, gorm.ErrRecordNotFound
 	case err := <-errChan:
 		return nil, err
+	case <-ctx.Done():
+		return nil, ctx.Err()
 	}
 }

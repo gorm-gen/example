@@ -8,6 +8,7 @@ import (
 	"context"
 	"runtime/debug"
 
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 
@@ -26,14 +27,16 @@ type _create struct {
 	values    []*models.IdentityCard
 	batchSize int
 	scopes    []func(gen.Dao) gen.Dao
+	trace     bool
 }
 
 // Create 添加数据
 func (i *IdentityCard) Create() *_create {
 	return &_create{
-		core:   i,
-		values: make([]*models.IdentityCard, 0),
-		scopes: make([]func(gen.Dao) gen.Dao, 0),
+		core:     i,
+		unscoped: i.unscoped,
+		values:   make([]*models.IdentityCard, 0),
+		scopes:   make([]func(gen.Dao) gen.Dao, 0),
 	}
 }
 
@@ -80,8 +83,21 @@ func (c *_create) BatchSize(batchSize uint) *_create {
 	return c
 }
 
+func (c *_create) Trace() *_create {
+	c.trace = true
+	return c
+}
+
 // Do 执行添加数据
 func (c *_create) Do(ctx context.Context) (err error) {
+	if c.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:IdentityCard.Create", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	length := len(c.values)
 	if length == 0 {
 		return nil

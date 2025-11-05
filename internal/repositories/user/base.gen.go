@@ -29,6 +29,7 @@ type User struct {
 	db           *gorm.DB
 	logger       *zap.Logger
 	newTableName *string
+	unscoped     bool
 }
 
 // Option User仓库初始化选项
@@ -55,6 +56,16 @@ func WithDB(db *gorm.DB) Option {
 func WithNewTableName(newTableName string) Option {
 	return func(u *User) {
 		u.newTableName = &newTableName
+	}
+}
+
+func WithUnscoped(unscoped ...bool) Option {
+	_unscoped := true
+	if len(unscoped) > 0 {
+		_unscoped = unscoped[0]
+	}
+	return func(u *User) {
+		u.unscoped = _unscoped
 	}
 }
 
@@ -210,10 +221,16 @@ func ConditionName(v ...string) ConditionOption {
 			if length == 0 {
 				return u.q.User.Table(*u.newTableName).Name.Eq("")
 			}
+			if length > 1 {
+				return u.q.User.Table(*u.newTableName).Name.In(v...)
+			}
 			return u.q.User.Table(*u.newTableName).Name.Eq(v[0])
 		}
 		if length == 0 {
 			return u.q.User.Name.Eq("")
+		}
+		if length > 1 {
+			return u.q.User.Name.In(v...)
 		}
 		return u.q.User.Name.Eq(v[0])
 	}
@@ -226,10 +243,16 @@ func ConditionNameNeq(v ...string) ConditionOption {
 			if length == 0 {
 				return u.q.User.Table(*u.newTableName).Name.Neq("")
 			}
+			if length > 1 {
+				return u.q.User.Table(*u.newTableName).Name.NotIn(v...)
+			}
 			return u.q.User.Table(*u.newTableName).Name.Neq(v[0])
 		}
 		if length == 0 {
 			return u.q.User.Name.Neq("")
+		}
+		if length > 1 {
+			return u.q.User.Name.NotIn(v...)
 		}
 		return u.q.User.Name.Neq(v[0])
 	}

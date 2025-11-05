@@ -8,6 +8,7 @@ import (
 	"context"
 	"runtime/debug"
 
+	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
@@ -31,12 +32,14 @@ type _last struct {
 	conditionOpts []ConditionOption
 	writeDB       bool
 	scopes        []func(gen.Dao) gen.Dao
+	trace         bool
 }
 
 // Last 获取最后一条记录（主键降序）
 func (u *UserLanguage) Last() *_last {
 	return &_last{
 		core:          u,
+		unscoped:      u.unscoped,
 		selects:       make([]field.Expr, 0),
 		relationOpts:  make([]RelationOption, 0),
 		conditionOpts: make([]ConditionOption, 0),
@@ -126,8 +129,21 @@ func (l *_last) WriteDB() *_last {
 	return l
 }
 
+func (l *_last) Trace() *_last {
+	l.trace = true
+	return l
+}
+
 // Do 执行获取最后一条记录（主键降序）
 func (l *_last) Do(ctx context.Context) (*models.UserLanguage, error) {
+	if l.trace {
+		if parent := opentracing.SpanFromContext(ctx); parent != nil {
+			if tracer := opentracing.GlobalTracer(); tracer != nil {
+				span := tracer.StartSpan("SQL:UserLanguage.Last", opentracing.ChildOf(parent.Context()))
+				defer span.Finish()
+			}
+		}
+	}
 	lq := l.core.q.UserLanguage
 	if l.tx != nil {
 		lq = l.tx.UserLanguage
