@@ -120,8 +120,8 @@ func (d *_shardingDelete) Do(ctx context.Context) (int64, map[int]int64, error) 
 	_condLen := len(d.conditionOpts)
 	sm := sync.Map{}
 	wg := sync.WaitGroup{}
-	errChan := make(chan error)
-	endChan := make(chan struct{})
+	errChan := make(chan error, _lenSharding)
+	endChan := make(chan struct{}, 1)
 	for _, sharding := range d.sharding {
 		d.worker <- struct{}{}
 		wg.Add(1)

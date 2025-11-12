@@ -136,8 +136,8 @@ func (u *_shardingUpdate) Do(ctx context.Context) (int64, map[string]int64, erro
 	_condLen := len(u.conditionOpts)
 	sm := sync.Map{}
 	wg := sync.WaitGroup{}
-	errChan := make(chan error)
-	endChan := make(chan struct{})
+	errChan := make(chan error, _lenSharding)
+	endChan := make(chan struct{}, 1)
 	for _, sharding := range u.sharding {
 		u.worker <- struct{}{}
 		wg.Add(1)

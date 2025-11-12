@@ -122,8 +122,8 @@ func (s *_shardingSum) Do(ctx context.Context) (decimal.Decimal, map[string]deci
 	_condLen := len(s.conditionOpts)
 	wg := sync.WaitGroup{}
 	sm := sync.Map{}
-	errChan := make(chan error)
-	endChan := make(chan struct{})
+	errChan := make(chan error, _lenSharding)
+	endChan := make(chan struct{}, 1)
 	for _, sharding := range s.sharding {
 		s.worker <- struct{}{}
 		wg.Add(1)

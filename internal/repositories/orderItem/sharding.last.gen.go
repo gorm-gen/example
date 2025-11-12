@@ -152,7 +152,8 @@ func (l *_shardingLast) Do(ctx context.Context) (*models.OrderItem, error) {
 			}
 		}
 	}
-	if len(l.sharding) == 0 {
+	_lenSharding := len(l.sharding)
+	if _lenSharding == 0 {
 		return nil, gorm.ErrRecordNotFound
 	}
 	var cancel context.CancelFunc
@@ -160,9 +161,9 @@ func (l *_shardingLast) Do(ctx context.Context) (*models.OrderItem, error) {
 	defer cancel()
 	_condLen := len(l.conditionOpts)
 	wg := sync.WaitGroup{}
-	endChan := make(chan struct{})
-	errChan := make(chan error)
-	resultChan := make(chan *models.OrderItem)
+	endChan := make(chan struct{}, 1)
+	errChan := make(chan error, _lenSharding)
+	resultChan := make(chan *models.OrderItem, _lenSharding)
 	for _, sharding := range l.sharding {
 		l.worker <- struct{}{}
 		wg.Add(1)

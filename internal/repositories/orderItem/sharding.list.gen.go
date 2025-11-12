@@ -242,9 +242,10 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.OrderItem, int64, err
 	_condLen := len(l.conditionOpts)
 	wg := sync.WaitGroup{}
 	_count_ := int64(0)
-	_list_ := make([][]*models.OrderItem, len(slList))
-	endChan := make(chan struct{})
-	errChan := make(chan error)
+	lenSlList := len(slList)
+	_list_ := make([][]*models.OrderItem, lenSlList)
+	endChan := make(chan struct{}, 1)
+	errChan := make(chan error, lenSlList)
 	for k, v := range slList {
 		l.worker <- struct{}{}
 		wg.Add(1)
@@ -261,9 +262,10 @@ func (l *_shardingList) Do(ctx context.Context) ([]*models.OrderItem, int64, err
 			}()
 			defer wg.Done()
 			_wg := &sync.WaitGroup{}
-			_endChan := make(chan struct{})
-			_errChan := make(chan error)
-			__list := make([][]*models.OrderItem, len(v.List))
+			_endChan := make(chan struct{}, 1)
+			_lenList := len(v.List)
+			_errChan := make(chan error, _lenList)
+			__list := make([][]*models.OrderItem, _lenList)
 			for kk, vv := range v.List {
 				l.worker <- struct{}{}
 				_wg.Add(1)
