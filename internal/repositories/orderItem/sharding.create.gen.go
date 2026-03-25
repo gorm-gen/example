@@ -12,6 +12,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
+	"gorm.io/gen/field"
 
 	"example/internal/query"
 
@@ -26,6 +27,7 @@ type _shardingCreate struct {
 	values    []*models.OrderItem
 	batchSize int
 	scopes    []func(gen.Dao) gen.Dao
+	omits     []field.Expr
 	trace     bool
 }
 
@@ -36,6 +38,7 @@ func (o *OrderItem) ShardingCreate() *_shardingCreate {
 		unscoped: o.unscoped,
 		values:   make([]*models.OrderItem, 0),
 		scopes:   make([]func(gen.Dao) gen.Dao, 0),
+		omits:    make([]field.Expr, 0),
 	}
 }
 
@@ -68,6 +71,12 @@ func (c *_shardingCreate) Unscoped(unscoped ...bool) *_shardingCreate {
 
 func (c *_shardingCreate) Scopes(funcs ...func(gen.Dao) gen.Dao) *_shardingCreate {
 	c.scopes = append(c.scopes, funcs...)
+	return c
+}
+
+// Omit 执行创建时忽略字段
+func (c *_shardingCreate) Omit(field ...field.Expr) *_shardingCreate {
+	c.omits = append(c.omits, field...)
 	return c
 }
 
@@ -107,6 +116,7 @@ func (c *_shardingCreate) Do(ctx context.Context) (err error) {
 			Tx(c.tx).
 			QueryTx(c.qTx).
 			Unscoped(c.unscoped).
+			Omit(c.omits...).
 			BatchSize(bs).
 			Values(c.values...).
 			Scopes(c.scopes...).
@@ -121,6 +131,7 @@ func (c *_shardingCreate) Do(ctx context.Context) (err error) {
 			Tx(c.tx).
 			QueryTx(c.qTx).
 			Unscoped(c.unscoped).
+			Omit(c.omits...).
 			BatchSize(bs).
 			Values(c.values...).
 			Scopes(c.scopes...).
@@ -132,6 +143,7 @@ func (c *_shardingCreate) Do(ctx context.Context) (err error) {
 				Tx(c.tx).
 				QueryTx(c.qTx).
 				Unscoped(c.unscoped).
+				Omit(c.omits...).
 				BatchSize(bs).
 				Values(values...).
 				Scopes(c.scopes...).
@@ -154,6 +166,7 @@ func (c *_shardingCreate) Do(ctx context.Context) (err error) {
 			err = c.core.Create().
 				Tx(tx).
 				Unscoped(c.unscoped).
+				Omit(c.omits...).
 				BatchSize(bs).
 				Values(values...).
 				Scopes(c.scopes...).

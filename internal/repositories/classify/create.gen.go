@@ -11,6 +11,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 	"gorm.io/gen"
+	"gorm.io/gen/field"
 
 	"example/internal/query"
 
@@ -27,6 +28,7 @@ type _create struct {
 	values    []*models.Classify
 	batchSize int
 	scopes    []func(gen.Dao) gen.Dao
+	omits     []field.Expr
 	trace     bool
 }
 
@@ -37,6 +39,7 @@ func (c *Classify) Create() *_create {
 		unscoped: c.unscoped,
 		values:   make([]*models.Classify, 0),
 		scopes:   make([]func(gen.Dao) gen.Dao, 0),
+		omits:    make([]field.Expr, 0),
 	}
 }
 
@@ -69,6 +72,12 @@ func (c *_create) Unscoped(unscoped ...bool) *_create {
 
 func (c *_create) Scopes(funcs ...func(gen.Dao) gen.Dao) *_create {
 	c.scopes = append(c.scopes, funcs...)
+	return c
+}
+
+// Omit 执行创建时忽略字段
+func (c *_create) Omit(field ...field.Expr) *_create {
+	c.omits = append(c.omits, field...)
 	return c
 }
 
@@ -118,6 +127,17 @@ func (c *_create) Do(ctx context.Context) (err error) {
 	}
 	if len(c.scopes) > 0 {
 		cr = cr.Scopes(c.scopes...)
+	}
+	if _len := len(c.omits); _len > 0 {
+		if c.core.newTableName == nil {
+			cr = cr.Omit(c.omits...)
+		} else {
+			fs := make([]field.Expr, 0, _len)
+			for _, v := range c.omits {
+				fs = append(fs, field.NewField(*c.core.newTableName, v.ColumnName().String()))
+			}
+			cr = cr.Omit(fs...)
+		}
 	}
 	if length > 1 && c.batchSize > 0 {
 		err = cr.CreateInBatches(c.values, c.batchSize)
